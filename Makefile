@@ -217,6 +217,7 @@ clean:
 	rm -f lib/Pipfile.lock
 	rm -rf frontend/app/build
 	rm -rf frontend/node_modules
+	rm -rf frontend/app/performance/reports
 	rm -rf frontend/app/node_modules
 	rm -rf frontend/lib/node_modules
 	rm -rf frontend/test_results
@@ -413,6 +414,12 @@ pre-commit-install:
 # Ensure relative imports exist within the lib/dist folder when doing yarn buildLibProd.
 ensure-relative-imports:
 	./scripts/ensure_relative_imports.sh
+
+.PHONY: streamlit-performance-lighthouse
+# Run Lighthouse performance tests
+streamlit-performance-lighthouse:
+	cd frontend/app; \
+	yarn run lighthouse:run
 
 .PHONY frontend-lib-prod:
 # Build the production version for @streamlit/lib.
