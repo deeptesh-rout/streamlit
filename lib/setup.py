@@ -33,7 +33,7 @@ INSTALL_REQUIRES = [
     "blinker>=1.0.0, <2",
     "cachetools>=4.0, <6",
     "click>=7.0, <9",
-    "numpy>=1.20, <3",
+    "numpy>=1.23, <3",
     "packaging>=20, <25",
     # Pandas <1.4 has a bug related to deleting columns in a DataFrame changing
     # the index dtype.
