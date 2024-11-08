@@ -34,8 +34,8 @@ message PageProfile {
 }
 
 // The field names are used as part of the event json sent
-// to Segment. Since there is a 32kb limit for the event
-// size we are using short names to optimize for the size.
+// to our metrics provider. we are using short names to
+// optimize for the size.
 message Argument {
   // The keyword of the argument:
   string k = 1;

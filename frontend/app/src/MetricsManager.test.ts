@@ -183,23 +183,6 @@ describe("initialize", () => {
     expect(fetch.mock.calls.length).toBe(1)
     expect(fetch.mock.calls[0][0]).toEqual(DEFAULT_METRICS_CONFIG)
   })
-
-  test("does not initialize Segment analytics when gatherUsageStats=false", () => {
-    const mm = getMetricsManager()
-    expect(window.analytics).toBeUndefined()
-    mm.initialize({ gatherUsageStats: false })
-    expect(window.analytics).toBeUndefined()
-  })
-
-  test("initializes Segment analytics when gatherUsageStats=true", () => {
-    const mm = getMetricsManager()
-    expect(window.analytics).toBeUndefined()
-    mm.initialize({ gatherUsageStats: true })
-    expect(window.analytics).toBeDefined()
-    expect(window.analytics.invoked).toBe(true)
-    expect(window.analytics.methods).toHaveLength(20)
-    expect(window.analytics.load).toBeDefined()
-  })
 })
 
 describe("metrics helpers", () => {
@@ -425,18 +408,5 @@ test("tracks installation data", () => {
 
   expect(mm.track.mock.calls[0][1]).toMatchObject({
     machineIdV3: sessionInfo.current.installationIdV3,
-  })
-})
-
-test("ip address is overwritten", () => {
-  const mm = getMetricsManager()
-  mm.initialize({ gatherUsageStats: true })
-
-  mm.enqueue("ev1", { data1: 11 })
-
-  expect(mm.track.mock.calls[0][2]).toMatchObject({
-    context: {
-      ip: "0.0.0.0",
-    },
   })
 })

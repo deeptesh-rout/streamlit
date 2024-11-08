@@ -17,7 +17,6 @@
 import pick from "lodash/pick"
 import { v4 as uuidv4 } from "uuid"
 
-import { initializeSegment } from "@streamlit/app/src/vendor/Segment"
 import {
   DeployedAppMetadata,
   getCookie,
@@ -34,13 +33,6 @@ import {
 
 // Default metrics config fetched when none provided by host config endpoint
 export const DEFAULT_METRICS_CONFIG = "https://data.streamlit.io/metrics.json"
-
-/**
- * The analytics is the Segment.io object. It is initialized in Segment.ts
- * It is loaded with global scope (window.analytics) to integrate with the segment.io api
- * @global
- * */
-declare const analytics: any
 
 type EventName = "viewReport" | "updateReport" | "pageProfile" | "menuClick"
 type Event = [EventName, Partial<IMetricsEvent>]
@@ -115,8 +107,6 @@ export class MetricsManager {
     }
 
     if (this.actuallySendMetrics) {
-      // Segment will not initialize if this is rendered with SSR
-      initializeSegment()
       this.sendPendingEvents()
     }
 
@@ -196,35 +186,15 @@ export class MetricsManager {
   // only be changed when requested by the data team. This is why `reportHash`
   // retains its old name.
   private send(evName: EventName, evData: Partial<IMetricsEvent> = {}): void {
-    const data = {
-      ...evData,
-      ...this.getHostTrackingData(),
-      ...this.getInstallationData(),
-      reportHash: this.appHash,
-      dev: IS_DEV_ENV,
-      source: "browser",
-      streamlitVersion: this.sessionInfo.current.streamlitVersion,
-      isHello: this.sessionInfo.isHello,
-    }
+    const data = this.buildEventProto(evName, evData)
 
     // Don't actually track events when in dev mode, just print them instead.
-    // This is just to keep us from tracking too many events and having to pay
-    // for all of them.
     if (IS_DEV_ENV) {
       logAlways("[Dev mode] Not tracking stat datapoint: ", evName, data)
     } else if (this.metricsUrl === "postMessage") {
       this.postMessageEvent(evName, data)
     } else {
-      this.track(evName, data, {
-        // Ensure both systems send same anonymousId - manually set Segment's anonymousId
-        anonymousId: this.anonymousId,
-        context: {
-          // Segment automatically attaches the IP address. But we don't use, process,
-          // or store IP addresses for our telemetry. To make this more explicit, we
-          // are overwriting this here so that it is never even sent to Segment.
-          ip: "0.0.0.0",
-        },
-      })
+      this.track(data)
     }
   }
 
@@ -236,38 +206,25 @@ export class MetricsManager {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private async track(
-    evName: EventName,
-    data: Partial<IMetricsEvent>,
-    context: Record<string, unknown>
-  ): Promise<void> {
-    // Send the event to Segment
-    analytics.track(evName, data, context)
-
+  private async track(data: MetricsEvent): Promise<void> {
     // Send the event to the metrics URL
-    const eventJson = this.buildEventProto(evName, data).toJSON()
-
     // @ts-expect-error - send func calls track & checks metricsUrl defined
     const request = new Request(this.metricsUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(eventJson),
+      body: JSON.stringify(data.toJSON()),
     })
     await fetch(request)
   }
 
   // Helper to send metrics events to host
-  private postMessageEvent(
-    eventName: EventName,
-    eventData: Partial<IMetricsEvent>
-  ): void {
-    const eventProto = this.buildEventProto(eventName, eventData)
+  private postMessageEvent(eventName: EventName, data: MetricsEvent): void {
     this.sendMessageToHost({
       type: "METRICS_EVENT",
       eventName,
-      data: eventProto,
+      data,
     })
   }
 

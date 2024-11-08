@@ -35,7 +35,6 @@ from streamlit.runtime.scriptrunner_utils.script_run_context import get_script_r
 _LOGGER: Final = get_logger(__name__)
 
 # Limit the number of commands to keep the page profile message small
-# since Segment allows only a maximum of 32kb per event.
 _MAX_TRACKED_COMMANDS: Final = 200
 # Only track a maximum of 25 uses per unique command since some apps use
 # commands excessively (e.g. calling add_rows thousands of times in one rerun)
@@ -162,7 +161,7 @@ _DBUS_MACHINE_ID_PATH = "/var/lib/dbus/machine-id"
 def _get_machine_id_v3() -> str:
     """Get the machine ID
 
-    This is a unique identifier for a user for tracking metrics in Segment,
+    This is a unique identifier for a user for tracking metrics,
     that is broken in different ways in some Linux distros and Docker images.
     - at times just a hash of '', which means many machines map to the same ID
     - at times a hash of the same string, when running in a Docker container
