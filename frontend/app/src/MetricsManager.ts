@@ -244,6 +244,9 @@ export class MetricsManager {
       streamlitVersion: this.sessionInfo.current.streamlitVersion,
       isHello: this.sessionInfo.isHello,
       ...this.getContextData(),
+      // We don't use, process, or store IP addresses for our telemetry. To make this
+      // more explicit, we overwrite the property here so it is never sent.
+      _ip: "0.0.0.0",
     })
 
     if (evName === "menuClick") {

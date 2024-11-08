@@ -391,13 +391,13 @@ test("tracks host data when in an iFrame", () => {
   mm.initialize({ gatherUsageStats: true })
   mm.enqueue("ev1", { data1: 11 })
 
-  expect(mm.track.mock.calls[0][1]).toMatchObject({
-    hostedAt: "S4A",
-    data1: 11,
-  })
-  expect(mm.track.mock.calls[0][1]).not.toMatchObject({
-    k: "v",
-  })
+  const trackCall = mm.track.mock.calls[0][0]
+  // Check that unexpected event data not included
+  expect(trackCall.data1).not.toBeDefined()
+
+  // Check that only expected metadata fields present (see getHostTrackingData)
+  expect(trackCall.hostedAt).toEqual("S4A")
+  expect(trackCall.k).not.toBeDefined()
 })
 
 test("tracks installation data", () => {
@@ -406,7 +406,16 @@ test("tracks installation data", () => {
   mm.initialize({ gatherUsageStats: true })
   mm.enqueue("ev1", { data1: 11 })
 
-  expect(mm.track.mock.calls[0][1]).toMatchObject({
-    machineIdV3: sessionInfo.current.installationIdV3,
-  })
+  const trackCall = mm.track.mock.calls[0][0]
+  expect(trackCall.machineIdV3).toEqual(sessionInfo.current.installationIdV3)
+})
+
+test("ip address is overwritten", () => {
+  const mm = getMetricsManager()
+  mm.initialize({ gatherUsageStats: true })
+
+  mm.enqueue("ev1", { data1: 11 })
+
+  const trackCall = mm.track.mock.calls[0][0]
+  expect(trackCall._ip).toEqual("0.0.0.0")
 })

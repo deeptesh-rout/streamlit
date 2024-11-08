@@ -34,6 +34,9 @@ message MetricsEvent {
   string streamlit_version = 7;
   bool is_hello = 8;
 
+  // Override automatically passed ip field
+  string _ip = 41;
+
   // Host tracking fields:
   string hosted_at = 9;
   string owner = 10;
@@ -79,7 +82,7 @@ message MetricsEvent {
   int64 total_load_time = 39;
   BrowserInfo browser_info = 40;
 
-  // Next ID: 41
+  // Next ID: 42
 }
 
 message BrowserInfo {
