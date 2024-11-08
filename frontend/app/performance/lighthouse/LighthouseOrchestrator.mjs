@@ -20,11 +20,11 @@
 import lighthouse from "lighthouse"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as chromeLauncher from "chrome-launcher"
+import { default as treeKill } from "tree-kill"
 
 import fs from "fs"
 import path from "path"
 import { exec, execSync } from "child_process"
-import { default as treeKill } from "tree-kill"
 
 import { MODES } from "./constants.mjs"
 
@@ -215,7 +215,7 @@ export class LighthouseOrchestrator {
     )
     fs.writeFileSync(
       path.join(REPORTS_DIRECTORY, `${REPORT_NAME}.json`),
-      JSON.stringify(runnerResult.lhr, null, 2)
+      JSON.stringify(runnerResult.lhr)
     )
 
     // `.lhr` is the Lighthouse Result as a JS object
