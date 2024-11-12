@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactElement, useCallback, useEffect, useState } from "react"
+import React, { ReactElement, useCallback, useState } from "react"
 
 import uniqueId from "lodash/uniqueId"
 import { Input as UIInput } from "baseui/input"
@@ -25,7 +25,8 @@ import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import {
   useBasicWidgetState,
   ValueWithSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
+import useUpdateUiValue from "@streamlit/lib/src/hooks/useUpdateUiValue"
 import InputInstructions from "@streamlit/lib/src/components/shared/InputInstructions/InputInstructions"
 import {
   StyledWidgetLabelHelp,
@@ -55,6 +56,24 @@ function TextInput({
   width,
   fragmentId,
 }: Props): ReactElement {
+  /**
+   * The value specified by the user via the UI. If the user didn't touch this
+   * widget's UI, the default value is used.
+   */
+  const [uiValue, setUiValue] = useState<string | null>(
+    getStateFromWidgetMgr(widgetMgr, element) ?? null
+  )
+
+  /**
+   * True if the user-specified state.value has not yet been synced to the WidgetStateManager.
+   */
+  const [dirty, setDirty] = useState(false)
+
+  const onFormCleared = useCallback(() => {
+    setUiValue(element.default ?? null)
+    setDirty(true)
+  }, [element.default])
+
   const [value, setValueWithSource] = useBasicWidgetState<
     string | null,
     TextInputProto
@@ -66,36 +85,24 @@ function TextInput({
     element,
     widgetMgr,
     fragmentId,
+    onFormCleared,
   })
 
-  /**
-   * True if the user-specified state.value has not yet been synced to the WidgetStateManager.
-   */
-  const [dirty, setDirty] = useState(false)
+  useUpdateUiValue(value, uiValue, setUiValue, dirty)
 
   /**
    * Whether the input is currently focused.
    */
   const [focused, setFocused] = useState(false)
 
-  /**
-   * The value specified by the user via the UI. If the user didn't touch this
-   * widget's UI, the default value is used.
-   */
-  const [uiValue, setUiValue] = useState<string | null>(value)
-
-  useEffect(() => {
-    if (value !== uiValue) {
-      setUiValue(value)
-    }
-    // Don't include `uiValue` in the deps below or the slider will become
-    // jittery.
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [value])
-
   const theme = useTheme()
   const [id] = useState(() => uniqueId("text_input_"))
   const { placeholder, formId } = element
+
+  const commitWidgetValue = useCallback((): void => {
+    setDirty(false)
+    setValueWithSource({ value: uiValue, fromUi: true })
+  }, [uiValue, setValueWithSource])
 
   // Show "Please enter" instructions if in a form & allowed, or not in form and state is dirty.
   const allowEnterToSubmit = isInForm({ formId })
@@ -108,10 +115,10 @@ function TextInput({
 
   const onBlur = useCallback((): void => {
     if (dirty) {
-      setValueWithSource({ value: uiValue, fromUi: true })
+      commitWidgetValue()
     }
     setFocused(false)
-  }, [dirty, uiValue])
+  }, [dirty, commitWidgetValue])
 
   const onFocus = useCallback((): void => {
     setFocused(true)
@@ -141,7 +148,7 @@ function TextInput({
       // update its value in the WidgetMgr. This means that individual keypresses
       // won't trigger a script re-run.
     },
-    [element]
+    [element, setValueWithSource]
   )
 
   const onKeyPress = useCallback(
@@ -151,14 +158,14 @@ function TextInput({
       }
 
       if (dirty) {
-        setValueWithSource({ value: uiValue, fromUi: true })
+        commitWidgetValue()
       }
 
       if (widgetMgr.allowFormEnterToSubmit(element.formId)) {
         widgetMgr.submitForm(element.formId, fragmentId)
       }
     },
-    [uiValue, element, fragmentId]
+    [element, fragmentId, dirty, commitWidgetValue, widgetMgr]
   )
 
   return (

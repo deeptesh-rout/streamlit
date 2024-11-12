@@ -18,17 +18,15 @@ import React, { ReactElement } from "react"
 
 import { OptionListProps, StyledEmptyState, StyledList } from "baseui/menu"
 import { FixedSizeList } from "react-window"
+import { useTheme } from "@emotion/react"
 
 import {
   OverflowTooltip,
   Placement,
 } from "@streamlit/lib/src/components/shared/Tooltip"
+import { convertRemToPx } from "@streamlit/lib/src/theme/utils"
 
 import { ThemedStyledDropdownListItem } from "./styled-components"
-
-const LIST_ITEM_HEIGHT = 40
-const EMPTY_LIST_HEIGHT = 90
-const MAX_LIST_HEIGHT = 300
 
 /*
  * A component that renders a large dropdown to render only a fixed amount of
@@ -59,13 +57,14 @@ function FixedSizeListItem(props: FixedSizeListItemProps): ReactElement {
 }
 
 const VirtualDropdown = React.forwardRef<any, any>((props, ref) => {
+  const theme = useTheme()
   const children = React.Children.toArray(props.children) as ReactElement[]
 
   if (!children[0] || !children[0].props.item) {
     const childrenProps = children[0] ? children[0].props : {}
     return (
       <StyledList
-        $style={{ height: `${EMPTY_LIST_HEIGHT}px` }}
+        $style={{ height: theme.sizes.emptyDropdownHeight }}
         ref={ref}
         data-testid="stSelectboxVirtualDropdownEmpty"
       >
@@ -74,7 +73,10 @@ const VirtualDropdown = React.forwardRef<any, any>((props, ref) => {
     )
   }
 
-  const height = Math.min(MAX_LIST_HEIGHT, children.length * LIST_ITEM_HEIGHT)
+  const height = Math.min(
+    convertRemToPx(theme.sizes.maxDropdownHeight),
+    children.length * convertRemToPx(theme.sizes.dropdownItemHeight)
+  )
 
   return (
     <StyledList
@@ -90,7 +92,7 @@ const VirtualDropdown = React.forwardRef<any, any>((props, ref) => {
         itemKey={(index: number, data: { props: OptionListProps }[]) =>
           data[index].props.item.value
         }
-        itemSize={LIST_ITEM_HEIGHT}
+        itemSize={convertRemToPx(theme.sizes.dropdownItemHeight)}
       >
         {FixedSizeListItem}
       </FixedSizeList>

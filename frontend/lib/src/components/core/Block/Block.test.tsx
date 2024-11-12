@@ -16,8 +16,6 @@
 
 import React, { ReactElement } from "react"
 
-import "@testing-library/jest-dom"
-
 import { screen } from "@testing-library/react"
 
 import { Block as BlockProto } from "@streamlit/lib/src/proto"

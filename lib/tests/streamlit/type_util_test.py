@@ -26,6 +26,7 @@ import pytest
 from parameterized import parameterized
 
 from streamlit import type_util
+from streamlit.delta_generator import DeltaGenerator
 from streamlit.errors import StreamlitAPIException
 from streamlit.runtime.context import StreamlitCookies, StreamlitHeaders
 from streamlit.runtime.secrets import Secrets
@@ -168,6 +169,8 @@ class TypeUtilTest(unittest.TestCase):
         assert type_util.has_callable_attr(TestClass, "also_not_callable") is False
         assert type_util.has_callable_attr(TestClass, "not_a_real_attr") is False
 
+        assert type_util.has_callable_attr(DeltaGenerator(), "foo") is False
+
     @parameterized.expand(
         [
             ({"key": "value"}, False),
@@ -182,3 +185,9 @@ class TypeUtilTest(unittest.TestCase):
     def test_is_custom_dict(self, dict_obj: Any, is_custom_dict: bool):
         """Test that `is_custom_dict` returns True for all Streamlit custom dicts."""
         assert type_util.is_custom_dict(dict_obj) is is_custom_dict
+
+    def test_is_delta_generator(self):
+        """Test that `is_delta_generator` returns True for DeltaGenerator."""
+
+        assert type_util.is_delta_generator(DeltaGenerator()) is True
+        assert type_util.is_delta_generator("not a DeltaGenerator") is False

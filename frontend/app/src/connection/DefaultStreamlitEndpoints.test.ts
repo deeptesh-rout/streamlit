@@ -166,7 +166,7 @@ describe("DefaultStreamlitEndpoints", () => {
     const MOCK_FILE = new File(["file1"], "file1.txt")
 
     let axiosMock: MockAdapter
-    const spyRequest = jest.spyOn(axios, "request")
+    const spyRequest = vi.spyOn(axios, "request")
     let endpoints: DefaultStreamlitEndpoints
 
     beforeEach(() => {
@@ -312,7 +312,7 @@ describe("DefaultStreamlitEndpoints", () => {
   // Test our private csrfRequest() API, which is responsible for setting
   // the "X-Xsrftoken" header.
   describe("csrfRequest()", () => {
-    const spyRequest = jest.spyOn(axios, "request")
+    const spyRequest = vi.spyOn(axios, "request")
     let prevDocumentCookie: string
 
     beforeEach(() => {

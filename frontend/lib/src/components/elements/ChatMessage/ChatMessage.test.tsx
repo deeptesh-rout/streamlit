@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { mockEndpoints } from "@streamlit/lib/src/mocks/mocks"
@@ -35,7 +34,7 @@ const getProps = (
     ...elementProps,
   }),
   endpoints: mockEndpoints({
-    buildMediaURL: jest.fn().mockImplementation(url => url),
+    buildMediaURL: vi.fn().mockImplementation(url => url),
   }),
 })
 

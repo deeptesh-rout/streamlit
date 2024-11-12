@@ -68,14 +68,14 @@ const MOCK_COLUMNS: BaseColumn[] = [
 ]
 
 const INITIAL_NUM_ROWS = 3
-const refreshCellsMock = jest.fn()
-const syncEditsMock = jest.fn()
-const updateNumRows = jest.fn()
-const clearSelectionMock = jest.fn()
-const getOriginalIndexMock = jest.fn().mockImplementation((index: number) => {
+const refreshCellsMock = vi.fn()
+const syncEditsMock = vi.fn()
+const updateNumRows = vi.fn()
+const clearSelectionMock = vi.fn()
+const getOriginalIndexMock = vi.fn().mockImplementation((index: number) => {
   return index
 })
-const getCellContentMock = jest
+const getCellContentMock = vi
   .fn()
   .mockImplementation(([col]: readonly [number]) => {
     const column = MOCK_COLUMNS[col]
@@ -87,7 +87,7 @@ const getCellContentMock = jest
 
 describe("useDataEditor hook", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it("allows to edit cells with onCellEdited", () => {
     const editingState = {

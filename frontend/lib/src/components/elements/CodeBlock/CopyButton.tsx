@@ -18,6 +18,9 @@ import React, { useEffect, useRef } from "react"
 
 import Clipboard from "clipboard"
 import { Copy as CopyIcon } from "react-feather"
+import { useTheme } from "@emotion/react"
+
+import { EmotionTheme } from "@streamlit/lib/src/theme"
 
 import { StyledCopyButton } from "./styled-components"
 
@@ -26,6 +29,7 @@ interface Props {
 }
 
 const CopyButton: React.FC<Props> = ({ text }) => {
+  const theme: EmotionTheme = useTheme()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const clipboardRef = useRef<Clipboard | null>(null)
 
@@ -58,7 +62,7 @@ const CopyButton: React.FC<Props> = ({ text }) => {
         right: 0,
       }}
     >
-      <CopyIcon size="16" />
+      <CopyIcon size={theme.iconSizes.base} />
     </StyledCopyButton>
   )
 }

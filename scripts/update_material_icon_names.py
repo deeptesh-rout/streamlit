@@ -17,6 +17,17 @@
 """Update the list of material icon names in `lib/streamlit/material_icon_names.py.
 
 Please only run this when updating the material symbols font to a later version.
+
+To update the material symbols font file, follow these steps:
+1. Visit https://fonts.google.com/icons?icon.style=Rounded
+2. Click on any icon to open the icon details
+3. On right side, find "Static icon font", and copy the URL from link tag without
+font specifiers and icon name, should be "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded
+4. Open the url in the browser, and find a src url in @font-face section, should be like
+"https://fonts.gstatic.com/s/materialsymbolsrounded/v214/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDB_Qb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOcbTCVpeRL2w5rwZu2rIelXxeJKJBiCa8.woff2"
+5. Download the font file from the src url, and save it as
+ `frontend/app/scr/assets/fonts/MaterialSymbols/MaterialSymbols-Rounded.woff2`.
+6. Update the `latest_material_symbol.py` e2e test to verify the new font works correctly.
 """
 
 import os

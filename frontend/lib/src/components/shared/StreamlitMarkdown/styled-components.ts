@@ -178,6 +178,9 @@ export const StyledStreamlitMarkdown =
           wordBreak: "break-word",
           marginBottom: isLabel ? theme.spacing.none : "",
           fontWeight: boldLabel ? theme.fontWeights.bold : "",
+          marginTop: theme.spacing.none,
+          marginLeft: theme.spacing.none,
+          marginRight: theme.spacing.none,
           ...(labelFontSize ? { fontSize: theme.fontSizes.sm } : {}),
         },
 
@@ -187,6 +190,7 @@ export const StyledStreamlitMarkdown =
           maxWidth: "100%",
           // In labels, widgets should never be taller than the text.
           maxHeight: isLabel ? "1em" : undefined,
+          verticalAlign: "middle",
         },
 
         li: {

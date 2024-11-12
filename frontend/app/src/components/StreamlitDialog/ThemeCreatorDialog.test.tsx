@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { fireEvent, screen, within } from "@testing-library/react"
 
 import {
@@ -36,14 +35,14 @@ import ThemeCreatorDialog, {
   toMinimalToml,
 } from "./ThemeCreatorDialog"
 
-const mockSetTheme = jest.fn()
-const mockAddThemes = jest.fn()
+const mockSetTheme = vi.fn()
+const mockAddThemes = vi.fn()
 
 const getProps = (
   props: Partial<ThemeCreatorDialogProps> = {}
 ): ThemeCreatorDialogProps => ({
-  backToSettings: jest.fn(),
-  onClose: jest.fn(),
+  backToSettings: vi.fn(),
+  onClose: vi.fn(),
   metricsMgr: new MetricsManager(mockSessionInfo()),
   ...props,
 })
@@ -60,7 +59,7 @@ const getContext = (
 
 Object.assign(navigator, {
   clipboard: {
-    writeText: jest.fn(),
+    writeText: vi.fn(),
   },
 })
 
@@ -167,7 +166,7 @@ font="monospace"
 
 describe("Opened ThemeCreatorDialog", () => {
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it("should update theme on color change", () => {
@@ -262,6 +261,7 @@ describe("Opened ThemeCreatorDialog", () => {
       addThemes: mockAddThemes,
     })
 
+    expect(screen.queryByText("Copied to clipboard")).not.toBeInTheDocument()
     const copyBtn = screen.getByRole("button", {
       name: "Copy theme to clipboard",
     })

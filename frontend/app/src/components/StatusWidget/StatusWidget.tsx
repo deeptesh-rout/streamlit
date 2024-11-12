@@ -23,6 +23,8 @@ import Hotkeys from "react-hot-keys"
 import { CSSTransition } from "react-transition-group"
 import { SignalConnection } from "typed-signals"
 
+import iconRunning from "@streamlit/app/src/assets/img/icon_running.gif"
+import newYearsRunning from "@streamlit/app/src/assets/img/fireworks.gif"
 import {
   BaseButton,
   BaseButtonKind,
@@ -40,12 +42,6 @@ import {
 } from "@streamlit/lib/src/util/utils"
 import { ConnectionState } from "@streamlit/app/src/connection/ConnectionState"
 import { SessionEventDispatcher } from "@streamlit/app/src/SessionEventDispatcher"
-/*
- * IMPORTANT: If you change the asset import below, make sure it still works if Streamlit is served
- * from a subpath.
- */
-import iconRunning from "@streamlit/app/src/assets/img/icon_running.gif"
-import newYearsRunning from "@streamlit/app/src/assets/img/fireworks.gif"
 
 import {
   StyledAppButtonContainer,

@@ -100,6 +100,8 @@ export const StyledBaseButton = styled.button<RequiredBaseButtonProps>(
       minHeight: theme.sizes.minElementHeight,
       margin: theme.spacing.none,
       lineHeight: theme.lineHeights.base,
+      fontSize: "inherit",
+      fontFamily: "inherit",
       color: "inherit",
       width: fluidWidth ? buttonWidth : "auto",
       cursor: "pointer",

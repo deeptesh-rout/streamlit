@@ -18,7 +18,6 @@ import React from "react"
 
 import { fireEvent, screen } from "@testing-library/react"
 
-import "@testing-library/jest-dom"
 import { render } from "@streamlit/lib/src/test_util"
 import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import { DownloadButton as DownloadButtonProto } from "@streamlit/lib/src/proto"
@@ -26,8 +25,8 @@ import { mockEndpoints } from "@streamlit/lib/src/mocks/mocks"
 
 import DownloadButton, { createDownloadLink, Props } from "./DownloadButton"
 
-jest.mock("@streamlit/lib/src/WidgetStateManager")
-jest.mock("@streamlit/lib/src/StreamlitEndpoints")
+vi.mock("@streamlit/lib/src/WidgetStateManager")
+vi.mock("@streamlit/lib/src/StreamlitEndpoints")
 
 const getProps = (
   elementProps: Partial<DownloadButtonProto> = {},
@@ -42,8 +41,8 @@ const getProps = (
   width: 250,
   disabled: false,
   widgetMgr: new WidgetStateManager({
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }),
   endpoints: mockEndpoints(),
   ...widgetProps,

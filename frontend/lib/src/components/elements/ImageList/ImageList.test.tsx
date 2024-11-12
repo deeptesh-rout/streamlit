@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -26,7 +25,7 @@ import { mockEndpoints } from "@streamlit/lib/src/mocks/mocks"
 import ImageList, { ImageListProps } from "./ImageList"
 
 describe("ImageList Element", () => {
-  const buildMediaURL = jest.fn().mockReturnValue("https://mock.media.url")
+  const buildMediaURL = vi.fn().mockReturnValue("https://mock.media.url")
 
   const getProps = (
     elementProps: Partial<ImageListProto> = {}

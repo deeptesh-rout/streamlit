@@ -29,7 +29,7 @@ def test_text_area_widget_rendering(
 ):
     """Test that the st.text_area widgets are correctly rendered via screenshot matching."""
     text_area_widgets = themed_app.get_by_test_id("stTextArea")
-    expect(text_area_widgets).to_have_count(12)
+    expect(text_area_widgets).to_have_count(13)
 
     assert_snapshot(text_area_widgets.nth(0), name="st_text_area-default")
     assert_snapshot(text_area_widgets.nth(1), name="st_text_area-value_some_text")
@@ -53,7 +53,7 @@ def test_help_tooltip_works(app: Page):
 def test_text_area_has_correct_initial_values(app: Page):
     """Test that st.text_area has the correct initial values."""
     markdown_elements = app.get_by_test_id("stMarkdown")
-    expect(markdown_elements).to_have_count(13)
+    expect(markdown_elements).to_have_count(14)
 
     expected = [
         "value 1: ",
@@ -69,10 +69,15 @@ def test_text_area_has_correct_initial_values(app: Page):
         "value 10: 1234",
         "value 11: default text",
         "value 12: default text",
+        "text area 13 (value from state) - value: xyz",
     ]
 
     for markdown_element, expected_text in zip(markdown_elements.all(), expected):
         expect(markdown_element).to_have_text(expected_text, use_inner_text=True)
+
+
+def test_text_area_shows_state_value(app: Page):
+    expect(app.get_by_test_id("stTextAreaRootElement").nth(12)).to_have_text("xyz")
 
 
 def test_text_area_shows_instructions_when_dirty(

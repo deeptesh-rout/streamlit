@@ -18,8 +18,6 @@ import React from "react"
 
 import { screen } from "@testing-library/react"
 
-import "@testing-library/jest-dom"
-
 import { render } from "@streamlit/lib/src/test_util"
 
 import Tooltip, { TooltipProps } from "./Tooltip"
@@ -29,7 +27,7 @@ describe("Dataframe Tooltip", () => {
     top: 100,
     left: 100,
     content: "**This is a tooltip.**",
-    clearTooltip: jest.fn(),
+    clearTooltip: vi.fn(),
   }
 
   test("renders the tooltip with provided content", () => {
@@ -46,7 +44,7 @@ describe("Dataframe Tooltip", () => {
       top: 200,
       left: 300,
       content: "Positioned tooltip.",
-      clearTooltip: jest.fn(),
+      clearTooltip: vi.fn(),
     }
 
     render(<Tooltip {...customPositionProps} />)

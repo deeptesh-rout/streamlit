@@ -16,7 +16,6 @@
 
 import React, { PureComponent, ReactNode } from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -46,8 +45,8 @@ class TestComponent extends PureComponent<TestProps> {
 const getProps = (props: Partial<TestProps> = {}): TestProps => ({
   width: 100,
   isFullScreen: false,
-  expand: jest.fn(),
-  collapse: jest.fn(),
+  expand: vi.fn(),
+  collapse: vi.fn(),
   label: "label",
   ...props,
 })

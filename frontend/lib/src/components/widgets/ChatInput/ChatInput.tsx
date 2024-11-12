@@ -214,6 +214,8 @@ function ChatInput({
               style: {
                 lineHeight: theme.lineHeights.inputWidget,
                 backgroundColor: theme.colors.transparent,
+                // Disable resizing via drag and drop
+                resize: "none",
                 "::placeholder": {
                   opacity: "0.7",
                 },

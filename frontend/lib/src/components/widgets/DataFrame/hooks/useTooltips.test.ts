@@ -63,7 +63,7 @@ const MOCK_COLUMNS: BaseColumn[] = [
   }),
 ]
 
-const getCellContentMock = jest
+const getCellContentMock = vi
   .fn()
   .mockImplementation(([col]: readonly [number]) => {
     const column = MOCK_COLUMNS[col]
@@ -73,7 +73,7 @@ const getCellContentMock = jest
     return { ...column.getCell("foo"), tooltip: "Cell tooltip 2" }
   })
 
-const getEmptyCellContentMock = jest
+const getEmptyCellContentMock = vi
   .fn()
   .mockImplementation(([col]: readonly [number]) => {
     const column = MOCK_COLUMNS[col]
@@ -82,13 +82,13 @@ const getEmptyCellContentMock = jest
 
 describe("useTooltips hook", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.useFakeTimers()
+    vi.clearAllMocks()
+    vi.useFakeTimers()
   })
 
   afterEach(() => {
-    jest.runOnlyPendingTimers()
-    jest.useRealTimers()
+    vi.runOnlyPendingTimers()
+    vi.useRealTimers()
   })
 
   it("renders a tooltip on hovering the header column with a tooltip", () => {
@@ -104,7 +104,7 @@ describe("useTooltips hook", () => {
         bounds: { x: 0, y: 0, width: 100, height: 30 },
       } as object as GridMouseEventArgs)
 
-      jest.advanceTimersByTime(DEBOUNCE_TIME_MS)
+      vi.advanceTimersByTime(DEBOUNCE_TIME_MS)
     })
 
     expect(result.current.tooltip).toMatchObject({
@@ -127,7 +127,7 @@ describe("useTooltips hook", () => {
         bounds: { x: 0, y: 30, width: 100, height: 30 },
       } as object as GridMouseEventArgs)
 
-      jest.advanceTimersByTime(DEBOUNCE_TIME_MS)
+      vi.advanceTimersByTime(DEBOUNCE_TIME_MS)
     })
 
     expect(result.current.tooltip).toMatchObject({
@@ -150,7 +150,7 @@ describe("useTooltips hook", () => {
         bounds: { x: 0, y: 30, width: 100, height: 30 },
       } as object as GridMouseEventArgs)
 
-      jest.advanceTimersByTime(DEBOUNCE_TIME_MS)
+      vi.advanceTimersByTime(DEBOUNCE_TIME_MS)
     })
 
     expect(result.current.tooltip).toMatchObject({
@@ -173,7 +173,7 @@ describe("useTooltips hook", () => {
         bounds: { x: 0, y: 0, width: 100, height: 30 },
       } as object as GridMouseEventArgs)
 
-      jest.advanceTimersByTime(DEBOUNCE_TIME_MS)
+      vi.advanceTimersByTime(DEBOUNCE_TIME_MS)
     })
 
     expect(result.current.tooltip).toMatchObject({

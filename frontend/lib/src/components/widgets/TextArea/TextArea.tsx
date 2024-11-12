@@ -25,6 +25,7 @@ import {
   Source,
   WidgetStateManager,
 } from "@streamlit/lib/src/WidgetStateManager"
+import useUpdateUiValue from "@streamlit/lib/src/hooks/useUpdateUiValue"
 import InputInstructions from "@streamlit/lib/src/components/shared/InputInstructions/InputInstructions"
 import {
   StyledWidgetLabelHelp,
@@ -40,7 +41,7 @@ import { EmotionTheme } from "@streamlit/lib/src/theme"
 import {
   useBasicWidgetState,
   ValueWithSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
 
 export interface Props {
   disabled: boolean
@@ -90,9 +91,6 @@ const TextArea: FC<Props> = ({
 }) => {
   const id = useRef(uniqueId("text_area_")).current
 
-  const [localValue, setLocalValue] = useState<string | null>(
-    getStateFromWidgetMgr(widgetMgr, element) ?? null
-  )
   /**
    * True if the user-specified state.value has not yet been synced to the WidgetStateManager.
    */
@@ -102,12 +100,20 @@ const TextArea: FC<Props> = ({
    */
   const [focused, setFocused] = useState(false)
 
+  /**
+   * The value specified by the user via the UI. If the user didn't touch this
+   * widget's UI, the default value is used.
+   */
+  const [uiValue, setUiValue] = useState<string | null>(
+    getStateFromWidgetMgr(widgetMgr, element) ?? null
+  )
+
   const onFormCleared = useCallback(() => {
-    setLocalValue(element.default ?? null)
+    setUiValue(element.default ?? null)
     setDirty(true)
   }, [element])
 
-  const [, setValueWithSource] = useBasicWidgetState<
+  const [value, setValueWithSource] = useBasicWidgetState<
     TextAreaValue,
     TextAreaProto
   >({
@@ -121,14 +127,16 @@ const TextArea: FC<Props> = ({
     onFormCleared,
   })
 
+  useUpdateUiValue(value, uiValue, setUiValue, dirty)
+
   const theme: EmotionTheme = useTheme()
 
   const commitWidgetValue = useCallback(
     ({ fromUi }: Source): void => {
-      setValueWithSource({ value: localValue, fromUi })
+      setValueWithSource({ value: uiValue, fromUi })
       setDirty(false)
     },
-    [localValue, setValueWithSource]
+    [uiValue, setValueWithSource]
   )
 
   const onBlur = useCallback(() => {
@@ -153,7 +161,7 @@ const TextArea: FC<Props> = ({
 
       // mark it dirty but don't update its value in the WidgetMgr
       // This means that individual keypresses won't trigger a script re-run.
-      setLocalValue(value)
+      setUiValue(value)
       setDirty(true)
     },
     [element]
@@ -223,7 +231,7 @@ const TextArea: FC<Props> = ({
         )}
       </WidgetLabel>
       <UITextArea
-        value={localValue ?? ""}
+        value={uiValue ?? ""}
         placeholder={placeholder}
         onBlur={onBlur}
         onFocus={onFocus}
@@ -268,7 +276,7 @@ const TextArea: FC<Props> = ({
       {shouldShowInstructions && (
         <InputInstructions
           dirty={dirty}
-          value={localValue ?? ""}
+          value={uiValue ?? ""}
           maxLength={element.maxChars}
           type={"multiline"}
           inForm={isInForm({ formId })}

@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { fireEvent, screen } from "@testing-library/react"
 import { act } from "react-dom/test-utils"
 
@@ -43,8 +42,8 @@ const getProps = (
   width: 0,
   disabled: disabled,
   widgetMgr: new WidgetStateManager({
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }),
 })
 
@@ -92,7 +91,7 @@ describe("TimeInput widget", () => {
 
   it("sets widget value on mount", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
     render(<TimeInput {...props} />)
 
     expect(props.widgetMgr.setStringValue).toHaveBeenCalledWith(
@@ -105,7 +104,7 @@ describe("TimeInput widget", () => {
 
   it("can pass fragmentId to setStringValue", () => {
     const props = { ...getProps(), fragmentId: "myFragmentId" }
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
     render(<TimeInput {...props} />)
 
     expect(props.widgetMgr.setStringValue).toHaveBeenCalledWith(
@@ -156,7 +155,7 @@ describe("TimeInput widget", () => {
 
   it("sets the widget value on change", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
 
     render(<TimeInput {...props} />)
     // Div containing the selected time as a value prop and as text
@@ -188,7 +187,7 @@ describe("TimeInput widget", () => {
     const props = getProps({ formId: "form" })
     props.widgetMgr.setFormSubmitBehaviors("form", true)
 
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
 
     render(<TimeInput {...props} />)
     // Div containing the selected time as a value prop and as text

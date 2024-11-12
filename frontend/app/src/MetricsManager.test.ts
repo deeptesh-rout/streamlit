@@ -36,17 +36,17 @@ const getMetricsManager = (
 ): MetricsManager => {
   const mm = new MetricsManager(sessionInfo || mockSessionInfo())
   if (mockRequestDefaultMetricsConfig) {
-    mm.requestDefaultMetricsConfig = jest.fn()
+    mm.requestDefaultMetricsConfig = vi.fn()
   }
   mm.setMetricsConfig(metricsConfig)
-  mm.track = jest.fn()
-  mm.identify = jest.fn()
-  mm.postMessageEvent = jest.fn()
+  mm.track = vi.fn()
+  mm.identify = vi.fn()
+  mm.postMessageEvent = vi.fn()
   return mm
 }
 
 // Mock fetch for our metrics config request
-global.fetch = jest.fn(() =>
+global.fetch = vi.fn(() =>
   Promise.resolve({
     ok: true,
     json: () =>
@@ -56,7 +56,7 @@ global.fetch = jest.fn(() =>
 
 // Mock AbortSignal, otherwise TypeError timeout is not a function
 global.AbortSignal = {
-  timeout: jest.fn(),
+  timeout: vi.fn(),
 }
 
 const DEFAULT_EVENT_DATA = {
@@ -173,7 +173,7 @@ describe("initialize", () => {
 
   test("attempts fetch when no metrics config received", () => {
     // eslint-disable-next-line no-proto
-    const getItemSpy = jest.spyOn(window.localStorage.__proto__, "getItem")
+    const getItemSpy = vi.spyOn(window.localStorage.__proto__, "getItem")
     const mm = getMetricsManager(undefined, "", false)
     mm.initialize({ gatherUsageStats: true })
 
@@ -318,11 +318,11 @@ describe("metrics helpers", () => {
     expect(window.localStorage.getItem("ajs_anonymous_id")).toBeNull()
     expect(document.cookie).not.toContain("ajs_anonymous_id")
 
-    const setCookieSpy = jest.spyOn(document, "cookie", "set")
-    const getCookieSpy = jest.spyOn(document, "cookie", "get")
+    const setCookieSpy = vi.spyOn(document, "cookie", "set")
+    const getCookieSpy = vi.spyOn(document, "cookie", "get")
     // eslint-disable-next-line no-proto
-    const getItemSpy = jest.spyOn(window.localStorage.__proto__, "getItem")
-    const setItemSpy = jest.spyOn(window.localStorage.__proto__, "setItem")
+    const getItemSpy = vi.spyOn(window.localStorage.__proto__, "getItem")
+    const setItemSpy = vi.spyOn(window.localStorage.__proto__, "setItem")
     const mm = getMetricsManager()
     mm.initialize({ gatherUsageStats: true })
 

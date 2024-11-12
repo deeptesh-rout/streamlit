@@ -18,7 +18,6 @@ import React from "react"
 
 import { screen } from "@testing-library/react"
 
-import "@testing-library/jest-dom"
 import { render } from "@streamlit/lib/src/test_util"
 import ThemeProvider from "@streamlit/lib/src/components/core/ThemeProvider"
 import { mockTheme } from "@streamlit/lib/src/mocks/mockTheme"

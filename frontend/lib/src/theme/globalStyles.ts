@@ -15,7 +15,7 @@
  */
 
 import { css, SerializedStyles } from "@emotion/react"
-import { darken, transparentize } from "color2k"
+import { transparentize } from "color2k"
 
 import { EmotionTheme } from "@streamlit/lib/src/theme"
 
@@ -40,10 +40,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     border: none;
     padding: 0;
     margin: 0;
-  }
-
-  .disabled {
-    color: ${theme.colors.disabled};
   }
 
   // Embedded Overflow Management
@@ -93,30 +89,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     outline: 0 !important;
   }
 
-  // Abbreviations
-  //
-  // 1. Duplicate behavior to the data-* attribute for our tooltip plugin
-  // 2. Add the correct text decoration in Chrome, Edge, Opera, and Safari.
-  // 3. Add explicit cursor to indicate changed behavior.
-  // 4. Prevent the text-decoration to be skipped.
-
-  abbr[title],
-  abbr[data-original-title] {
-    // 1
-    text-decoration: underline; // 2
-    text-decoration: underline dotted; // 2
-    cursor: help; // 3
-    text-decoration-skip-ink: none; // 4
-  }
-
-  // Address
-
-  address {
-    margin-bottom: 1rem;
-    font-style: normal;
-    line-height: inherit;
-  }
-
   // Lists
   // Reset margins on paragraphs
   //
@@ -139,20 +111,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     margin-bottom: 0;
   }
 
-  dt {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 1em 0 0.2em 0;
-    padding: 0;
-  }
-
-  // 1. Undo browser default
-
-  dd {
-    margin: 0 0 0.2em 1.2em;
-    font-size: 1rem;
-  }
-
   // Strong
   //
   // Add the correct font weight in Chrome, Edge, and Safari
@@ -168,24 +126,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     font-size: ${theme.fontSizes.sm};
   }
 
-  // Mark
-
-  mark {
-    padding: 0.2em;
-    background-color: ${theme.colors.secondaryBg};
-  }
-
-  // Links
-
-  a {
-    color: ${theme.colors.primary};
-    text-decoration: underline;
-
-    &:hover {
-      color: ${darken(theme.colors.primary, 0.15)};
-    }
-  }
-
   // And undo these styles for placeholder links/named anchors (without href).
   // It would be more straightforward to just use a[href] in previous block, but that
   // causes specificity issues in many other styles that are too complex to fix.
@@ -197,14 +137,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
       color: inherit;
       text-decoration: none;
     }
-  }
-
-  // Code
-
-  pre,
-  code {
-    font-size: 1em;
-    font-family: ${theme.genericFonts.codeFont};
   }
 
   // Images and content
@@ -266,15 +198,9 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     text-transform: none;
   }
 
-  // Set the cursor for non-<button> buttons
-  //
-  // Details at https://github.com/twbs/bootstrap/pull/30562
+  // Set the cursor for all buttons or button-like elements
+  button,
   [role="button"] {
-    cursor: pointer;
-  }
-
-  // Set the cursor for all buttons buttons
-  button {
     &:not(:disabled) {
       cursor: pointer;
     }
@@ -285,13 +211,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
 
   select {
     word-wrap: normal;
-  }
-
-  // Remove the dropdown arrow in Chrome from inputs built with datalists.
-  // See https://stackoverflow.com/a/54997118
-
-  [list]::-webkit-calendar-picker-indicator {
-    display: none;
   }
 
   // 1. Prevent a WebKit bug where (2) destroys native audio and video
@@ -311,109 +230,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
   ::-moz-focus-inner {
     padding: 0;
     border-style: none;
-  }
-
-  // 1. Textareas should really only resize vertically so they don't break their (horizontal) containers.
-
-  textarea {
-    resize: vertical; // 1
-  }
-
-  // 1. Browsers set a default min-width: min-content; on fieldsets,
-  //    unlike e.g. <div>s, which have min-width: 0; by default.
-  //    So we reset that to ensure fieldsets behave more like a standard block element.
-  //    See https://github.com/twbs/bootstrap/issues/12359
-  //    and https://html.spec.whatwg.org/multipage/#the-fieldset-and-legend-elements
-  // 2. Reset the default outline behavior of fieldsets so they don't affect page layout.
-
-  fieldset {
-    min-width: 0; // 1
-    padding: 0; // 2
-    margin: 0; // 2
-    border: 0; // 2
-  }
-
-  // 1. By using float: left, the legend will behave like a block element.
-  //    This way the border of a fieldset wraps around the legend if present.
-  // 2. Correct the text wrapping in Edge.
-  // 3. Fix wrapping bug.
-  //    See https://github.com/twbs/bootstrap/issues/29712
-
-  legend {
-    float: left; // 1
-    width: 100%;
-    padding: 0;
-    margin-bottom: ${theme.spacing.sm};
-    font-size: inherit;
-    line-height: inherit;
-    white-space: normal; // 2
-
-    + * {
-      clear: left; // 3
-    }
-  }
-
-  // Fix height of inputs with a type of datetime-local, date, month, week, or time
-  // See https://github.com/twbs/bootstrap/issues/18842
-
-  ::-webkit-datetime-edit-fields-wrapper,
-  ::-webkit-datetime-edit-text,
-  ::-webkit-datetime-edit-minute,
-  ::-webkit-datetime-edit-hour-field,
-  ::-webkit-datetime-edit-day-field,
-  ::-webkit-datetime-edit-month-field,
-  ::-webkit-datetime-edit-year-field {
-    padding: 0;
-  }
-
-  ::-webkit-inner-spin-button {
-    height: auto;
-  }
-
-  // 1. Correct the outline style in Safari.
-  // 2. This overrides the extra rounded corners on search inputs in iOS so that our
-  //    .form-control class can properly style them. Note that this cannot simply
-  //    be added to .form-control as it's not specific enough. For details, see
-  //    https://github.com/twbs/bootstrap/issues/11586.
-
-  [type="search"] {
-    outline-offset: -2px; // 1
-    -webkit-appearance: textfield; // 2
-  }
-
-  // Remove the inner padding in Chrome and Safari on macOS.
-
-  ::-webkit-search-decoration {
-    -webkit-appearance: none;
-  }
-
-  // Remove padding around color pickers in webkit browsers
-
-  ::-webkit-color-swatch-wrapper {
-    padding: 0;
-  }
-
-  // 1. Change font properties to inherit in Safari.
-  // 2. Correct the inability to style clickable types in iOS and Safari.
-
-  ::-webkit-file-upload-button {
-    font: inherit; // 1
-    -webkit-appearance: button; // 2
-  }
-
-  // Correct element displays
-
-  output {
-    display: inline-block;
-  }
-
-  // Summary
-  //
-  // 1. Add the correct display in all browsers
-
-  summary {
-    display: list-item; // 1
-    cursor: pointer;
   }
 
   // Hidden attribute

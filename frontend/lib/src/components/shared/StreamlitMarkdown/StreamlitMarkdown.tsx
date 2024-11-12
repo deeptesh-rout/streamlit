@@ -51,6 +51,7 @@ import IsSidebarContext from "@streamlit/lib/src/components/core/IsSidebarContex
 import ErrorBoundary from "@streamlit/lib/src/components/shared/ErrorBoundary"
 import { InlineTooltipIcon } from "@streamlit/lib/src/components/shared/TooltipIcon"
 import {
+  EmotionTheme,
   getMarkdownBgColors,
   getMarkdownTextColors,
 } from "@streamlit/lib/src/theme"
@@ -158,6 +159,7 @@ const HeaderActionElements: FunctionComponent<HeadingActionElements> = ({
   help,
   hideAnchor,
 }) => {
+  const theme: EmotionTheme = useTheme()
   if (!help && hideAnchor) {
     return <></>
   }
@@ -167,7 +169,7 @@ const HeaderActionElements: FunctionComponent<HeadingActionElements> = ({
       {help && <InlineTooltipIcon content={help} />}
       {elementId && !hideAnchor && (
         <StyledLinkIcon href={`#${elementId}`}>
-          <LinkIcon size="18" />
+          <LinkIcon size={theme.iconSizes.base} />
         </StyledLinkIcon>
       )}
     </StyledHeadingActionElements>
@@ -358,7 +360,7 @@ export function RenderedMarkdown({
     h6: CustomHeading,
     ...(overrideComponents || {}),
   }
-  const theme = useTheme()
+  const theme: EmotionTheme = useTheme()
   const { red, orange, yellow, green, blue, violet, purple, gray, primary } =
     getMarkdownTextColors(theme)
   const {

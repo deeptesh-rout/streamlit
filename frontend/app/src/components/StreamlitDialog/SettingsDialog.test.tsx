@@ -16,10 +16,9 @@
 
 import React from "react"
 
-import userEvent from "@testing-library/user-event"
+import { userEvent } from "@testing-library/user-event"
 import { screen } from "@testing-library/react"
 
-import "@testing-library/jest-dom"
 import { customRenderLibContext } from "@streamlit/lib/src/test_util"
 import {
   createPresetThemes,
@@ -32,8 +31,8 @@ import { MetricsManager } from "@streamlit/app/src/MetricsManager"
 
 import { Props, SettingsDialog } from "./SettingsDialog"
 
-const mockSetTheme = jest.fn()
-const mockAddThemes = jest.fn()
+const mockSetTheme = vi.fn()
+const mockAddThemes = vi.fn()
 
 const getContext = (
   extend?: Partial<LibContextProps>
@@ -47,13 +46,13 @@ const getContext = (
 
 const getProps = (extend?: Partial<Props>): Props => ({
   isServerConnected: true,
-  onClose: jest.fn(),
-  onSave: jest.fn(),
+  onClose: vi.fn(),
+  onSave: vi.fn(),
   settings: { wideMode: false, runOnSave: false },
   allowRunOnSave: false,
   developerMode: true,
   animateModal: true,
-  openThemeCreator: jest.fn(),
+  openThemeCreator: vi.fn(),
   metricsMgr: new MetricsManager(
     // @ts-expect-error The mock seems to have a mismatched internal type to what's expected.
     mockSessionInfo()

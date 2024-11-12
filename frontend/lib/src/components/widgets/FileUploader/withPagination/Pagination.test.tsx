@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { fireEvent, screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -27,8 +26,8 @@ const getProps = (props: Partial<Props> = {}): Props => ({
   currentPage: 1,
   totalPages: 2,
   pageSize: 3,
-  onNext: jest.fn(),
-  onPrevious: jest.fn(),
+  onNext: vi.fn(),
+  onPrevious: vi.fn(),
   ...props,
 })
 

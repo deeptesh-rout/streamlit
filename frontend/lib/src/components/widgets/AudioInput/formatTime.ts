@@ -20,6 +20,7 @@ const formatTime = (timeMs: number): string => {
   return date.toLocaleTimeString(undefined, {
     minute: "2-digit",
     second: "2-digit",
+    timeZone: "UTC",
   })
 }
 

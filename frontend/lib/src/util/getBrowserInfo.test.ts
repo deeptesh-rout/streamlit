@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+import { MockInstance } from "vitest"
+
 import getBrowserInfo from "./getBrowserInfo"
 
 describe("getBrowserInfo", () => {
-  let userAgentSpy: jest.SpyInstance
+  let userAgentSpy: MockInstance
 
   const mockUserAgent = (userAgentString: string): void => {
-    userAgentSpy = jest
+    userAgentSpy = vi
       .spyOn(window.navigator, "userAgent", "get")
       .mockReturnValue(userAgentString)
   }

@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -27,15 +26,15 @@ import { WidgetStateManager as ElementStateManager } from "@streamlit/lib/src/Wi
 import Audio, { AudioProps } from "./Audio"
 
 describe("Audio Element", () => {
-  const buildMediaURL = jest.fn().mockReturnValue("https://mock.media.url")
+  const buildMediaURL = vi.fn().mockReturnValue("https://mock.media.url")
 
-  const mockSetElementState = jest.fn()
-  const mockGetElementState = jest.fn()
+  const mockSetElementState = vi.fn()
+  const mockGetElementState = vi.fn()
   const elementMgrMock = {
     setElementState: mockSetElementState,
     getElementState: mockGetElementState,
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }
 
   const getProps = (elementProps: Partial<AudioProto> = {}): AudioProps => ({
@@ -69,7 +68,7 @@ describe("Audio Element", () => {
   })
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockGetElementState.mockReturnValue(false) // By default, assume autoplay is not prevented
   })
 

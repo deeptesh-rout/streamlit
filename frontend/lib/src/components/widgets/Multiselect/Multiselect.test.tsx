@@ -15,7 +15,6 @@
  */
 
 import React from "react"
-import "@testing-library/jest-dom"
 
 import { fireEvent, screen } from "@testing-library/react"
 
@@ -25,6 +24,8 @@ import {
   LabelVisibilityMessage as LabelVisibilityMessageProto,
   MultiSelect as MultiSelectProto,
 } from "@streamlit/lib/src/proto"
+import * as Utils from "@streamlit/lib/src/theme/utils"
+import { mockConvertRemToPx } from "@streamlit/lib/src/mocks/mocks"
 
 import Multiselect, { Props } from "./Multiselect"
 
@@ -43,13 +44,21 @@ const getProps = (
   width: 0,
   disabled: false,
   widgetMgr: new WidgetStateManager({
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }),
   ...widgetProps,
 })
 
 describe("Multiselect widget", () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  beforeEach(() => {
+    vi.spyOn(Utils, "convertRemToPx").mockImplementation(mockConvertRemToPx)
+  })
+
   it("renders without crashing", () => {
     const props = getProps()
     render(<Multiselect {...props} />)
@@ -60,7 +69,7 @@ describe("Multiselect widget", () => {
 
   it("sets widget value on mount", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setIntArrayValue")
+    vi.spyOn(props.widgetMgr, "setIntArrayValue")
 
     render(<Multiselect {...props} />)
     expect(props.widgetMgr.setIntArrayValue).toHaveBeenCalledWith(
@@ -75,7 +84,7 @@ describe("Multiselect widget", () => {
 
   it("can pass fragmentId to setIntArrayValue", () => {
     const props = getProps(undefined, { fragmentId: "myFragmentId" })
-    jest.spyOn(props.widgetMgr, "setIntArrayValue")
+    vi.spyOn(props.widgetMgr, "setIntArrayValue")
 
     render(<Multiselect {...props} />)
     expect(props.widgetMgr.setIntArrayValue).toHaveBeenCalledWith(
@@ -237,7 +246,7 @@ describe("Multiselect widget", () => {
     const props = getProps({ formId: "form" })
     props.widgetMgr.setFormSubmitBehaviors("form", true)
 
-    jest.spyOn(props.widgetMgr, "setIntArrayValue")
+    vi.spyOn(props.widgetMgr, "setIntArrayValue")
 
     render(<Multiselect {...props} />)
 

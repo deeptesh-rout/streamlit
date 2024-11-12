@@ -14,19 +14,5 @@
  * limitations under the License.
  */
 
-"use strict"
-
-// This is a custom Jest transformer turning css imports into empty objects
-// as css aren't really helpful for testing so we can safely mock them out
-// Without this, we try to import css and jest tries to parse them as javascript
-// https://jestjs.io/docs/webpack#handling-static-assets
-
-module.exports = {
-  process() {
-    return "module.exports = {};"
-  },
-  getCacheKey() {
-    // The output is always the same.
-    return "cssTransform"
-  },
-}
+/// <reference types="vite/client" />
+/// <reference types="vitest/globals" />

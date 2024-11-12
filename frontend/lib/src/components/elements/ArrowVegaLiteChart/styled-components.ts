@@ -189,6 +189,8 @@ export const StyledVegaLiteChartContainer =
           right: 0,
           opacity: 0,
           listStyle: "none",
+          cursor: "pointer",
+          display: "list-item",
           padding: theme.spacing.xs,
           // Fix weird floating button height issue in Vega Lite.
           height: "auto",
@@ -200,7 +202,6 @@ export const StyledVegaLiteChartContainer =
           color: theme.colors.fadedText10,
           backgroundColor: "transparent",
           transition: "opacity 300ms 150ms,transform 300ms 150ms",
-          cursor: "pointer",
           lineHeight: 0,
           "&::-webkit-details-marker": {
             display: "none",

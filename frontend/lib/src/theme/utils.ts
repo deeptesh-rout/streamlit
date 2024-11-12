@@ -496,6 +496,8 @@ export const convertRemToPx = (scssValue: string): number => {
     // TODO(lukasmasuch): We might want to somehow cache this value at some point.
     // However, I did experimented with the performance of calling this, and
     // it seems not like a big deal to call it many times.
-    remValue * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    remValue *
+    // We fallback to 16px if the fontSize is not defined (should only happen in tests)
+    (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16)
   )
 }

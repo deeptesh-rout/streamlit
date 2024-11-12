@@ -90,6 +90,9 @@ export const StyledSidebarNavItems = styled.ul(({ theme }) => {
     listStyle: "none",
     margin: theme.spacing.none,
     paddingBottom: theme.spacing.threeXS,
+    paddingTop: theme.spacing.none,
+    paddingRight: theme.spacing.none,
+    paddingLeft: theme.spacing.none,
   }
 })
 
@@ -269,7 +272,7 @@ export const StyledLogo = styled.img<StyledLogoProps>(
     marginLeft: theme.spacing.none,
     zIndex: theme.zIndices.header,
     objectFit: "contain",
-
+    verticalAlign: "middle",
     ...(sidebarWidth && {
       // Control max width of logo so sidebar collapse button always shows (issue #8707)
       // L & R padding (twoXL) + R margin (sm) + collapse button (2.25rem)
@@ -387,6 +390,7 @@ export const StyledViewButton = styled.button(({ theme }) => {
 
   return {
     fontSize: theme.fontSizes.sm,
+    fontFamily: "inherit",
     lineHeight: theme.lineHeights.base,
     color,
     backgroundColor: theme.colors.transparent,
@@ -394,6 +398,8 @@ export const StyledViewButton = styled.button(({ theme }) => {
     borderRadius: theme.radii.default,
     marginTop: theme.spacing.twoXS,
     marginLeft: theme.spacing.xl,
+    marginBottom: theme.spacing.none,
+    marginRight: theme.spacing.none,
     padding: `${theme.spacing.threeXS} ${theme.spacing.sm}`,
     "&:hover, &:active, &:focus": {
       border: "none",

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const vitest = require("eslint-plugin-vitest")
+
 module.exports = {
   env: {
     // allow using browser-defined globals like `window` and `document`
@@ -34,8 +36,6 @@ module.exports = {
     // This will display prettier errors as ESLint errors.
     // Make sure this is always the last configuration in the extends array.
     "plugin:prettier/recommended",
-    // Recommended Jest configuration to enforce good testing practices
-    "plugin:jest/recommended",
     // Uses the recommended rules from React Testing Library:
     "plugin:testing-library/react",
     // Uses the recommended rules from lodash
@@ -62,10 +62,12 @@ module.exports = {
     "**/vendor/*",
     "**/node_modules/*",
   ],
-  plugins: ["no-relative-import-paths", "streamlit-custom"],
+  plugins: ["no-relative-import-paths", "streamlit-custom", "vitest"],
   // Place to specify ESLint rules.
   // Can be used to overwrite rules specified from the extended configs
   rules: {
+    // Recommended vitest configuration to enforce good testing practices
+    ...vitest.configs.recommended.rules,
     // Use `const` or `let` instead of `var`
     "no-var": "error",
     // We don't use PropTypes
