@@ -29,14 +29,13 @@ class FooWithNoDocs:
     my_static_var_1 = 123
 
 
-st.help(FooWithNoDocs)
+st.container(key="help_no_docs").help(FooWithNoDocs)
 
 # Testing case where there are no members.
-st.help(globals)
+st.container(key="help_globals").help(globals)
 
 
-# Test case where there the docs need to scroll,
-# and test case where some members doesn't have docs.
+# Test case where there the docs need to scroll
 class FooWithLongDocs:
     """My docstring.
 
@@ -71,6 +70,18 @@ class FooWithLongDocs:
     def __init__(self):
         self.my_var_1 = 123
 
+
+f = FooWithLongDocs()
+
+st.container(key="help_long_docs").help(f)
+
+
+class FooWithMixedDocs:
+    """My docstring."""
+
+    def __init__(self):
+        self.my_var_1 = 123
+
     def my_func_1(self, a, b=False):
         "Func with doc."
 
@@ -79,6 +90,4 @@ class FooWithLongDocs:
         pass
 
 
-f = FooWithLongDocs()
-
-f
+st.container(key="help_mixed_docs").help(FooWithMixedDocs())

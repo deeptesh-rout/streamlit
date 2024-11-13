@@ -53,3 +53,12 @@ def test_st_json_displays_correctly_when_themed(
 def test_check_top_level_class(app: Page):
     """Check that the top level class is correctly set."""
     check_top_level_class(app, "stJson")
+
+
+def test_shows_copy_icon(themed_app: Page, assert_snapshot: ImageCompareFunction):
+    """Test that the copy icon is shown by hovering over the element."""
+    json_element = themed_app.get_by_test_id("stJson").first
+    expect(json_element).to_be_visible()
+    json_element.hover()
+
+    assert_snapshot(json_element, name="st_json-copy_icon_on_hover")

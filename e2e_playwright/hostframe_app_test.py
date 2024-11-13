@@ -56,7 +56,7 @@ def _load_html_and_get_locators(
     toolbar = page.get_by_test_id("toolbar")
     expect(toolbar).to_have_count(1)
     toolbar_buttons = toolbar.get_by_role("button")
-    expect(toolbar_buttons).to_have_count(12)
+    expect(toolbar_buttons).to_have_count(13)
     wait_for_app_run(frame_locator)
     return frame_locator, toolbar_buttons
 
@@ -73,6 +73,67 @@ def test_handles_host_theme_message(
     assert_snapshot(
         frame_locator.get_by_test_id("stApp"), name="hostframe_app-theme_message_after"
     )
+
+
+def test_handles_set_file_upload_client_config_message(iframed_app: IframedPage):
+    frame_locator, toolbar_buttons = _load_html_and_get_locators(iframed_app)
+
+    file_name1 = "file1.txt"
+    file_content1 = b"file1content"
+
+    file_name2 = "file2.txt"
+    file_content2 = b"file2content"
+
+    files = [
+        {"name": file_name1, "mimeType": "text/plain", "buffer": file_content1},
+        {"name": file_name2, "mimeType": "text/plain", "buffer": file_content2},
+    ]
+
+    uploader_index = 0
+
+    with iframed_app.page.expect_file_chooser() as fc_info:
+        frame_locator.get_by_test_id("stFileUploaderDropzone").nth(
+            uploader_index
+        ).click()
+
+    file_chooser = fc_info.value
+
+    # First test without file upload config
+    with iframed_app.page.expect_request(lambda request: request.method == "PUT") as r:
+        file_chooser.set_files(files=files[0])
+
+    url = r.value.url
+    headers = r.value.all_headers()
+
+    assert r.value.response().status == 204  # Upload successful
+    assert url.startswith("http://localhost") and "_stcore/upload_file" in url
+    assert "header1" not in headers
+
+    wait_for_app_run(frame_locator, wait_delay=500)
+
+    # Click the button to set the file upload config
+    toolbar_buttons.get_by_text("Set file upload config").click()
+    iframed_app.page.wait_for_timeout(5000)
+
+    with iframed_app.page.expect_file_chooser() as fc_info:
+        frame_locator.get_by_test_id("stFileUploaderDropzone").nth(
+            uploader_index
+        ).click()
+
+    file_chooser = fc_info.value
+
+    with iframed_app.page.expect_request(lambda request: request.method == "PUT") as r:
+        file_chooser.set_files(files=files[1])
+
+    url = r.value.url
+    headers = r.value.all_headers()
+
+    assert url.startswith("https://some-prefix.com/somethingelse/_stcore/upload_file/")
+    assert "header1" in headers
+    assert "header2" in headers
+
+    assert headers["header1"] == "header1value"
+    assert headers["header2"] == "header2value"
 
 
 def test_handles_host_rerun_script_message(iframed_app: IframedPage):

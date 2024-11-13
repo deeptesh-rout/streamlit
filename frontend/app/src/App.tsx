@@ -343,6 +343,11 @@ export class App extends PureComponent<Props, State> {
           this.endpoints.setJWTHeader({ jwtHeaderName, jwtHeaderValue })
         }
       },
+      fileUploadClientConfigChanged: config => {
+        if (this.endpoints.setFileUploadClientConfig !== undefined) {
+          this.endpoints.setFileUploadClientConfig(config)
+        }
+      },
       hostMenuItemsChanged: hostMenuItems => {
         this.setState({ hostMenuItems })
       },

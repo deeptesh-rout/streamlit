@@ -134,7 +134,12 @@ describe("Video Element", () => {
         type: VideoProto.Type.YOUTUBE_IFRAME,
       })
       render(<Video {...props} />)
-      expect(document.body).toMatchSnapshot()
+      const videoElement = screen.getByTestId("stVideo")
+      expect(videoElement).toBeInstanceOf(HTMLIFrameElement)
+      expect(videoElement).toHaveAttribute(
+        "src",
+        "https://www.w3schools.com/html/mov_bbb.mp4"
+      )
     })
 
     it("renders a youtube iframe with an starting time", () => {
@@ -143,7 +148,12 @@ describe("Video Element", () => {
         startTime: 10,
       })
       render(<Video {...props} />)
-      expect(document.body).toMatchSnapshot()
+      const videoElement = screen.getByTestId("stVideo")
+      expect(videoElement).toBeInstanceOf(HTMLIFrameElement)
+      expect(videoElement).toHaveAttribute(
+        "src",
+        "https://www.w3schools.com/html/mov_bbb.mp4?start=10"
+      )
     })
   })
 

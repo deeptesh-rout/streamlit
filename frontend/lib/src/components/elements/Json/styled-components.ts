@@ -21,8 +21,14 @@ interface StyledJsonWrapperProps {
 }
 
 export const StyledJsonWrapper = styled.div<StyledJsonWrapperProps>(
-  ({ width }) => ({
+  ({ theme, width }) => ({
     width: width,
     overflowY: "auto",
+    ".react-json-view .copy-icon svg": {
+      // Make the copy icon responsive to the root font size.
+      fontSize: `1em !important`,
+      marginRight: `${theme.spacing.threeXS} !important`,
+      verticalAlign: "middle !important",
+    },
   })
 )

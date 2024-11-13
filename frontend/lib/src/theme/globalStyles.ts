@@ -36,12 +36,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     }
   }
 
-  iframe {
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
-
   // Embedded Overflow Management
   body.embedded {
     overflow: hidden;

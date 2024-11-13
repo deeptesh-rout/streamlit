@@ -75,6 +75,16 @@ v12 = st.text_input(
 )
 st.write("text input 12 (value from state) - value: ", v12)
 
+with st.form("form"):
+    st.text_input("text input 13 (value from form)", key="text_input_13")
+    st.form_submit_button("submit")
+
+form_value = (
+    st.session_state["text_input_13"] if "text_input_13" in st.session_state else None
+)
+st.write("text input 13 (value from form) - value: ", form_value)
+
+
 if "rerun_counter" not in st.session_state:
     st.session_state.rerun_counter = 0
 

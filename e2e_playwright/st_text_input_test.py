@@ -28,7 +28,7 @@ def test_text_input_widget_rendering(
 ):
     """Test that the st.text_input widgets are correctly rendered via screenshot matching."""
     text_input_widgets = themed_app.get_by_test_id("stTextInput")
-    expect(text_input_widgets).to_have_count(12)
+    expect(text_input_widgets).to_have_count(13)
 
     assert_snapshot(text_input_widgets.nth(0), name="st_text_input-default")
     assert_snapshot(text_input_widgets.nth(1), name="st_text_input-value_some_text")
@@ -46,7 +46,7 @@ def test_text_input_widget_rendering(
 def test_text_input_has_correct_initial_values(app: Page):
     """Test that st.text_input has the correct initial values."""
     markdown_elements = app.get_by_test_id("stMarkdown")
-    expect(markdown_elements).to_have_count(14)
+    expect(markdown_elements).to_have_count(15)
 
     expected = [
         "value 1: ",
@@ -244,6 +244,17 @@ def test_calls_callback_on_change(app: Page):
     )
     expect(app.get_by_test_id("stMarkdown").nth(9)).to_have_text(
         "text input changed: False",
+        use_inner_text=True,
+    )
+
+
+def test_text_input_in_form_with_submit_by_enter(app: Page):
+    """Test that text area in form can be submitted by pressing Command+Enter"""
+    text_area_field = app.get_by_test_id("stTextInput").nth(12).locator("input").first
+    text_area_field.fill("hello world")
+    text_area_field.press("Enter")
+    expect(app.get_by_test_id("stMarkdown").nth(13)).to_have_text(
+        "text input 13 (value from form) - value: hello world",
         use_inner_text=True,
     )
 

@@ -26,8 +26,9 @@ font specifiers and icon name, should be "https://fonts.googleapis.com/css2?fami
 4. Open the url in the browser, and find a src url in @font-face section, should be like
 "https://fonts.gstatic.com/s/materialsymbolsrounded/v214/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDB_Qb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOcbTCVpeRL2w5rwZu2rIelXxeJKJBiCa8.woff2"
 5. Download the font file from the src url, and save it as
- `frontend/app/scr/assets/fonts/MaterialSymbols/MaterialSymbols-Rounded.woff2`.
-6. Update the `latest_material_symbol.py` e2e test to verify the new font works correctly.
+`frontend/app/scr/assets/fonts/MaterialSymbols/MaterialSymbols-Rounded.woff2`.
+6. Update the `test_material_symbol_from_latest_font_version_rendering` e2e test in
+`e2e_playwright/st_alert_test.py` with to verify the new font works correctly.
 """
 
 import os
