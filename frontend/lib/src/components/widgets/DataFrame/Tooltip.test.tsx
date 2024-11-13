@@ -36,7 +36,7 @@ describe("Dataframe Tooltip", () => {
     const tooltipContent = screen.getByText("This is a tooltip.")
     expect(tooltipContent).toBeInTheDocument()
     // Uses markdown to render the content:
-    expect(tooltipContent).toHaveStyle("font-weight: bold")
+    expect(tooltipContent).toHaveStyle("font-weight: 600")
   })
 
   test("renders the tooltip at the correct position", () => {

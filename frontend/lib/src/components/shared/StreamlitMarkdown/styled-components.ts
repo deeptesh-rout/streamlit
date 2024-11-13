@@ -163,10 +163,15 @@ export const StyledStreamlitMarkdown =
     }) => {
       // Widget Labels have smaller font size with exception of Button/Checkbox/Radio Button labels
       // Toasts also have smaller font size
-      const labelFontSize = (isLabel && !largerLabel) || isToast
+      const useSmallerFontSize =
+        (isLabel && !largerLabel) || isToast || isCaption
+
       return {
         fontFamily: theme.genericFonts.bodyFont,
+        fontSize: useSmallerFontSize ? theme.fontSizes.sm : theme.fontSizes.md,
         marginBottom: isLabel ? "" : `-${theme.spacing.lg}`,
+        opacity: isCaption ? 0.6 : undefined,
+        color: "inherit",
         ...sharedMarkdownStyle(theme),
         ...getMarkdownHeadingDefinitions(
           theme,
@@ -181,7 +186,6 @@ export const StyledStreamlitMarkdown =
           marginTop: theme.spacing.none,
           marginLeft: theme.spacing.none,
           marginRight: theme.spacing.none,
-          ...(labelFontSize ? { fontSize: theme.fontSizes.sm } : {}),
         },
 
         img: {
@@ -199,7 +203,6 @@ export const StyledStreamlitMarkdown =
           // But this would require some styling changes.
           margin: "0.2em 0 0.2em 1.2em",
           padding: "0 0 0 0.6em",
-          fontSize: theme.fontSizes.md,
         },
 
         // Handles quotes:
@@ -207,6 +210,10 @@ export const StyledStreamlitMarkdown =
           margin: "1em 0 1em 0",
           padding: "0 0 0 1.2em",
           borderLeft: `${theme.sizes.borderWidth} solid ${theme.colors.lightGray}`,
+        },
+
+        "b, strong": {
+          fontWeight: theme.fontWeights.bold,
         },
 
         // Handles the horizontal divider:
@@ -251,25 +258,9 @@ export const StyledStreamlitMarkdown =
           borderRadius: theme.radii.md,
         },
 
-        ...(isToast
-          ? {
-              div: {
-                display: "inline-flex",
-              },
-            }
-          : {}),
-
-        ...(isCaption
-          ? {
-              color: isInSidebarOrDialog
-                ? theme.colors.gray
-                : theme.colors.fadedText60,
-              fontSize: theme.fontSizes.sm,
-              "p, ol, ul, dl, li": {
-                fontSize: "inherit",
-              },
-            }
-          : {}),
+        "p, ol, ul, dl, li": {
+          fontSize: "inherit",
+        },
       }
     }
   )

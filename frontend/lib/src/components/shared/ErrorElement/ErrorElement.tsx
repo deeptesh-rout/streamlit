@@ -21,7 +21,7 @@ import AlertContainer, {
 } from "@streamlit/lib/src/components/shared/AlertContainer"
 import { StyledCode } from "@streamlit/lib/src/components/elements/CodeBlock/styled-components"
 
-import { StyledStackTrace } from "./styled-components"
+import { StyledErrorName, StyledStackTrace } from "./styled-components"
 
 export interface ErrorElementProps {
   name: string
@@ -47,7 +47,7 @@ function ErrorElement(props: ErrorElementProps): ReactElement {
 
   return (
     <AlertContainer kind={Kind.ERROR} width={width}>
-      <strong>{name}: </strong>
+      <StyledErrorName>{name}: </StyledErrorName>
       {message}
       {stack ? (
         <StyledStackTrace data-testid="stErrorElementStack">

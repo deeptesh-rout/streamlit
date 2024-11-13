@@ -100,6 +100,7 @@ export const StyledBaseButton = styled.button<RequiredBaseButtonProps>(
       minHeight: theme.sizes.minElementHeight,
       margin: theme.spacing.none,
       lineHeight: theme.lineHeights.base,
+      textTransform: "none",
       fontSize: "inherit",
       fontFamily: "inherit",
       color: "inherit",

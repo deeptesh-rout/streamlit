@@ -34,10 +34,13 @@ export const StyledTable = styled.table(({ theme }) => ({
   captionSide: "bottom",
   border: `${theme.sizes.borderWidth} solid ${theme.colors.borderColorLight}`,
   "& caption": {
+    fontFamily: theme.genericFonts.bodyFont,
+    fontSize: theme.fontSizes.sm,
     paddingTop: theme.spacing.sm,
     paddingBottom: 0,
     color: theme.colors.fadedText60,
     textAlign: "left",
+    wordWrap: "break-word",
   },
 }))
 

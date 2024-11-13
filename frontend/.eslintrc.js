@@ -70,15 +70,14 @@ module.exports = {
     ...vitest.configs.recommended.rules,
     // Use `const` or `let` instead of `var`
     "no-var": "error",
+    // Prevent unintentional use of `console.log`
+    "no-console": "error",
     // We don't use PropTypes
     "react/prop-types": "off",
     // We don't escape entities
     "react/no-unescaped-entities": "off",
     // Some of these are being caught erroneously
     "@typescript-eslint/camelcase": "off",
-    // Console statements are currently allowed,
-    // but we may want to reconsider this!
-    "@typescript-eslint/no-console": "off",
     // Empty interfaces are ok
     "@typescript-eslint/no-empty-interface": "off",
     // Empty functions are ok

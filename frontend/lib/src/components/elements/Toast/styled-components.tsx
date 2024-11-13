@@ -67,4 +67,7 @@ export const StyledMessageWrapper = styled.div(({ theme }) => ({
   minHeight: "100%",
   fontSize: theme.fontSizes.sm,
   lineHeight: theme.lineHeights.base,
+  div: {
+    display: "inline-flex",
+  },
 }))

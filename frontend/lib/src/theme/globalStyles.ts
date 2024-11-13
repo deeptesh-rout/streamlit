@@ -19,9 +19,14 @@ import { transparentize } from "color2k"
 
 import { EmotionTheme } from "@streamlit/lib/src/theme"
 
+/**
+ * Contains various styles that are applied globally to the app.
+ *
+ * Please only add styles here if they are truly global. Putting styles to the
+ * individual components should be strongly preferred.
+ */
 export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
   // Override the base font-size value here.
-  // This overrides the value set in reboot.scss.
   html {
     font-size: ${theme.fontSizes.mdPx}px;
   }
@@ -30,19 +35,11 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
   @media print {
     html {
       height: 100%;
-      // make background-colors appear by default (e.g. the sidebar background, widget background, multi-select element background, ...)
+      // make background-colors appear by default (e.g. the sidebar background,
+      // widget background, multi-select element background, ...)
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
-  }
-
-  // Embedded Overflow Management
-  body.embedded {
-    overflow: hidden;
-  }
-
-  body.embedded:hover {
-    overflow: auto;
   }
 
   *,
@@ -68,6 +65,15 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     -webkit-text-size-adjust: 100%; // 3
     -webkit-tap-highlight-color: ${transparentize(theme.colors.black, 1)}; // 4
     -webkit-font-smoothing: auto;
+  }
+
+  // Embedded Overflow Management
+  body.embedded {
+    overflow: hidden;
+  }
+
+  body.embedded:hover {
+    overflow: auto;
   }
 
   // Future-proof rule: in browsers that support :focus-visible, suppress the focus outline
@@ -105,21 +111,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     margin-bottom: 0;
   }
 
-  // Strong
-  //
-  // Add the correct font weight in Chrome, Edge, and Safari
-
-  b,
-  strong {
-    font-weight: ${theme.fontWeights.bold};
-  }
-
-  // Small
-
-  small {
-    font-size: ${theme.fontSizes.sm};
-  }
-
   // And undo these styles for placeholder links/named anchors (without href).
   // It would be more straightforward to just use a[href] in previous block, but that
   // causes specificity issues in many other styles that are too complex to fix.
@@ -138,31 +129,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
   img,
   svg {
     vertical-align: middle;
-  }
-
-  // Forms
-  //
-  // 1. Allow labels to use margin for spacing.
-
-  label {
-    display: inline-block; // 1
-  }
-
-  // Remove the default border-radius that macOS Chrome adds.
-  // See https://github.com/twbs/bootstrap/issues/24093
-
-  button {
-    // stylelint-disable-next-line property-blacklist
-    border-radius: 0;
-  }
-
-  // Work around a Firefox bug where the transparent button background
-  // results in a loss of the default button focus styles.
-  // Credit https://github.com/suitcss/base/
-
-  button:focus {
-    outline: 1px dotted;
-    outline: 5px auto -webkit-focus-ring-color;
   }
 
   // 1. Remove the margin in Firefox and Safari
@@ -185,26 +151,12 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
     overflow: visible;
   }
 
-  // Remove the inheritance of text transform in Firefox
-
-  button,
-  select {
-    text-transform: none;
-  }
-
   // Set the cursor for all buttons or button-like elements
   button,
   [role="button"] {
     &:not(:disabled) {
       cursor: pointer;
     }
-  }
-
-  // Remove the inheritance of word-wrap in Safari.
-  // See https://github.com/twbs/bootstrap/issues/24990
-
-  select {
-    word-wrap: normal;
   }
 
   // 1. Prevent a WebKit bug where (2) destroys native audio and video
@@ -217,13 +169,6 @@ export const globalStyles = (theme: EmotionTheme): SerializedStyles => css`
   [type="reset"],
   [type="submit"] {
     -webkit-appearance: button; // 2
-  }
-
-  // Remove inner border and padding from Firefox, but don't restore the outline like Normalize.
-
-  ::-moz-focus-inner {
-    padding: 0;
-    border-style: none;
   }
 
   // Hidden attribute

@@ -29,3 +29,7 @@ export const StyledStackTrace = styled.pre(({ theme }) => ({
   padding: theme.spacing.lg,
   border: `${theme.sizes.borderWidth} solid ${theme.colors.borderColor}`,
 }))
+
+export const StyledErrorName = styled.strong(({ theme }) => ({
+  fontWeight: theme.fontWeights.bold,
+}))
