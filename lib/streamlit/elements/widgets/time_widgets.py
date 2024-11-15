@@ -67,15 +67,8 @@ TimeValue: TypeAlias = Union[time, datetime, str, Literal["now"]]
 # Type for things that point to a specific date (even if a default date, including None).
 NullableScalarDateValue: TypeAlias = Union[date, datetime, str, Literal["today"], None]
 
-# Same as above, plus "today".
-ExtendedNullableScalarDateValue: TypeAlias = Union[
-    Literal["today"], NullableScalarDateValue
-]
-
 # The accepted input value for st.date_input. Can be a date scalar or a date range.
-DateValue: TypeAlias = Union[
-    ExtendedNullableScalarDateValue, Sequence[ExtendedNullableScalarDateValue]
-]
+DateValue: TypeAlias = Union[NullableScalarDateValue, Sequence[NullableScalarDateValue]]
 
 # The return value of st.date_input.
 DateWidgetReturn: TypeAlias = Union[
@@ -119,7 +112,7 @@ def _convert_timelike_to_time(value: TimeValue) -> time:
 
 
 def _convert_datelike_to_date(
-    value: ExtendedNullableScalarDateValue,
+    value: NullableScalarDateValue,
 ) -> date:
     if isinstance(value, datetime):
         return value.date()
@@ -149,14 +142,14 @@ def _parse_date_value(value: DateValue) -> tuple[list[date] | None, bool]:
     if value is None:
         return None, False
 
-    value_tuple: Sequence[ExtendedNullableScalarDateValue]
+    value_tuple: Sequence[NullableScalarDateValue]
 
     if isinstance(value, Sequence) and not isinstance(value, str):
         is_range = True
         value_tuple = value
     else:
         is_range = False
-        value_tuple = [cast(ExtendedNullableScalarDateValue, value)]
+        value_tuple = [cast(NullableScalarDateValue, value)]
 
     if len(value_tuple) not in {0, 1, 2}:
         raise StreamlitAPIException(
@@ -575,7 +568,7 @@ class TimeWidgetsMixin:
     def date_input(
         self,
         label: str,
-        value: ExtendedNullableScalarDateValue | None = "today",
+        value: NullableScalarDateValue | None = "today",
         min_value: NullableScalarDateValue = None,
         max_value: NullableScalarDateValue = None,
         key: Key | None = None,
@@ -744,7 +737,7 @@ class TimeWidgetsMixin:
     def _date_input(
         self,
         label: str,
-        value: ExtendedNullableScalarDateValue = "today",
+        value: NullableScalarDateValue = "today",
         min_value: NullableScalarDateValue = None,
         max_value: NullableScalarDateValue = None,
         key: Key | None = None,
