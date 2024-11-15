@@ -131,13 +131,13 @@ function DataFrame({
   widgetMgr,
   disableFullscreenMode,
   fragmentId,
-  width: containerWidth,
-  height: containerHeight,
 }: Readonly<DataFrameProps>): ReactElement {
   const {
     expanded: isFullScreen,
     expand,
     collapse,
+    width: containerWidth,
+    height: containerHeight,
   } = useRequiredContext(ElementFullscreenContext)
 
   const resizableRef = React.useRef<Resizable>(null)

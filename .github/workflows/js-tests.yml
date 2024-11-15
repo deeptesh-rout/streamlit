@@ -49,13 +49,10 @@ jobs:
         run: make frontend-lib
       - name: Audit frontend licenses
         run: ./scripts/audit_frontend_licenses.py
+      - name: Run type checks
+        run: make tstypecheck
       - name: Run linters
-        run: |
-          # Run eslint as a standalone command to generate the test report.
-          # We need to --hook-stage manual to trigger Typecheck too
-          PRE_COMMIT_NO_CONCURRENCY=true SKIP=eslint,ruff,ruff-format pre-commit run --hook-stage manual --show-diff-on-failure --color=always --all-files
-          # Run eslint using Makefile omitting the pre-commit
-          make jslint
+        run: make jslint
       - name: Validate NOTICES
         run: |
           # Run `make notices`. If it results in changes, warn the user and fail.
@@ -76,7 +73,7 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage_report_jest
+          name: coverage_report_vitest
           path: |
             frontend/lib/coverage
             frontend/app/coverage

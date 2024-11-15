@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import inspect
 import os
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from streamlit.components.v1.custom_component import CustomComponent
@@ -49,7 +50,7 @@ def _get_module_name(caller_frame: FrameType) -> str:
 
 def declare_component(
     name: str,
-    path: str | None = None,
+    path: str | Path | None = None,
     url: str | None = None,
 ) -> CustomComponent:
     """Create a custom component and register it if there is a ``ScriptRunContext``.
@@ -71,7 +72,7 @@ def declare_component(
     name : str
         A short, descriptive name for the component, like "slider".
 
-    path: str or None
+    path: str, Path, or None
         The path to serve the component's frontend files from. If ``path`` is
         ``None`` (default), Streamlit will serve the component from the
         location in ``url``. Either ``path`` or ``url`` must be specified, but
@@ -90,6 +91,8 @@ def declare_component(
         in the Streamlit app.
 
     """
+    if path is not None and isinstance(path, Path):
+        path = str(path)
 
     # Get our stack frame.
     current_frame: FrameType | None = inspect.currentframe()

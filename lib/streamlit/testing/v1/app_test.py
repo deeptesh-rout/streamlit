@@ -152,13 +152,13 @@ class AppTest:
 
     def __init__(
         self,
-        script_path: str,
+        script_path: str | Path,
         *,
         default_timeout: float,
         args=None,
         kwargs=None,
     ):
-        self._script_path = script_path
+        self._script_path = str(script_path)
         self.default_timeout = default_timeout
         session_state = SessionState()
         session_state[TESTING_KEY] = {}
@@ -264,7 +264,9 @@ class AppTest:
         )
 
     @classmethod
-    def from_file(cls, script_path: str, *, default_timeout: float = 3) -> AppTest:
+    def from_file(
+        cls, script_path: str | Path, *, default_timeout: float = 3
+    ) -> AppTest:
         """
         Create an instance of ``AppTest`` to simulate an app page defined\
         within a file.
@@ -275,7 +277,7 @@ class AppTest:
 
         Parameters
         ----------
-        script_path: str
+        script_path: str | Path
             Path to a script file. The path should be absolute or relative to
             the file calling ``.from_file``.
 
@@ -288,9 +290,9 @@ class AppTest:
         AppTest
             A simulated Streamlit app for testing. The simulated app can be
             executed via ``.run()``.
-
         """
-        if Path.is_file(Path(script_path)):
+        script_path = Path(script_path)
+        if script_path.is_file():
             path = script_path
         else:
             # TODO: Make this not super fragile
@@ -298,7 +300,7 @@ class AppTest:
             # path can be relative to there.
             stack = traceback.StackSummary.extract(traceback.walk_stack(None))
             filepath = Path(stack[1].filename)
-            path = str(filepath.parent / script_path)
+            path = filepath.parent / script_path
         return AppTest(path, default_timeout=default_timeout)
 
     def _run(

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { CSSProperties, ReactElement } from "react"
+import React, { ReactElement } from "react"
 
 import {
   isNullOrUndefined,
@@ -24,6 +24,8 @@ import {
   DEFAULT_IFRAME_FEATURE_POLICY,
   DEFAULT_IFRAME_SANDBOX_POLICY,
 } from "@streamlit/lib/src/util/IFrameUtil"
+
+import { StyledIframe } from "./styled-components"
 
 export interface IFrameProps {
   element: IFrameProto
@@ -36,21 +38,6 @@ export default function IFrame({
 }: Readonly<IFrameProps>): ReactElement {
   const width = element.hasWidth ? element.width : propWidth
 
-  // Handle scrollbar visibility. Chrome and other WebKit browsers still
-  // seem to use the deprecated "scrolling" attribute, whereas the standard
-  // says to use a CSS style.
-  let scrolling: string
-  let style: CSSProperties
-  if (element.scrolling) {
-    scrolling = "auto"
-    style = {}
-  } else {
-    scrolling = "no"
-    style = { overflow: "hidden" }
-  }
-
-  style.colorScheme = "normal"
-
   // Either 'src' or 'srcDoc' will be set in our element. If 'src'
   // is set, we're loading a remote URL in the iframe.
   const src = getNonEmptyString(element.src)
@@ -59,16 +46,16 @@ export default function IFrame({
     : getNonEmptyString(element.srcdoc)
 
   return (
-    <iframe
+    <StyledIframe
       className="stIFrame"
       data-testid="stIFrame"
       allow={DEFAULT_IFRAME_FEATURE_POLICY}
-      style={style}
+      disableScrolling={!element.scrolling}
       src={src}
       srcDoc={srcDoc}
       width={width}
       height={element.height}
-      scrolling={scrolling}
+      scrolling={element.scrolling ? "auto" : "no"}
       sandbox={DEFAULT_IFRAME_SANDBOX_POLICY}
       title="st.iframe"
     />

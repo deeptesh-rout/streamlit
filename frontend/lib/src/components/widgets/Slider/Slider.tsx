@@ -33,7 +33,7 @@ import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import {
   useBasicWidgetState,
   ValueWithSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
 import { Slider as SliderProto } from "@streamlit/lib/src/proto"
 import {
   debounce,

@@ -126,15 +126,47 @@ def navigation(
     you pass to ``streamlit run``. Your entrypoint file manages your app's
     navigation and serves as a router between pages.
 
+    **Example 1: Use a callable or Python file as a page**
+
     You can declare pages from callables or file paths.
 
+    ``page_1.py`` (in the same directory as your entrypoint file):
+
     >>> import streamlit as st
-    >>> from page_functions import page1
     >>>
-    >>> pg = st.navigation([st.Page(page1), st.Page("page2.py")])
+    >>> st.title("Page 1")
+
+    Your entrypoint file:
+
+    >>> import streamlit as st
+    >>>
+    >>> def page_2():
+    ...     st.title("Page 2")
+    >>>
+    >>> pg = st.navigation([st.Page("page_1.py"), st.Page(page_2)])
     >>> pg.run()
 
-    Use a dictionary to create sections within your navigation menu.
+    .. output::
+        https://doc-navigation-example-1.streamlit.app/
+        height: 200px
+
+    **Example 2: Group pages into sections**
+
+    You can use a dictionary to create sections within your navigation menu. In
+    the following example, each page is similar to Page 1 in Example 1, and all
+    pages are in the same directory. However, you can use Python files from
+    anywhere in your repository. For more information, see |st.Page|_.
+
+    Directory structure:
+
+    >>> your_repository/
+    >>> ├── create_account.py
+    >>> ├── learn.py
+    >>> ├── manage_account.py
+    >>> ├── streamlit_app.py
+    >>> └── trial.py
+
+    ``streamlit_app.py``:
 
     >>> import streamlit as st
     >>>
@@ -151,6 +183,12 @@ def navigation(
     >>>
     >>> pg = st.navigation(pages)
     >>> pg.run()
+
+    .. output::
+        https://doc-navigation-example-2.streamlit.app/
+        height: 300px
+
+    **Example 3: Stateful widgets across multiple pages**
 
     Call widget functions in your entrypoint file when you want a widget to be
     stateful across pages. Assign keys to your common widgets and access their
@@ -170,6 +208,13 @@ def navigation(
     >>>
     >>> pg = st.navigation([st.Page(page1), st.Page(page2)])
     >>> pg.run()
+
+    .. output::
+        https://doc-navigation-multipage-widgets.streamlit.app/
+        height: 350px
+
+    .. |st.Page| replace:: ``st.Page``
+    .. _st.Page: https://docs.streamlit.io/develop/api-reference/navigation/st.page
 
     """
     nav_sections = {"": pages} if isinstance(pages, list) else pages

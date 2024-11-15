@@ -23,6 +23,7 @@ import {
   ModalButton,
   ModalFooter,
   ModalHeader,
+  StreamlitMarkdown,
 } from "@streamlit/lib"
 
 import { StyledInstruction, StyledRecordAudioLabel } from "./styled-components"
@@ -91,7 +92,10 @@ class ScreencastDialog extends PureComponent<Props, State> {
             </StyledRecordAudioLabel>
           </p>
           <StyledInstruction data-testid="stScreencastInstruction">
-            Press <kbd>Esc</kbd> any time to stop recording.
+            <StreamlitMarkdown
+              source="Press `Esc` any time to stop recording."
+              allowHTML={false}
+            />
           </StyledInstruction>
         </ModalBody>
         <ModalFooter>

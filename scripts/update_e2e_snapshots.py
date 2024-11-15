@@ -98,7 +98,7 @@ def get_latest_workflow_run(
 def wait_for_workflow_completion(
     owner: str, repo: str, workflow_file_name: str, commit_sha: str, token: str
 ) -> Dict[str, Any]:
-    """Wait for the workflow to complete, checking every 30 seconds."""
+    """Wait for the workflow to complete, checking every few seconds."""
     while True:
         workflow_run = get_latest_workflow_run(
             owner, repo, workflow_file_name, commit_sha, token
@@ -107,15 +107,19 @@ def wait_for_workflow_completion(
         conclusion = workflow_run.get("conclusion")
 
         if status == "completed":
-            if conclusion != "success":
-                print(f"The latest workflow run failed with status: {conclusion}")
+            if conclusion == "failure":
+                # Only failed runs are expected to have updated snapshots.
+                return workflow_run
+            else:
+                print(
+                    f"The latest workflow run completed with status: {conclusion}. "
+                    "The snapshot update is only working on failed runs."
+                )
                 sys.exit(1)
-            return workflow_run
-
         print(
-            f"Workflow is still {status}. Waiting 30 seconds before checking again..."
+            f"Workflow is still {status}. Waiting 60 seconds before checking again..."
         )
-        time.sleep(30)
+        time.sleep(60)
 
 
 def get_artifacts(
@@ -148,6 +152,7 @@ def download_artifact(artifact_url: str, token: str, download_path: str) -> None
         raise Exception(
             f"Error downloading artifact: {response.status_code} {response.text}"
         )
+
     with open(download_path, "wb") as f:
         for chunk in response.iter_content(chunk_size=8192):
             f.write(chunk)
@@ -194,7 +199,7 @@ def main() -> None:
     parser.add_argument(
         "--token",
         required=False,
-        help="GitHub Personal Access Token (only basic read-only access is needed)",
+        help="GitHub Personal Access Token (only requires the repo/public_repo scope)",
     )
     args = parser.parse_args()
     token = args.token
@@ -208,7 +213,7 @@ def main() -> None:
             # Add interactive prompt for token
             try:
                 token = input(
-                    "Please enter your GitHub Personal Access Token (only basic read-only access is needed): "
+                    "Please enter your GitHub Personal Access Token (only requires the repo/public_repo scope): "
                 ).strip()
             except (KeyboardInterrupt, EOFError):
                 token = None
@@ -227,25 +232,26 @@ def main() -> None:
         commit_sha = get_last_commit_sha()
         print(f"Current head SHA: {commit_sha}")
 
-        # Wait for the workflow to complete
+        # Wait for the workflow to complete with status 'failure'
         workflow_run = wait_for_workflow_completion(
             GITHUB_OWNER, GITHUB_REPO, GITHUB_WORKFLOW_FILE_NAME, commit_sha, token
         )
         run_id = workflow_run["id"]
-        print(f"Found completed workflow run ID: {run_id}")
+        print(f"Found completed workflow run with ID: {run_id}")
 
         # Get artifacts for this run
         artifacts = get_artifacts(GITHUB_OWNER, GITHUB_REPO, run_id, token)
         if not artifacts:
-            print(f"No artifacts found for run ID {run_id}")
+            print(f"No artifacts found for workflow run with ID {run_id}")
             sys.exit(1)
         # Find the correct artifact:
         artifact = next(
             (a for a in artifacts if a["name"] == PLAYWRIGHT_RESULT_ARTIFACT_NAME), None
         )
+
         if not artifact:
             print(
-                f"Artifact '{PLAYWRIGHT_RESULT_ARTIFACT_NAME}' not found in run ID {run_id}"
+                f"Artifact '{PLAYWRIGHT_RESULT_ARTIFACT_NAME}' not found in workflow run with ID {run_id}"
             )
             sys.exit(1)
         artifact_id = artifact["id"]

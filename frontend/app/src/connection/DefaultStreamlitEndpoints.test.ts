@@ -34,6 +34,10 @@ function createMockForwardMsg(hash: string, cacheable = true): ForwardMsg {
   })
 }
 
+afterEach(() => {
+  vi.clearAllMocks()
+})
+
 describe("DefaultStreamlitEndpoints", () => {
   const { location: originalLocation } = window
   beforeEach(() => {
@@ -118,6 +122,16 @@ describe("DefaultStreamlitEndpoints", () => {
       )
       expect(uri).toBe("http://example.com/upload_file/file_2")
     })
+
+    it("respects URL prefix from fileUploadClientConfig", () => {
+      endpoints.setFileUploadClientConfig({
+        prefix: "https://someprefix.com/somepath/",
+        headers: {},
+      })
+
+      const uri = endpoints.buildFileUploadURL("/upload_file/file_2")
+      expect(uri).toBe("https://someprefix.com/somepath/upload_file/file_2")
+    })
   })
 
   describe("buildAppPageURL", () => {
@@ -166,7 +180,7 @@ describe("DefaultStreamlitEndpoints", () => {
     const MOCK_FILE = new File(["file1"], "file1.txt")
 
     let axiosMock: MockAdapter
-    const spyRequest = jest.spyOn(axios, "request")
+    const spyRequest = vi.spyOn(axios, "request")
     let endpoints: DefaultStreamlitEndpoints
 
     beforeEach(() => {
@@ -247,6 +261,49 @@ describe("DefaultStreamlitEndpoints", () => {
       })
     })
 
+    it("respects fileUploadClientConfig", async () => {
+      axiosMock
+        .onPut("http://example.com/someprefix/upload_file/file_2")
+        .reply(() => [200, 1])
+
+      const mockOnUploadProgress = (_: any): void => {}
+      const mockCancelToken = axios.CancelToken.source().token
+
+      endpoints.setFileUploadClientConfig({
+        prefix: "http://example.com/someprefix/",
+        headers: {
+          header1: "header1value",
+          header2: "header2value",
+        },
+      })
+
+      await expect(
+        endpoints.uploadFileUploaderFile(
+          "upload_file/file_2",
+          MOCK_FILE,
+          "mockSessionId",
+          mockOnUploadProgress,
+          mockCancelToken
+        )
+      ).resolves.toBeUndefined()
+
+      const expectedData = new FormData()
+      expectedData.append(MOCK_FILE.name, MOCK_FILE)
+
+      expect(spyRequest).toHaveBeenCalledWith({
+        url: "http://example.com/someprefix/upload_file/file_2",
+        method: "PUT",
+        responseType: "text",
+        data: expectedData,
+        headers: {
+          header1: "header1value",
+          header2: "header2value",
+        },
+        cancelToken: mockCancelToken,
+        onUploadProgress: mockOnUploadProgress,
+      })
+    })
+
     it("errors on bad status", async () => {
       axiosMock
         .onPut("http://streamlit.mock:80/mock/base/path/_stcore/upload_file")
@@ -259,6 +316,74 @@ describe("DefaultStreamlitEndpoints", () => {
           "mockSessionId"
         )
       ).rejects.toEqual(new Error("Request failed with status code 400"))
+    })
+  })
+
+  describe("deleteFileAtURL()", () => {
+    let axiosMock: MockAdapter
+    const spyRequest = vi.spyOn(axios, "request")
+    let endpoints: DefaultStreamlitEndpoints
+
+    beforeEach(() => {
+      axiosMock = new MockAdapter(axios)
+      endpoints = new DefaultStreamlitEndpoints({
+        getServerUri: () => MOCK_SERVER_URI,
+        csrfEnabled: false,
+      })
+    })
+
+    afterEach(() => {
+      axiosMock.restore()
+    })
+
+    it("delete properly constructs the correct endpoint when given a relative URL", async () => {
+      axiosMock
+        .onDelete(
+          "http://streamlit.mock:80/mock/base/path/_stcore/upload_file/file_1"
+        )
+        .reply(() => [204])
+
+      await expect(
+        endpoints.deleteFileAtURL(
+          "/_stcore/upload_file/file_1",
+          "mockSessionId"
+        )
+      ).resolves.toBeUndefined()
+
+      expect(spyRequest).toHaveBeenCalledWith({
+        url: "http://streamlit.mock:80/mock/base/path/_stcore/upload_file/file_1",
+        method: "DELETE",
+        headers: {},
+        data: { sessionId: "mockSessionId" },
+      })
+    })
+
+    it("respects fileUploadClientConfig", async () => {
+      axiosMock
+        .onDelete("http://example.com/someprefix/upload_file/file_1")
+        .reply(() => [204])
+
+      endpoints.setFileUploadClientConfig({
+        prefix: "http://example.com/someprefix/",
+        headers: {
+          header1: "header1value",
+          header2: "header2value",
+        },
+      })
+
+      await expect(
+        endpoints.deleteFileAtURL("upload_file/file_1", "mockSessionId")
+      ).resolves.toBeUndefined()
+
+      expect(spyRequest).toHaveBeenCalledWith({
+        url: "http://example.com/someprefix/upload_file/file_1",
+        method: "DELETE",
+        headers: {
+          header1: "header1value",
+          header2: "header2value",
+        },
+        data: { sessionId: "mockSessionId" },
+      })
     })
   })
 
@@ -312,7 +437,7 @@ describe("DefaultStreamlitEndpoints", () => {
   // Test our private csrfRequest() API, which is responsible for setting
   // the "X-Xsrftoken" header.
   describe("csrfRequest()", () => {
-    const spyRequest = jest.spyOn(axios, "request")
+    const spyRequest = vi.spyOn(axios, "request")
     let prevDocumentCookie: string
 
     beforeEach(() => {

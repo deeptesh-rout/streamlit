@@ -48,5 +48,5 @@ jobs:
         run: make protobuf
       - name: Run make frontend-lib-prod
         run: make frontend-lib-prod
-      - name: Ensure ensure relative imports exist in the @streamlit/lib/dist folder
+      - name: Ensure relative imports exist in the @streamlit/lib/dist folder
         run: make ensure-relative-imports

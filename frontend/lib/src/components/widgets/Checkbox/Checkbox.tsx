@@ -30,7 +30,7 @@ import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import {
   useBasicWidgetState,
   ValueWithSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
 import { hasLightBackgroundColor } from "@streamlit/lib/src/theme"
 import TooltipIcon from "@streamlit/lib/src/components/shared/TooltipIcon"
 import { Placement } from "@streamlit/lib/src/components/shared/Tooltip"
@@ -203,6 +203,8 @@ function Checkbox({
           },
           Label: {
             style: {
+              lineHeight: theme.lineHeights.small,
+              paddingLeft: theme.spacing.sm,
               position: "relative",
               color,
             },

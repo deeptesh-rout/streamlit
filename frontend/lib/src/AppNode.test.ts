@@ -15,6 +15,7 @@
  */
 
 import { Writer } from "protobufjs"
+import { MockInstance } from "vitest"
 
 import { arrayFromVector } from "@streamlit/lib/src/test_util"
 import { isNullOrUndefined } from "@streamlit/lib/src/util/utils"
@@ -803,10 +804,10 @@ describe("ElementNode.arrowAddRows", () => {
 })
 
 describe("AppRoot.empty", () => {
-  let windowSpy: jest.SpyInstance
+  let windowSpy: MockInstance
 
   beforeEach(() => {
-    windowSpy = jest.spyOn(window, "window", "get")
+    windowSpy = vi.spyOn(window, "window", "get")
   })
 
   afterEach(() => {
@@ -1168,7 +1169,7 @@ describe("AppRoot.applyDelta", () => {
 
   it("timestamp is set on BlockNode as message id", () => {
     const timestamp = new Date(Date.UTC(2017, 1, 14)).valueOf()
-    Date.now = jest.fn(() => timestamp)
+    Date.now = vi.fn(() => timestamp)
     const delta = makeProto(DeltaProto, {
       addBlock: {},
     })
@@ -1490,15 +1491,24 @@ function makeProto<Type, Props>(
 // Custom Jest matchers for dealing with AppNodes
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
+  namespace vi {
     interface Matchers<R> {
       toBeTextNode(text: string): R
     }
   }
 }
 
+interface CustomMatchers<R = unknown> {
+  toBeTextNode(text: string): R
+}
+
+declare module "vitest" {
+  interface Assertion<T = any> extends CustomMatchers<T> {}
+  interface AsymmetricMatchersContaining extends CustomMatchers {}
+}
+
 expect.extend({
-  toBeTextNode(received, text): jest.CustomMatcherResult {
+  toBeTextNode(received, text): any {
     const elementNode = received as ElementNode
     if (isNullOrUndefined(elementNode)) {
       return {

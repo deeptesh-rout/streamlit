@@ -18,6 +18,9 @@ from e2e_playwright.conftest import ImageCompareFunction
 
 
 def test_disconnected_states(app: Page, assert_snapshot: ImageCompareFunction):
+    # Abort all requests to simulate runtime shutdown
+    app.route("**", lambda route, request: route.abort())
+
     expect(app.get_by_test_id("stButton").locator("button")).not_to_have_attribute(
         "disabled", ""
     )
@@ -25,8 +28,9 @@ def test_disconnected_states(app: Page, assert_snapshot: ImageCompareFunction):
 
     expect(app.get_by_test_id("stConnectionStatus")).not_to_be_visible()
 
-    # activating this will disable all elements and simulate runtime shutdown
-    app.evaluate("window.streamlitDebug.shutdownRuntime()")
+    # disconnect the websocket connection
+    app.evaluate("window.streamlitDebug.disconnectWebsocket()")
+
     expect(app.get_by_test_id("stConnectionStatus")).to_contain_text("Connecting")
 
     expect(app.get_by_test_id("stButton").locator("button")).to_have_attribute(

@@ -23,10 +23,12 @@ import AlertContainer, {
 import StreamlitMarkdown from "@streamlit/lib/src/components/shared/StreamlitMarkdown"
 import { Exception as ExceptionProto } from "@streamlit/lib/src/proto"
 import { StyledCode } from "@streamlit/lib/src/components/elements/CodeBlock/styled-components"
+import { StyledStackTrace } from "@streamlit/lib/src/components/shared/ErrorElement/styled-components"
 
 import {
+  StyledExceptionMessage,
   StyledMessageType,
-  StyledStackTrace,
+  StyledStackTraceContent,
   StyledStackTraceRow,
   StyledStackTraceTitle,
 } from "./styled-components"
@@ -84,13 +86,18 @@ function StackTrace({ stackTrace }: Readonly<StackTraceProps>): ReactElement {
     <>
       <StyledStackTraceTitle>Traceback:</StyledStackTraceTitle>
       <StyledStackTrace>
-        <StyledCode>
-          {stackTrace.map((row: string, index: number) => (
-            <StyledStackTraceRow key={index} data-testid="stExceptionTraceRow">
-              {row}
-            </StyledStackTraceRow>
-          ))}
-        </StyledCode>
+        <StyledStackTraceContent>
+          <StyledCode>
+            {stackTrace.map((row: string, index: number) => (
+              <StyledStackTraceRow
+                key={index}
+                data-testid="stExceptionTraceRow"
+              >
+                {row}
+              </StyledStackTraceRow>
+            ))}
+          </StyledCode>
+        </StyledStackTraceContent>
       </StyledStackTrace>
     </>
   )
@@ -109,13 +116,13 @@ export default function ExceptionElement({
         kind={element.isWarning ? Kind.WARNING : Kind.ERROR}
         width={width}
       >
-        <div data-testid="stExceptionMessage">
+        <StyledExceptionMessage data-testid="stExceptionMessage">
           <ExceptionMessage
             type={element.type}
             message={element.message}
             messageIsMarkdown={element.messageIsMarkdown}
           />
-        </div>
+        </StyledExceptionMessage>
         {element.stackTrace && element.stackTrace.length > 0 ? (
           <StackTrace stackTrace={element.stackTrace} />
         ) : null}

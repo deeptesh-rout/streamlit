@@ -28,7 +28,7 @@ def test_text_input_widget_rendering(
 ):
     """Test that the st.text_input widgets are correctly rendered via screenshot matching."""
     text_input_widgets = themed_app.get_by_test_id("stTextInput")
-    expect(text_input_widgets).to_have_count(11)
+    expect(text_input_widgets).to_have_count(13)
 
     assert_snapshot(text_input_widgets.nth(0), name="st_text_input-default")
     assert_snapshot(text_input_widgets.nth(1), name="st_text_input-value_some_text")
@@ -46,7 +46,7 @@ def test_text_input_widget_rendering(
 def test_text_input_has_correct_initial_values(app: Page):
     """Test that st.text_input has the correct initial values."""
     markdown_elements = app.get_by_test_id("stMarkdown")
-    expect(markdown_elements).to_have_count(12)
+    expect(markdown_elements).to_have_count(15)
 
     expected = [
         "value 1: ",
@@ -146,6 +146,36 @@ def test_text_input_has_correct_value_on_click_outside(app: Page):
     )
 
 
+def test_text_input_does_not_trigger_rerun_when_value_does_not_change_and_click_outside(
+    app: Page,
+):
+    """Test that st.text_input has the correct value on click outside."""
+
+    expect(
+        app.get_by_test_id("stMarkdown").filter(has_text="Rerun counter: 1")
+    ).to_be_attached()
+
+    first_text_input_field = (
+        app.get_by_test_id("stTextInput").first.locator("input").first
+    )
+    first_text_input_field.focus()
+    first_text_input_field.fill("hello world")
+    app.get_by_test_id("stMarkdown").first.click()
+
+    expect(app.get_by_test_id("stMarkdown").first).to_have_text(
+        "value 1: hello world", use_inner_text=True
+    )
+    expect(
+        app.get_by_test_id("stMarkdown").filter(has_text="Rerun counter: 2")
+    ).to_be_attached()
+
+    first_text_input_field.focus()
+    app.get_by_test_id("stMarkdown").first.click()
+    expect(
+        app.get_by_test_id("stMarkdown").filter(has_text="Rerun counter: 2")
+    ).to_be_attached()
+
+
 def test_empty_text_input_behaves_correctly(app: Page):
     """Test that st.text_input behaves correctly when empty."""
     # Should return None as value:
@@ -171,6 +201,12 @@ def test_empty_text_input_behaves_correctly(app: Page):
     # Should be set to empty string (we don't clear to None for text input):
     expect(app.get_by_test_id("stMarkdown").nth(3)).to_have_text(
         "value 4: ", use_inner_text=True
+    )
+
+
+def test_text_input_shows_state_value(app: Page):
+    expect(app.get_by_test_id("stTextInput").nth(11).locator("input")).to_have_value(
+        "xyz"
     )
 
 
@@ -212,6 +248,17 @@ def test_calls_callback_on_change(app: Page):
     )
 
 
+def test_text_input_in_form_with_submit_by_enter(app: Page):
+    """Test that text area in form can be submitted by pressing Command+Enter"""
+    text_area_field = app.get_by_test_id("stTextInput").nth(12).locator("input").first
+    text_area_field.fill("hello world")
+    text_area_field.press("Enter")
+    expect(app.get_by_test_id("stMarkdown").nth(13)).to_have_text(
+        "text input 13 (value from form) - value: hello world",
+        use_inner_text=True,
+    )
+
+
 def test_help_tooltip_works(app: Page):
     """Test that the help tooltip is displayed on hover."""
     element_with_help = app.get_by_test_id("stTextInput").nth(8)
@@ -225,4 +272,4 @@ def test_check_top_level_class(app: Page):
 
 def test_custom_css_class_via_key(app: Page):
     """Test that the element can have a custom css class via the key argument."""
-    expect(get_element_by_key(app, "text_input9")).to_be_visible()
+    expect(get_element_by_key(app, "text_input_9")).to_be_visible()

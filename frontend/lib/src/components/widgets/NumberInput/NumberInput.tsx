@@ -467,6 +467,11 @@ export const NumberInput: React.FC<Props> = ({
                 step: step,
                 min: min,
                 max: max,
+                // We specify the type as "number" to have numeric keyboard on mobile devices.
+                // We also set inputMode to "" since by default BaseWeb sets "text",
+                // and for "decimal" / "numeric" IOS shows keyboard without a minus sign.
+                type: "number",
+                inputMode: "",
               },
               style: {
                 lineHeight: theme.lineHeights.inputWidget,

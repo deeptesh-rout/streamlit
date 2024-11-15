@@ -16,9 +16,8 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { fireEvent, screen } from "@testing-library/react"
-import { default as userEvent } from "@testing-library/user-event"
+import { userEvent } from "@testing-library/user-event"
 
 import { render } from "@streamlit/lib/src/test_util"
 import {
@@ -43,8 +42,8 @@ const getProps = (
   width: 300,
   disabled: false,
   widgetMgr: new WidgetStateManager({
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }),
 
   ...widgetProps,
@@ -61,7 +60,7 @@ describe("TextArea widget", () => {
 
   it("sets widget value on mount", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
     render(<TextArea {...props} />)
 
     expect(props.widgetMgr.setStringValue).toHaveBeenCalledWith(
@@ -74,7 +73,7 @@ describe("TextArea widget", () => {
 
   it("can pass fragmentId to setStringValue", () => {
     const props = getProps(undefined, { fragmentId: "myFragmentId" })
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
     render(<TextArea {...props} />)
 
     expect(props.widgetMgr.setStringValue).toHaveBeenCalledWith(
@@ -150,7 +149,7 @@ describe("TextArea widget", () => {
 
   it("sets widget value on blur", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
     render(<TextArea {...props} />)
 
     const textArea = screen.getByRole("textbox")
@@ -169,7 +168,7 @@ describe("TextArea widget", () => {
 
   it("sets widget value when ctrl+enter is pressed", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
     render(<TextArea {...props} />)
 
     const textArea = screen.getByRole("textbox")
@@ -205,7 +204,7 @@ describe("TextArea widget", () => {
 
   it("does not update widget value on text changes when outside of a form", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
     render(<TextArea {...props} />)
 
     const textArea = screen.getByRole("textbox")
@@ -247,7 +246,7 @@ describe("TextArea widget", () => {
     const props = getProps({ formId: "form" })
     props.widgetMgr.setFormSubmitBehaviors("form", true)
 
-    jest.spyOn(props.widgetMgr, "setStringValue")
+    vi.spyOn(props.widgetMgr, "setStringValue")
 
     render(<TextArea {...props} />)
 
@@ -287,7 +286,7 @@ describe("TextArea widget", () => {
   it("shows Input Instructions if in form that allows submit on enter", async () => {
     const user = userEvent.setup()
     const props = getProps({ formId: "form" })
-    jest.spyOn(props.widgetMgr, "allowFormEnterToSubmit").mockReturnValue(true)
+    vi.spyOn(props.widgetMgr, "allowFormEnterToSubmit").mockReturnValue(true)
 
     render(<TextArea {...props} />)
 
@@ -303,7 +302,7 @@ describe("TextArea widget", () => {
   it("shows Input Instructions if focused again in form that allows submit on enter", async () => {
     const user = userEvent.setup()
     const props = getProps({ formId: "form" })
-    jest.spyOn(props.widgetMgr, "allowFormEnterToSubmit").mockReturnValue(true)
+    vi.spyOn(props.widgetMgr, "allowFormEnterToSubmit").mockReturnValue(true)
 
     render(<TextArea {...props} />)
 
@@ -323,9 +322,7 @@ describe("TextArea widget", () => {
   it("hides Input Instructions if in form that doesn't allow submit on enter", async () => {
     const user = userEvent.setup()
     const props = getProps({ formId: "form" })
-    jest
-      .spyOn(props.widgetMgr, "allowFormEnterToSubmit")
-      .mockReturnValue(false)
+    vi.spyOn(props.widgetMgr, "allowFormEnterToSubmit").mockReturnValue(false)
 
     render(<TextArea {...props} />)
 
@@ -356,7 +353,7 @@ describe("TextArea widget", () => {
 
     it("sets widget value when ⌘+enter is pressed", () => {
       const props = getProps()
-      jest.spyOn(props.widgetMgr, "setStringValue")
+      vi.spyOn(props.widgetMgr, "setStringValue")
       render(<TextArea {...props} />)
       const textArea = screen.getByRole("textbox")
       fireEvent.change(textArea, { target: { value: "testing" } })

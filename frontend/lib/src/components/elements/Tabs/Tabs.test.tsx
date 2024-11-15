@@ -15,7 +15,6 @@
  */
 
 import React from "react"
-import "@testing-library/jest-dom"
 
 import { screen, within } from "@testing-library/react"
 
@@ -49,7 +48,7 @@ const getProps = (props?: Partial<TabProps>): TabProps =>
     node: makeTabsNode(5),
     isStale: false,
     ...props,
-    renderTabContent: jest.fn(),
+    renderTabContent: vi.fn(),
   })
 
 describe("st.tabs", () => {

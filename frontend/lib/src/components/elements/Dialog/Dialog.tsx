@@ -24,8 +24,6 @@ import { Block as BlockProto } from "@streamlit/lib/src/proto"
 import IsDialogContext from "@streamlit/lib/src/components/core/IsDialogContext"
 import { notNullOrUndefined } from "@streamlit/lib/src/util/utils"
 
-import { StyledDialogContent } from "./styled-components"
-
 export interface Props {
   element: BlockProto.Dialog
   deltaMsgReceivedAt?: number
@@ -63,9 +61,7 @@ const Dialog: React.FC<React.PropsWithChildren<Props>> = ({
       size={width === BlockProto.Dialog.DialogWidth.LARGE ? "full" : "default"}
     >
       <ModalHeader>{title}</ModalHeader>
-      <ModalBody>
-        <StyledDialogContent>{children}</StyledDialogContent>
-      </ModalBody>
+      <ModalBody>{children}</ModalBody>
     </Modal>
   )
 }

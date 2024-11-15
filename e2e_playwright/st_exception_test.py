@@ -25,7 +25,11 @@ def test_st_exception_displays_correctly(
         "RuntimeError: This exception message is awesome!"
     )
 
-    for i in range(2):
+    # Click the button that raises the exception
+    button = themed_app.get_by_test_id("stButton").nth(0).locator("button")
+    button.click()
+
+    for i in range(4):
         assert_snapshot(
             themed_app.get_by_test_id("stException").nth(i), name=f"st_exception-{i}"
         )

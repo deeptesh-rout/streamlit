@@ -26,13 +26,9 @@ import {
   ModalHeader,
   SessionInfo,
   StreamlitMarkdown,
+  StreamlitSyntaxHighlighter,
 } from "@streamlit/lib"
 import { STREAMLIT_HOME_URL } from "@streamlit/app/src/urls"
-import {
-  StyledCode,
-  StyledInlineCode,
-  StyledPre,
-} from "@streamlit/lib/src/components/elements/CodeBlock/styled-components"
 
 import { SettingsDialog, Props as SettingsDialogProps } from "./SettingsDialog"
 import ThemeCreatorDialog, {
@@ -190,19 +186,20 @@ interface ClearCacheProps {
  * onClose         - callback to close the dialog
  */
 function clearCacheDialog(props: ClearCacheProps): ReactElement {
+  // Markdown New line is 2 spaces + \n
+  const newLineMarkdown = "  \n"
+  const clearCacheInfo = [
+    `**Are you sure you want to clear the app's function caches?**`,
+    "This will remove all cached entries from functions using",
+    "`@st.cache_data` and `@st.cache_resource`.",
+  ].join(newLineMarkdown)
+
   return (
     <div data-testid="stClearCacheDialog">
       <Modal isOpen onClose={props.onClose}>
         <ModalHeader>Clear caches</ModalHeader>
         <ModalBody>
-          <div>
-            <b>Are you sure you want to clear the app's function caches?</b>
-          </div>
-          <div>
-            This will remove all cached entries from functions using{" "}
-            <StyledInlineCode>@st.cache_data</StyledInlineCode> and{" "}
-            <StyledInlineCode>@st.cache_resource</StyledInlineCode>.
-          </div>
+          <StreamlitMarkdown source={clearCacheInfo} allowHTML={false} />
         </ModalBody>
         <ModalFooter>
           <ModalButton kind={BaseButtonKind.TERTIARY} onClick={props.onClose}>
@@ -234,13 +231,9 @@ function scriptCompileErrorDialog(
     <Modal isOpen onClose={props.onClose} size="auto" autoFocus={false}>
       <ModalHeader>Script execution error</ModalHeader>
       <ModalBody>
-        <div>
-          <StyledPre>
-            <StyledCode>
-              {props.exception ? props.exception.message : "No message"}
-            </StyledCode>
-          </StyledPre>
-        </div>
+        <StreamlitSyntaxHighlighter showLineNumbers={false} wrapLines={false}>
+          {props.exception?.message ? props.exception.message : "No message"}
+        </StreamlitSyntaxHighlighter>
       </ModalBody>
       <ModalFooter>
         <ModalButton kind={BaseButtonKind.SECONDARY} onClick={props.onClose}>

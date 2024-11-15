@@ -22,11 +22,11 @@ import { TextColumn } from "@streamlit/lib/src/components/widgets/DataFrame/colu
 
 import useSelectionHandler from "./useSelectionHandler"
 
-const syncSelectionStateMock = jest.fn()
+const syncSelectionStateMock = vi.fn()
 
 describe("useSelectionHandler hook", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it("detects single row selection", () => {

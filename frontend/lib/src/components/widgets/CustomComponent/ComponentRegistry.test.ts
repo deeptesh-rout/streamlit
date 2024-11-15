@@ -34,8 +34,8 @@ describe("ComponentRegistry", () => {
     // Create some mocks
     const msgSource1: any = {}
     const msgSource2: any = {}
-    const msgListener1 = jest.fn()
-    const msgListener2 = jest.fn()
+    const msgListener1 = vi.fn()
+    const msgListener2 = vi.fn()
 
     // This should not error (and will not be handled).
     onMessageEvent(new MessageEvent("message", { source: msgSource1 }))

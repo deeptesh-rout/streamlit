@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-import React, { ReactElement, useCallback, useEffect, useState } from "react"
+import React, { ReactElement, useCallback, useState } from "react"
 
 import uniqueId from "lodash/uniqueId"
 import { Input as UIInput } from "baseui/input"
 import { useTheme } from "@emotion/react"
 
+import useOnInputChange from "@streamlit/lib/src/hooks/useOnInputChange"
 import { TextInput as TextInputProto } from "@streamlit/lib/src/proto"
 import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import {
   useBasicWidgetState,
   ValueWithSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
+import useUpdateUiValue from "@streamlit/lib/src/hooks/useUpdateUiValue"
+import useSubmitFormViaEnterKey from "@streamlit/lib/src/hooks/useSubmitFormViaEnterKey"
 import InputInstructions from "@streamlit/lib/src/components/shared/InputInstructions/InputInstructions"
 import {
   StyledWidgetLabelHelp,
@@ -55,6 +58,24 @@ function TextInput({
   width,
   fragmentId,
 }: Props): ReactElement {
+  /**
+   * The value specified by the user via the UI. If the user didn't touch this
+   * widget's UI, the default value is used.
+   */
+  const [uiValue, setUiValue] = useState<string | null>(
+    getStateFromWidgetMgr(widgetMgr, element) ?? null
+  )
+
+  /**
+   * True if the user-specified state.value has not yet been synced to the WidgetStateManager.
+   */
+  const [dirty, setDirty] = useState(false)
+
+  const onFormCleared = useCallback(() => {
+    setUiValue(element.default ?? null)
+    setDirty(true)
+  }, [element.default])
+
   const [value, setValueWithSource] = useBasicWidgetState<
     string | null,
     TextInputProto
@@ -66,36 +87,24 @@ function TextInput({
     element,
     widgetMgr,
     fragmentId,
+    onFormCleared,
   })
 
-  /**
-   * True if the user-specified state.value has not yet been synced to the WidgetStateManager.
-   */
-  const [dirty, setDirty] = useState(false)
+  useUpdateUiValue(value, uiValue, setUiValue, dirty)
 
   /**
    * Whether the input is currently focused.
    */
   const [focused, setFocused] = useState(false)
 
-  /**
-   * The value specified by the user via the UI. If the user didn't touch this
-   * widget's UI, the default value is used.
-   */
-  const [uiValue, setUiValue] = useState<string | null>(value)
-
-  useEffect(() => {
-    if (value !== uiValue) {
-      setUiValue(value)
-    }
-    // Don't include `uiValue` in the deps below or the slider will become
-    // jittery.
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [value])
-
   const theme = useTheme()
   const [id] = useState(() => uniqueId("text_input_"))
   const { placeholder, formId } = element
+
+  const commitWidgetValue = useCallback((): void => {
+    setDirty(false)
+    setValueWithSource({ value: uiValue, fromUi: true })
+  }, [uiValue, setValueWithSource])
 
   // Show "Please enter" instructions if in a form & allowed, or not in form and state is dirty.
   const allowEnterToSubmit = isInForm({ formId })
@@ -108,57 +117,29 @@ function TextInput({
 
   const onBlur = useCallback((): void => {
     if (dirty) {
-      setValueWithSource({ value: uiValue, fromUi: true })
+      commitWidgetValue()
     }
     setFocused(false)
-  }, [dirty, uiValue])
+  }, [dirty, commitWidgetValue])
 
   const onFocus = useCallback((): void => {
     setFocused(true)
   }, [])
 
-  const onChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-      const { value: newValue } = e.target
-      const { maxChars } = element
+  const onChange = useOnInputChange({
+    formId: element.formId,
+    maxChars: element.maxChars,
+    setDirty,
+    setUiValue,
+    setValueWithSource,
+  })
 
-      if (maxChars !== 0 && newValue.length > maxChars) {
-        return
-      }
-
-      setDirty(true)
-      setUiValue(newValue)
-
-      // We immediately update its widgetValue on text changes in forms
-      // see here for why: https://github.com/streamlit/streamlit/issues/7101
-      // The widgetValue won't be passed to the Python script until the form
-      // is submitted, so this won't cause the script to re-run.
-      if (isInForm(element)) {
-        // Make sure dirty is true so that enter to submit form text shows
-        setValueWithSource({ value: newValue, fromUi: true })
-      }
-      // If the TextInput is *not* part of a form, we mark it dirty but don't
-      // update its value in the WidgetMgr. This means that individual keypresses
-      // won't trigger a script re-run.
-    },
-    [element]
-  )
-
-  const onKeyPress = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-      if (e.key !== "Enter") {
-        return
-      }
-
-      if (dirty) {
-        setValueWithSource({ value: uiValue, fromUi: true })
-      }
-
-      if (widgetMgr.allowFormEnterToSubmit(element.formId)) {
-        widgetMgr.submitForm(element.formId, fragmentId)
-      }
-    },
-    [uiValue, element, fragmentId]
+  const onKeyPress = useSubmitFormViaEnterKey(
+    element.formId,
+    commitWidgetValue,
+    dirty,
+    widgetMgr,
+    fragmentId
   )
 
   return (

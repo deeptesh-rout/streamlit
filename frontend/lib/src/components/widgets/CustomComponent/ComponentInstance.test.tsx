@@ -16,7 +16,7 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
+import { Mock } from "vitest"
 import { act, fireEvent, screen } from "@testing-library/react"
 
 import {
@@ -44,18 +44,18 @@ import { ComponentRegistry } from "./ComponentRegistry"
 import { ComponentMessageType, StreamlitMessageType } from "./enums"
 
 // Mock log functions.
-jest.mock("@streamlit/lib/src/util/log")
+vi.mock("@streamlit/lib/src/util/log")
 
 // We have some timeouts that we want to use fake timers for.
-jest.useFakeTimers()
+vi.useFakeTimers()
 
 // Mock uri utils.
-jest.mock("@streamlit/lib/src/util/UriUtil")
-const mockedBuildHttpUri = buildHttpUri as jest.Mock
+vi.mock("@streamlit/lib/src/util/UriUtil")
+const mockedBuildHttpUri = buildHttpUri as Mock
 mockedBuildHttpUri.mockImplementation(() => "registry/url")
 
 // Mock our WidgetStateManager
-jest.mock("@streamlit/lib/src/WidgetStateManager")
+vi.mock("@streamlit/lib/src/WidgetStateManager")
 
 const MOCK_COMPONENT_URL = "http://a.mock.url"
 const MOCK_WIDGET_ID = "mock_widget_id"
@@ -68,16 +68,16 @@ describe("ComponentInstance", () => {
 
   beforeEach(() => {
     // Clear our class mocks
-    const mockWidgetStateManager = WidgetStateManager as unknown as jest.Mock
+    const mockWidgetStateManager = WidgetStateManager as unknown as Mock
     mockWidgetStateManager.mockClear()
 
-    const mockLog = logWarning as jest.Mock
+    const mockLog = logWarning as Mock
     mockLog.mockClear()
   })
 
   it("registers a message listener on render", () => {
     const componentRegistry = getComponentRegistry()
-    const registerListener = jest.spyOn(componentRegistry, "registerListener")
+    const registerListener = vi.spyOn(componentRegistry, "registerListener")
     render(
       <ComponentInstance
         element={createElementProp()}
@@ -87,8 +87,8 @@ describe("ComponentInstance", () => {
         theme={mockTheme.emotion}
         widgetMgr={
           new WidgetStateManager({
-            sendRerunBackMsg: jest.fn(),
-            formsDataChanged: jest.fn(),
+            sendRerunBackMsg: vi.fn(),
+            formsDataChanged: vi.fn(),
           })
         }
       />
@@ -98,7 +98,7 @@ describe("ComponentInstance", () => {
 
   it("deregisters its message listener on rerender", () => {
     const componentRegistry = getComponentRegistry()
-    const deregisterListener = jest.spyOn(
+    const deregisterListener = vi.spyOn(
       componentRegistry,
       "deregisterListener"
     )
@@ -111,8 +111,8 @@ describe("ComponentInstance", () => {
         theme={mockTheme.emotion}
         widgetMgr={
           new WidgetStateManager({
-            sendRerunBackMsg: jest.fn(),
-            formsDataChanged: jest.fn(),
+            sendRerunBackMsg: vi.fn(),
+            formsDataChanged: vi.fn(),
           })
         }
       />
@@ -132,8 +132,8 @@ describe("ComponentInstance", () => {
         theme={mockTheme.emotion}
         widgetMgr={
           new WidgetStateManager({
-            sendRerunBackMsg: jest.fn(),
-            formsDataChanged: jest.fn(),
+            sendRerunBackMsg: vi.fn(),
+            formsDataChanged: vi.fn(),
           })
         }
       />
@@ -141,7 +141,7 @@ describe("ComponentInstance", () => {
     const iframe = screen.getByTitle(MOCK_COMPONENT_NAME)
     expect(iframe).toHaveAttribute(
       "src",
-      "http://a.mock.url?streamlitUrl=http%3A%2F%2Flocalhost%2F"
+      "http://a.mock.url?streamlitUrl=http%3A%2F%2Flocalhost%3A3000%2F"
     )
     expect(iframe).toHaveAttribute("allow", DEFAULT_IFRAME_FEATURE_POLICY)
     expect(iframe).toHaveAttribute("sandbox", DEFAULT_IFRAME_SANDBOX_POLICY)
@@ -159,8 +159,8 @@ describe("ComponentInstance", () => {
         theme={mockTheme.emotion}
         widgetMgr={
           new WidgetStateManager({
-            sendRerunBackMsg: jest.fn(),
-            formsDataChanged: jest.fn(),
+            sendRerunBackMsg: vi.fn(),
+            formsDataChanged: vi.fn(),
           })
         }
       />
@@ -184,8 +184,8 @@ describe("ComponentInstance", () => {
         theme={mockTheme.emotion}
         widgetMgr={
           new WidgetStateManager({
-            sendRerunBackMsg: jest.fn(),
-            formsDataChanged: jest.fn(),
+            sendRerunBackMsg: vi.fn(),
+            formsDataChanged: vi.fn(),
           })
         }
       />
@@ -209,15 +209,15 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
       )
       const iframe = screen.getByTitle(MOCK_COMPONENT_NAME)
       // @ts-expect-error
-      const postMessage = jest.spyOn(iframe.contentWindow, "postMessage")
+      const postMessage = vi.spyOn(iframe.contentWindow, "postMessage")
       // SET COMPONENT_READY
       fireEvent(
         window,
@@ -245,8 +245,8 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
@@ -283,15 +283,15 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
       )
       const iframe = screen.getByTitle(MOCK_COMPONENT_NAME)
       // @ts-expect-error
-      const postMessage = jest.spyOn(iframe.contentWindow, "postMessage")
+      const postMessage = vi.spyOn(iframe.contentWindow, "postMessage")
       expect(postMessage).toHaveBeenCalledTimes(0)
     })
 
@@ -310,15 +310,15 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
       )
       const iframe = screen.getByTitle(MOCK_COMPONENT_NAME)
       // @ts-expect-error
-      const postMessage = jest.spyOn(iframe.contentWindow, "postMessage")
+      const postMessage = vi.spyOn(iframe.contentWindow, "postMessage")
       // SET COMPONENT_READY
       fireEvent(
         window,
@@ -360,15 +360,15 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
       )
       const iframe = screen.getByTitle(MOCK_COMPONENT_NAME)
       // @ts-expect-error
-      const postMessage = jest.spyOn(iframe.contentWindow, "postMessage")
+      const postMessage = vi.spyOn(iframe.contentWindow, "postMessage")
       // SET COMPONENT_READY
       fireEvent(
         window,
@@ -392,8 +392,8 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
@@ -415,15 +415,15 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
       )
       const iframe = screen.getByTitle(MOCK_COMPONENT_NAME)
       // @ts-expect-error
-      const postMessage = jest.spyOn(iframe.contentWindow, "postMessage")
+      const postMessage = vi.spyOn(iframe.contentWindow, "postMessage")
       // SET COMPONENT_READY
       fireEvent(
         window,
@@ -447,8 +447,8 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
@@ -470,8 +470,8 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
@@ -508,8 +508,8 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
@@ -530,14 +530,14 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
       )
       // Advance past our warning timeout, and force a re-render.
-      act(() => jest.advanceTimersByTime(COMPONENT_READY_WARNING_TIME_MS))
+      act(() => vi.advanceTimersByTime(COMPONENT_READY_WARNING_TIME_MS))
 
       expect(
         screen.getByText(/The app is attempting to load the component from/)
@@ -564,8 +564,8 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
@@ -625,8 +625,8 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
           // Also verify that we can pass a fragmentID down to setBytesValue.
@@ -694,8 +694,8 @@ describe("ComponentInstance", () => {
           theme={mockTheme.emotion}
           widgetMgr={
             new WidgetStateManager({
-              sendRerunBackMsg: jest.fn(),
-              formsDataChanged: jest.fn(),
+              sendRerunBackMsg: vi.fn(),
+              formsDataChanged: vi.fn(),
             })
           }
         />
@@ -738,8 +738,8 @@ describe("ComponentInstance", () => {
             theme={mockTheme.emotion}
             widgetMgr={
               new WidgetStateManager({
-                sendRerunBackMsg: jest.fn(),
-                formsDataChanged: jest.fn(),
+                sendRerunBackMsg: vi.fn(),
+                formsDataChanged: vi.fn(),
               })
             }
           />
@@ -797,8 +797,8 @@ describe("ComponentInstance", () => {
             theme={mockTheme.emotion}
             widgetMgr={
               new WidgetStateManager({
-                sendRerunBackMsg: jest.fn(),
-                formsDataChanged: jest.fn(),
+                sendRerunBackMsg: vi.fn(),
+                formsDataChanged: vi.fn(),
               })
             }
           />

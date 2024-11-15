@@ -352,7 +352,11 @@ export function isValidElementId(
   if (!elementId) {
     return false
   }
-  return elementId.startsWith(GENERATED_ELEMENT_ID_PREFIX)
+  return (
+    elementId.startsWith(GENERATED_ELEMENT_ID_PREFIX) &&
+    // There must be at least 3 parts: $$ID-<hash>-<userKey>
+    elementId.split("-").length >= 3
+  )
 }
 
 /**

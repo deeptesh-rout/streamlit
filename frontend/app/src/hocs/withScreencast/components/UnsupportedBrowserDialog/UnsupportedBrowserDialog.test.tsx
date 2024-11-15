@@ -17,7 +17,6 @@
 import React from "react"
 
 import { BaseProvider, LightTheme } from "baseui"
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib"
@@ -39,7 +38,7 @@ describe("UnsupportedBrowserDialog", () => {
   })
 
   it("should render a header", () => {
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     render(
       <BaseProvider theme={LightTheme}>
         <UnsupportedBrowserDialog onClose={onClose} />

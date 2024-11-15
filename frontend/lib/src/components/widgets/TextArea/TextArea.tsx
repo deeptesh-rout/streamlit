@@ -21,10 +21,10 @@ import { useTheme } from "@emotion/react"
 import uniqueId from "lodash/uniqueId"
 
 import { TextArea as TextAreaProto } from "@streamlit/lib/src/proto"
-import {
-  Source,
-  WidgetStateManager,
-} from "@streamlit/lib/src/WidgetStateManager"
+import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
+import useUpdateUiValue from "@streamlit/lib/src/hooks/useUpdateUiValue"
+import useSubmitFormViaEnterKey from "@streamlit/lib/src/hooks/useSubmitFormViaEnterKey"
+import useOnInputChange from "@streamlit/lib/src/hooks/useOnInputChange"
 import InputInstructions from "@streamlit/lib/src/components/shared/InputInstructions/InputInstructions"
 import {
   StyledWidgetLabelHelp,
@@ -40,7 +40,7 @@ import { EmotionTheme } from "@streamlit/lib/src/theme"
 import {
   useBasicWidgetState,
   ValueWithSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
 
 export interface Props {
   disabled: boolean
@@ -90,9 +90,6 @@ const TextArea: FC<Props> = ({
 }) => {
   const id = useRef(uniqueId("text_area_")).current
 
-  const [localValue, setLocalValue] = useState<string | null>(
-    getStateFromWidgetMgr(widgetMgr, element) ?? null
-  )
   /**
    * True if the user-specified state.value has not yet been synced to the WidgetStateManager.
    */
@@ -102,12 +99,20 @@ const TextArea: FC<Props> = ({
    */
   const [focused, setFocused] = useState(false)
 
+  /**
+   * The value specified by the user via the UI. If the user didn't touch this
+   * widget's UI, the default value is used.
+   */
+  const [uiValue, setUiValue] = useState<string | null>(
+    getStateFromWidgetMgr(widgetMgr, element) ?? null
+  )
+
   const onFormCleared = useCallback(() => {
-    setLocalValue(element.default ?? null)
+    setUiValue(element.default ?? null)
     setDirty(true)
   }, [element])
 
-  const [, setValueWithSource] = useBasicWidgetState<
+  const [value, setValueWithSource] = useBasicWidgetState<
     TextAreaValue,
     TextAreaProto
   >({
@@ -121,19 +126,18 @@ const TextArea: FC<Props> = ({
     onFormCleared,
   })
 
+  useUpdateUiValue(value, uiValue, setUiValue, dirty)
+
   const theme: EmotionTheme = useTheme()
 
-  const commitWidgetValue = useCallback(
-    ({ fromUi }: Source): void => {
-      setValueWithSource({ value: localValue, fromUi })
-      setDirty(false)
-    },
-    [localValue, setValueWithSource]
-  )
+  const commitWidgetValue = useCallback((): void => {
+    setDirty(false)
+    setValueWithSource({ value: uiValue, fromUi: true })
+  }, [uiValue, setValueWithSource])
 
   const onBlur = useCallback(() => {
     if (dirty) {
-      commitWidgetValue({ fromUi: true })
+      commitWidgetValue()
     }
     setFocused(false)
   }, [dirty, commitWidgetValue])
@@ -142,53 +146,21 @@ const TextArea: FC<Props> = ({
     setFocused(true)
   }, [])
 
-  const onChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-      const { value } = e.target
-      const { maxChars } = element
+  const onChange = useOnInputChange({
+    formId: element.formId,
+    maxChars: element.maxChars,
+    setDirty,
+    setUiValue,
+    setValueWithSource,
+  })
 
-      if (maxChars !== 0 && value.length > maxChars) {
-        return
-      }
-
-      // mark it dirty but don't update its value in the WidgetMgr
-      // This means that individual keypresses won't trigger a script re-run.
-      setLocalValue(value)
-      setDirty(true)
-    },
-    [element]
-  )
-
-  const isEnterKeyPressed = (
-    event: React.KeyboardEvent<HTMLTextAreaElement>
-  ): boolean => {
-    const { keyCode, key } = event
-
-    // Using keyCode as well due to some different behaviors on Windows
-    // https://bugs.chromium.org/p/chromium/issues/detail?id=79407
-    return (
-      (key === "Enter" || keyCode === 13 || keyCode === 10) &&
-      // Do not send the sentence being composed when Enter is typed into the IME.
-      !(event.nativeEvent?.isComposing === true)
-    )
-  }
-
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
-      const { metaKey, ctrlKey } = e
-      const { formId } = element
-      const allowFormEnterToSubmit = widgetMgr.allowFormEnterToSubmit(formId)
-
-      if (isEnterKeyPressed(e) && (ctrlKey || metaKey) && dirty) {
-        e.preventDefault()
-
-        commitWidgetValue({ fromUi: true })
-        if (allowFormEnterToSubmit) {
-          widgetMgr.submitForm(formId, fragmentId)
-        }
-      }
-    },
-    [element, widgetMgr, dirty, commitWidgetValue, fragmentId]
+  const onKeyDown = useSubmitFormViaEnterKey(
+    element.formId,
+    commitWidgetValue,
+    dirty,
+    widgetMgr,
+    fragmentId,
+    true
   )
 
   const style = { width }
@@ -223,7 +195,7 @@ const TextArea: FC<Props> = ({
         )}
       </WidgetLabel>
       <UITextArea
-        value={localValue ?? ""}
+        value={uiValue ?? ""}
         placeholder={placeholder}
         onBlur={onBlur}
         onFocus={onFocus}
@@ -268,7 +240,7 @@ const TextArea: FC<Props> = ({
       {shouldShowInstructions && (
         <InputInstructions
           dirty={dirty}
-          value={localValue ?? ""}
+          value={uiValue ?? ""}
           maxLength={element.maxChars}
           type={"multiline"}
           inForm={isInForm({ formId })}

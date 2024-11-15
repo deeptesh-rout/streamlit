@@ -16,10 +16,13 @@
 
 import React from "react"
 
-import { CUSTOM_THEME_NAME, RootStyleProvider } from "@streamlit/lib"
+import {
+  CUSTOM_THEME_NAME,
+  PortalProvider,
+  RootStyleProvider,
+  WindowDimensionsProvider,
+} from "@streamlit/lib"
 import FontFaceDeclaration from "@streamlit/app/src/components/FontFaceDeclaration"
-import { PortalProvider } from "@streamlit/lib/src/components/core/Portal/PortalProvider"
-import { WindowDimensionsProvider } from "@streamlit/lib/src/components/shared/WindowDimensions/Provider"
 
 import AppWithScreencast from "./App"
 import { useThemeManager } from "./util/useThemeManager"

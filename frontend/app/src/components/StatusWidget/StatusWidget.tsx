@@ -28,24 +28,18 @@ import {
   BaseButtonKind,
   EmotionTheme,
   Icon,
+  isNullOrUndefined,
+  notNullOrUndefined,
   Placement,
   ScriptRunState,
   SessionEvent,
   Timer,
   Tooltip,
 } from "@streamlit/lib"
-import {
-  isNullOrUndefined,
-  notNullOrUndefined,
-} from "@streamlit/lib/src/util/utils"
-import { ConnectionState } from "@streamlit/app/src/connection/ConnectionState"
-import { SessionEventDispatcher } from "@streamlit/app/src/SessionEventDispatcher"
-/*
- * IMPORTANT: If you change the asset import below, make sure it still works if Streamlit is served
- * from a subpath.
- */
 import iconRunning from "@streamlit/app/src/assets/img/icon_running.gif"
 import newYearsRunning from "@streamlit/app/src/assets/img/fireworks.gif"
+import { ConnectionState } from "@streamlit/app/src/connection/ConnectionState"
+import { SessionEventDispatcher } from "@streamlit/app/src/SessionEventDispatcher"
 
 import {
   StyledAppButtonContainer,

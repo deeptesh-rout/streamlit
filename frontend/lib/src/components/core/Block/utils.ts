@@ -200,6 +200,9 @@ export function getKeyFromId(
     return undefined
   }
 
-  const userKey = elementId.split("-", 3).pop()
+  // Split the elementId by hyphens
+  const parts = elementId.split("-")
+  // Extract all parts after the second hyphen
+  const userKey = parts.slice(2).join("-")
   return userKey === "None" ? undefined : userKey
 }

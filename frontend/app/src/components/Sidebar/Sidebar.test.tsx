@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import {
   fireEvent,
   RenderResult,
@@ -34,10 +33,10 @@ import {
 
 import Sidebar, { SidebarProps } from "./Sidebar"
 
-jest.mock("@streamlit/lib/src/util/Hooks", () => ({
+vi.mock("@streamlit/lib/src/util/Hooks", async () => ({
   __esModule: true,
-  ...jest.requireActual("@streamlit/lib/src/util/Hooks"),
-  useIsOverflowing: jest.fn(),
+  ...(await vi.importActual("@streamlit/lib/src/util/Hooks")),
+  useIsOverflowing: vi.fn(),
 }))
 
 const mockEndpointProp = mockEndpoints()
@@ -51,7 +50,7 @@ function renderSidebar(props: Partial<SidebarProps> = {}): RenderResult {
       appLogo={null}
       appPages={[]}
       navSections={[]}
-      onPageChange={jest.fn()}
+      onPageChange={vi.fn()}
       currentPageScriptHash={""}
       hasElements
       hideSidebarNav={false}
@@ -271,7 +270,7 @@ describe("Sidebar Component", () => {
     })
 
     it("renders logo when sidebar collapsed - uses iconImage if provided", () => {
-      const sourceSpy = jest.spyOn(mockEndpointProp, "buildMediaURL")
+      const sourceSpy = vi.spyOn(mockEndpointProp, "buildMediaURL")
       renderSidebar({
         initialSidebarState: PageConfig.SidebarState.COLLAPSED,
         appLogo: fullAppLogo,
@@ -288,7 +287,7 @@ describe("Sidebar Component", () => {
     })
 
     it("renders logo when sidebar collapsed - defaults to image if no iconImage", () => {
-      const sourceSpy = jest.spyOn(mockEndpointProp, "buildMediaURL")
+      const sourceSpy = vi.spyOn(mockEndpointProp, "buildMediaURL")
       renderSidebar({
         initialSidebarState: PageConfig.SidebarState.COLLAPSED,
         appLogo: imageOnly,
@@ -305,7 +304,7 @@ describe("Sidebar Component", () => {
     })
 
     it("renders logo's image param when sidebar expanded", () => {
-      const sourceSpy = jest.spyOn(mockEndpointProp, "buildMediaURL")
+      const sourceSpy = vi.spyOn(mockEndpointProp, "buildMediaURL")
       renderSidebar({ appLogo: fullAppLogo })
       const sidebarLogoContainer = screen.getByTestId("stSidebarHeader")
       expect(sidebarLogoContainer).toBeInTheDocument()

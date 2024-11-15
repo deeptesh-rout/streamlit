@@ -16,10 +16,11 @@
 
 import React, { MouseEvent, ReactElement } from "react"
 
-import { DynamicIcon } from "@streamlit/lib/src/components/shared/Icon"
+import { DynamicIcon } from "@streamlit/lib"
 
 import {
   StyledSidebarLinkText,
+  StyledSidebarNavIcon,
   StyledSidebarNavLink,
   StyledSidebarNavLinkContainer,
 } from "./styled-components"
@@ -47,7 +48,11 @@ const SidebarNavLink = ({
         href={pageUrl}
         onClick={onClick}
       >
-        {icon && icon.length && <DynamicIcon size="md" iconValue={icon} />}
+        {icon && icon.length && (
+          <StyledSidebarNavIcon isActive={isActive}>
+            <DynamicIcon size="md" iconValue={icon} />
+          </StyledSidebarNavIcon>
+        )}
         <StyledSidebarLinkText isActive={isActive}>
           {children}
         </StyledSidebarLinkText>

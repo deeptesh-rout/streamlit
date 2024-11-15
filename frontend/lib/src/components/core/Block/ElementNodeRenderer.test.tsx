@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen, waitFor } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -78,15 +77,15 @@ function getProps(
     scriptRunState: ScriptRunState.RUNNING,
     sessionInfo: sessionInfo,
     widgetMgr: new WidgetStateManager({
-      sendRerunBackMsg: jest.fn(),
-      formsDataChanged: jest.fn(),
+      sendRerunBackMsg: vi.fn(),
+      formsDataChanged: vi.fn(),
     }),
     widgetsDisabled: false,
     uploadClient: new FileUploadClient({
       sessionInfo: sessionInfo,
       endpoints,
       formsWithPendingRequestsChanged: () => {},
-      requestFileURLs: jest.fn(),
+      requestFileURLs: vi.fn(),
     }),
     componentRegistry: new ComponentRegistry(endpoints),
     formsData: createFormsData(),

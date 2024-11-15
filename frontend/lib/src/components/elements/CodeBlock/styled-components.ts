@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Theme } from "@emotion/react"
+import { CSSObject, Theme } from "@emotion/react"
 import styled from "@emotion/styled"
 
-const codeLink = {
+const codeLink: CSSObject = {
   // Streamline the style when inside anchors to avoid broken underline and more
   "a > &": {
     color: "inherit",
@@ -38,11 +38,12 @@ export const StyledInlineCode = styled.code(({ theme }) => ({
   ...codeLink,
 }))
 
-const codeBlockStyle = (theme: Theme): React.CSSProperties => ({
+const codeBlockStyle = (theme: Theme): CSSObject => ({
   background: "transparent",
   border: 0,
   color: "inherit",
   display: "inline",
+  fontFamily: theme.genericFonts.codeFont,
   fontSize: theme.fontSizes.sm,
   lineHeight: "inherit",
   margin: 0,
@@ -69,6 +70,7 @@ export const StyledPre = styled.pre(({ theme }) => ({
   borderRadius: theme.radii.default,
   color: theme.colors.bodyText,
   fontSize: theme.fontSizes.twoSm,
+  fontFamily: theme.genericFonts.codeFont,
   display: "block",
   // Remove browser default top margin
   margin: 0,

@@ -52,6 +52,12 @@ class MarkdownMixin:
               For a list of all supported codes,
               see https://share.streamlit.io/streamlit/emoji-shortcodes.
 
+            * Streamlit logo shortcode. Use ``:streamlit:`` to add a little
+              Streamlit flair to your text.
+
+            * A limited set of typographical symbols. ``"<- -> <-> -- >= <= ~="``
+              becomes "← → ↔ — ≥ ≤ ≈" when parsed as Markdown.
+
             * Google Material Symbols (rounded style), using the syntax
               ``:material/icon_name:``, where "icon_name" is the name of the
               icon in snake case. For a complete list of icons, see Google's

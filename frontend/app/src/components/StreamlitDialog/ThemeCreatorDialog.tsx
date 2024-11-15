@@ -36,18 +36,17 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
+  StreamlitMarkdown,
   ThemeConfig,
   toThemeInput,
   UISelectbox,
 } from "@streamlit/lib"
-import { StyledInlineCode } from "@streamlit/lib/src/components/elements/CodeBlock/styled-components"
 import { MetricsManager } from "@streamlit/app/src/MetricsManager"
 
 import {
   StyledBackButton,
   StyledDialogBody,
   StyledFullRow,
-  StyledSmall,
 } from "./styled-components"
 
 interface ThemeOptionBuilder {
@@ -285,11 +284,14 @@ const ThemeCreatorDialog = (props: Props): ReactElement => {
       <ModalBody>
         <StyledDialogBody data-testid="stThemeCreatorDialog">
           <StyledFullRow>
-            <StyledSmall>
-              Changes made to the active theme will exist for the duration of a
-              session. To discard changes and recover the original theme,
-              refresh the page.
-            </StyledSmall>
+            <StreamlitMarkdown
+              source={`
+Changes made to the active theme will exist for the duration of a
+session. To discard changes and recover the original theme,
+refresh the page.`}
+              allowHTML={false}
+              isCaption={true}
+            />
           </StyledFullRow>
 
           <ThemeOption name="primaryColor" value={primaryColor} />
@@ -305,12 +307,16 @@ const ThemeCreatorDialog = (props: Props): ReactElement => {
           </StyledFullRow>
 
           <StyledFullRow>
-            <StyledSmall>
-              To save your changes, copy your custom theme into the clipboard
-              and paste it into the
-              <StyledInlineCode>[theme]</StyledInlineCode> section of your{" "}
-              <StyledInlineCode>.streamlit/config.toml</StyledInlineCode> file.
-            </StyledSmall>
+            <StyledFullRow>
+              <StreamlitMarkdown
+                source={`
+To save your changes, copy your custom theme into the clipboard and paste it into the
+\`[theme]\` section of your \`.streamlit/config.toml\` file.
+`}
+                allowHTML={false}
+                isCaption={true}
+              />
+            </StyledFullRow>
           </StyledFullRow>
 
           <StyledFullRow>

@@ -16,8 +16,7 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
-import { fireEvent, screen, waitFor } from "@testing-library/react"
+import { fireEvent, screen } from "@testing-library/react"
 
 import {
   mockTheme,
@@ -36,7 +35,7 @@ const getProps = (
   connectionState: ConnectionState.CONNECTED,
   sessionEventDispatcher: new SessionEventDispatcher(),
   scriptRunState: ScriptRunState.RUNNING,
-  rerunScript: jest.fn(),
+  rerunScript: vi.fn(),
   stopScript: () => {},
   allowRunOnSave: true,
   theme: mockTheme.emotion,
@@ -76,8 +75,8 @@ describe("StatusWidget element", () => {
     expect(screen.getByTestId("stTooltipHoverTarget")).toBeInTheDocument()
   })
 
-  it("renders its tooltip when running and minimized", async () => {
-    jest.useFakeTimers()
+  it("renders its tooltip when running and minimized", () => {
+    vi.useFakeTimers()
     render(<StatusWidget {...getProps()} />)
     expect(
       screen.queryByTestId("stTooltipHoverTarget")
@@ -87,18 +86,11 @@ describe("StatusWidget element", () => {
     global.scrollY = 50
 
     render(<StatusWidget {...getProps()} />)
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("stTooltipHoverTarget")).toBeInTheDocument()
-      },
-      {
-        timeout: 550,
-      }
-    )
+    vi.runAllTimers()
+    expect(screen.getByTestId("stTooltipHoverTarget")).toBeInTheDocument()
 
     // Reset scrollY for following tests not impacted
     global.scrollY = 0
-    jest.useRealTimers()
   })
 
   it("does not render its tooltip when connected", () => {
@@ -115,8 +107,8 @@ describe("StatusWidget element", () => {
 
   it("sets and unsets the sessionEventConnection", () => {
     const sessionEventDispatcher = new SessionEventDispatcher()
-    const connectSpy = jest.fn()
-    const disconnectSpy = jest.fn()
+    const connectSpy = vi.fn()
+    const disconnectSpy = vi.fn()
     sessionEventDispatcher.onSessionEvent.connect =
       connectSpy.mockImplementation(() => ({
         disconnect: disconnectSpy,
@@ -133,22 +125,22 @@ describe("StatusWidget element", () => {
     expect(disconnectSpy).toHaveBeenCalled()
   })
 
-  it("calls stopScript when clicked", async () => {
-    jest.useFakeTimers()
-    const stopScript = jest.fn()
+  it("calls stopScript when clicked", () => {
+    vi.useFakeTimers()
+    const stopScript = vi.fn()
     render(<StatusWidget {...getProps({ stopScript })} />)
 
-    const baseButtonHeader = await screen.findByTestId("stBaseButton-header")
+    vi.runAllTimers()
+    const baseButtonHeader = screen.getByTestId("stBaseButton-header")
 
     fireEvent.click(baseButtonHeader)
 
     expect(stopScript).toHaveBeenCalled()
-    jest.useRealTimers()
   })
 
   it("shows the rerun button when script changes", () => {
     const sessionEventDispatcher = new SessionEventDispatcher()
-    const rerunScript = jest.fn()
+    const rerunScript = vi.fn()
 
     render(
       <StatusWidget
@@ -182,7 +174,7 @@ describe("StatusWidget element", () => {
 
   it("shows the always rerun button when script changes", () => {
     const sessionEventDispatcher = new SessionEventDispatcher()
-    const rerunScript = jest.fn()
+    const rerunScript = vi.fn()
 
     render(
       <StatusWidget
@@ -216,7 +208,7 @@ describe("StatusWidget element", () => {
 
   it("does not show the always rerun button when script changes", () => {
     const sessionEventDispatcher = new SessionEventDispatcher()
-    const rerunScript = jest.fn()
+    const rerunScript = vi.fn()
 
     render(
       <StatusWidget
@@ -244,7 +236,7 @@ describe("StatusWidget element", () => {
 
   it("calls always run on save", () => {
     const sessionEventDispatcher = new SessionEventDispatcher()
-    const rerunScript = jest.fn()
+    const rerunScript = vi.fn()
 
     render(
       <StatusWidget
@@ -277,15 +269,15 @@ describe("StatusWidget element", () => {
 
 describe("Running Icon", () => {
   beforeEach(() => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
-  it("renders regular running gif before New Years", async () => {
-    jest.setSystemTime(new Date("December 30, 2022 23:59:00"))
+  it("renders regular running gif before New Years", () => {
+    vi.setSystemTime(new Date("December 30, 2022 23:59:00"))
 
     render(
       <StatusWidget
@@ -293,12 +285,14 @@ describe("Running Icon", () => {
       />
     )
 
-    const icon = await screen.findByRole("img")
-    expect(icon).toHaveAttribute("src", "icon_running.gif")
+    vi.runAllTimers()
+
+    const icon = screen.queryByRole("img")
+    expect(icon).toHaveAttribute("src", "/src/assets/img/icon_running.gif")
   })
 
-  it("renders firework gif on Dec 31st", async () => {
-    jest.setSystemTime(new Date("December 31, 2022 00:00:00"))
+  it("renders firework gif on Dec 31st", () => {
+    vi.setSystemTime(new Date("December 31, 2022 00:00:00"))
 
     render(
       <StatusWidget
@@ -306,12 +300,14 @@ describe("Running Icon", () => {
       />
     )
 
-    const icon = await screen.findByRole("img")
-    expect(icon).toHaveAttribute("src", "fireworks.gif")
+    vi.runAllTimers()
+
+    const icon = screen.queryByRole("img")
+    expect(icon).toHaveAttribute("src", "/src/assets/img/fireworks.gif")
   })
 
-  it("renders firework gif on Jan 6th", async () => {
-    jest.setSystemTime(new Date("January 6, 2023 23:59:00"))
+  it("renders firework gif on Jan 6th", () => {
+    vi.setSystemTime(new Date("January 6, 2023 23:59:00"))
 
     render(
       <StatusWidget
@@ -319,12 +315,14 @@ describe("Running Icon", () => {
       />
     )
 
-    const icon = await screen.findByRole("img")
-    expect(icon).toHaveAttribute("src", "fireworks.gif")
+    vi.runAllTimers()
+
+    const icon = screen.queryByRole("img")
+    expect(icon).toHaveAttribute("src", "/src/assets/img/fireworks.gif")
   })
 
   it("renders regular running gif after New Years", async () => {
-    jest.setSystemTime(new Date("January 7, 2023 00:00:00"))
+    vi.setSystemTime(new Date("January 7, 2023 00:00:00"))
 
     render(
       <StatusWidget
@@ -332,8 +330,10 @@ describe("Running Icon", () => {
       />
     )
 
-    const icon = await screen.findByRole("img")
-    expect(icon).toHaveAttribute("src", "icon_running.gif")
+    vi.runAllTimers()
+
+    const icon = screen.queryByRole("img")
+    expect(icon).toHaveAttribute("src", "/src/assets/img/icon_running.gif")
   })
 
   it("delays render of running gif", () => {
@@ -346,9 +346,9 @@ describe("Running Icon", () => {
     let icon = screen.queryByRole("img")
     expect(icon).not.toBeInTheDocument()
 
-    jest.runAllTimers()
+    vi.runAllTimers()
 
     icon = screen.queryByRole("img")
-    expect(icon).toHaveAttribute("src", "icon_running.gif")
+    expect(icon).toHaveAttribute("src", "/src/assets/img/icon_running.gif")
   })
 })

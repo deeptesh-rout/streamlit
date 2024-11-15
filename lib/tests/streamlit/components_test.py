@@ -19,6 +19,7 @@ import json
 import os
 import threading
 import unittest
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 from unittest import mock
 from unittest.mock import MagicMock, patch
@@ -121,8 +122,8 @@ class DeclareComponentTest(unittest.TestCase):
             inner_module_component.name,
         )
 
-    def test_only_path(self):
-        """Succeed when a path is provided."""
+    def test_only_path_str(self):
+        """Succeed when a path is provided via str."""
 
         def isdir(path):
             return path == PATH or path == os.path.abspath(PATH)
@@ -132,6 +133,26 @@ class DeclareComponentTest(unittest.TestCase):
             side_effect=isdir,
         ):
             component = components.declare_component("test", path=PATH)
+
+        self.assertEqual(PATH, component.path)
+        self.assertIsNone(component.url)
+
+        self.assertEqual(
+            ComponentRegistry.instance().get_component_path(component.name),
+            component.abspath,
+        )
+
+    def test_only_path_pathlib(self):
+        """Succeed when a path is provided via Path."""
+
+        def isdir(path):
+            return path == PATH or path == os.path.abspath(PATH)
+
+        with mock.patch(
+            "streamlit.components.v1.component_registry.os.path.isdir",
+            side_effect=isdir,
+        ):
+            component = components.declare_component("test", path=Path(PATH))
 
         self.assertEqual(PATH, component.path)
         self.assertIsNone(component.url)

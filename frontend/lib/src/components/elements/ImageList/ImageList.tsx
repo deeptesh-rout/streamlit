@@ -42,7 +42,7 @@ export interface ImageListProps {
 }
 
 /**
- * @see WidthBehaviour on the Backend
+ * @see WidthBehavior on the Backend
  * @see the Image.proto file
  */
 enum WidthBehavior {

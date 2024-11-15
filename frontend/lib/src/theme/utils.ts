@@ -468,46 +468,6 @@ export function computeSpacingStyle(
     .join(" ")
 }
 
-/**
- * Return a @emotion/styled-like css dictionary to update the styles of headers, such as h1, h2, ...
- * Used for st.title, st.header, ... that are wrapped in the Sidebar or Dialogs.
- */
-export function getWrappedHeadersStyle(theme: EmotionTheme): {
-  [cssSelector: string]: { fontSize: string; fontWeight: number }
-} {
-  return {
-    "& h1": {
-      fontSize: theme.fontSizes.xl,
-      fontWeight: theme.fontWeights.bold,
-    },
-
-    "& h2": {
-      fontSize: theme.fontSizes.lg,
-      fontWeight: theme.fontWeights.bold,
-    },
-
-    "& h3": {
-      fontSize: theme.fontSizes.mdLg,
-      fontWeight: theme.fontWeights.bold,
-    },
-
-    "& h4": {
-      fontSize: theme.fontSizes.md,
-      fontWeight: theme.fontWeights.bold,
-    },
-
-    "& h5": {
-      fontSize: theme.fontSizes.sm,
-      fontWeight: theme.fontWeights.bold,
-    },
-
-    "& h6": {
-      fontSize: theme.fontSizes.twoSm,
-      fontWeight: theme.fontWeights.bold,
-    },
-  }
-}
-
 function addPxUnit(n: number): string {
   return `${n}px`
 }
@@ -536,6 +496,8 @@ export const convertRemToPx = (scssValue: string): number => {
     // TODO(lukasmasuch): We might want to somehow cache this value at some point.
     // However, I did experimented with the performance of calling this, and
     // it seems not like a big deal to call it many times.
-    remValue * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    remValue *
+    // We fallback to 16px if the fontSize is not defined (should only happen in tests)
+    (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16)
   )
 }

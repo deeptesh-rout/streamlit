@@ -6,6 +6,10 @@ query-filters:
       id: py/ineffectual-statement
   - exclude:
       id: py/import-and-import-from
+  - exclude:
+      id: py/cyclic-import
+  - exclude:
+      id: py/unsafe-cyclic-import
 paths:
   - lib/streamlit
   - frontend/lib/src

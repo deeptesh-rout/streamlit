@@ -23,7 +23,6 @@ import {
   waitFor,
   within,
 } from "@testing-library/react"
-import "@testing-library/jest-dom"
 import { PLACEMENT, ToasterContainer } from "baseui/toast"
 
 import { render } from "@streamlit/lib/src/test_util"

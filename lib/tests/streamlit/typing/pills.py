@@ -26,6 +26,14 @@ if TYPE_CHECKING:
 
     options: list[int] = [1, 2, 3]
     assert_type(
+        pills("foo", options),
+        Union[int, None],
+    )
+    assert_type(
+        pills("foo", options, default=1),
+        Union[int, None],
+    )
+    assert_type(
         pills("foo", options, selection_mode="single"),
         Union[int, None],
     )

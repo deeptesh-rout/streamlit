@@ -23,11 +23,7 @@ from e2e_playwright.shared.app_utils import (
 def test_shows_clear_cache_dialog_when_c_is_pressed(app: Page):
     app.keyboard.type("c")
     expect(app.get_by_role("dialog")).to_be_visible()
-    expect(app.get_by_role("dialog")).to_have_text(
-        """
-Clear cachesAre you sure you want to clear the app's function caches?This will remove all cached entries from functions using @st.cache_data and @st.cache_resource.CancelClear caches
-    """
-    )
+    expect(app.get_by_role("dialog")).to_contain_text("Clear caches")
 
 
 modifier_keys = ["Control", "Meta"]

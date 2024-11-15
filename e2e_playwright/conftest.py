@@ -242,11 +242,11 @@ def app_server(
     streamlit_proc.start()
     if not wait_for_app_server_to_start(app_port):
         streamlit_stdout = streamlit_proc.terminate()
-        print(streamlit_stdout)
+        print(streamlit_stdout, flush=True)
         raise RuntimeError("Unable to start Streamlit app")
     yield streamlit_proc
     streamlit_stdout = streamlit_proc.terminate()
-    print(streamlit_stdout)
+    print(streamlit_stdout, flush=True)
 
 
 @pytest.fixture(scope="function")
@@ -314,6 +314,8 @@ def iframed_app(page: Page, app_port: int) -> IframedPage:
         f"default-src 'none'; worker-src blob:; form-action 'none'; "
         f"connect-src ws://localhost:{app_port}/_stcore/stream "
         f"http://localhost:{app_port}/_stcore/allowed-message-origins "
+        f"http://localhost:{app_port}/_stcore/upload_file/ "
+        f"https://some-prefix.com/somethingelse/_stcore/upload_file/ "
         f"http://localhost:{app_port}/_stcore/host-config "
         f"http://localhost:{app_port}/_stcore/health; script-src 'unsafe-inline' "
         f"'unsafe-eval' {app_url}/static/js/; style-src 'unsafe-inline' "
@@ -504,6 +506,42 @@ class ImageCompareFunction(Protocol):
         """
 
 
+@pytest.fixture(scope="session", autouse=True)
+def delete_output_dir(pytestconfig: Any) -> None:
+    # Overwriting the default delete_output_dir fixture from pytest-playwright:
+    # There seems to be a bug with the combination of pytest-playwright, xdist,
+    # and pytest-rerunfailures where the output dir is deleted when it shouldn't be.
+    # To prevent this issue, we are not deleting the output dir when running with
+    # reruns and xdist.
+
+    uses_xdist = (
+        pytestconfig.getoption("workerinput", None) or os.getenv("PYTEST_XDIST_WORKER"),
+    )
+    uses_reruns = pytestconfig.getoption("reruns", None)
+
+    if not (uses_xdist and uses_reruns):
+        # Delete the output folder. Uses the same logic as the default
+        # delete_output_dir fixture from pytest-playwright:
+        # https://github.com/microsoft/playwright-pytest/blob/fb51327390ccbd3561c1777499934eb88296f1bf/pytest-playwright/pytest_playwright/pytest_playwright.py#L68
+        output_dir = pytestconfig.getoption("--output")
+        if os.path.exists(output_dir):
+            try:
+                shutil.rmtree(output_dir)
+            except FileNotFoundError:
+                # When running in parallel, another thread may have already deleted the files
+                pass
+            except OSError as error:
+                if error.errno != 16:
+                    raise
+                # We failed to remove folder, might be due to the whole folder being mounted inside a container:
+                #   https://github.com/microsoft/playwright/issues/12106
+                #   https://github.com/microsoft/playwright-python/issues/1781
+                # Do a best-effort to remove all files inside of it instead.
+                entries = os.listdir(output_dir)
+                for entry in entries:
+                    shutil.rmtree(entry)
+
+
 @pytest.fixture(scope="session")
 def output_folder(pytestconfig: Any) -> Path:
     """Fixture returning the directory that is used for all test failures information.
@@ -640,6 +678,7 @@ def assert_snapshot(
             # Update this in updates folder:
             snapshot_updates_file_path.parent.mkdir(parents=True, exist_ok=True)
             snapshot_updates_file_path.write_bytes(img_bytes)
+
             test_failure_messages.append(
                 f"Snapshot matching for {snapshot_file_name} failed. "
                 f"Expected size: {img_b.size}, actual size: {img_a.size}. "

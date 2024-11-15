@@ -16,8 +16,8 @@
 
 import React, { ReactElement } from "react"
 
-import "@testing-library/jest-dom"
 import ReactMarkdown from "react-markdown"
+// eslint-disable-next-line testing-library/no-manual-cleanup
 import { cleanup, screen } from "@testing-library/react"
 import { transparentize } from "color2k"
 
@@ -332,7 +332,11 @@ describe("StreamlitMarkdown", () => {
     render(<StreamlitMarkdown source={source} allowHTML={false} isToast />)
 
     const textTag = screen.getByText("Here is some toast text")
-    expect(textTag).toHaveStyle("font-size: 14px")
+    expect(textTag).toBeInTheDocument()
+
+    // Use the smaller font size for the markdown container
+    const markdownContainer = screen.getByTestId("stMarkdownContainer")
+    expect(markdownContainer).toHaveStyle("font-size: 14px")
   })
 
   it("renders regular text sizing when largerLabel is true", () => {
@@ -375,7 +379,7 @@ describe("StreamlitMarkdown", () => {
       ["orange", colors.orange100],
       ["gray", colors.gray80],
       ["grey", colors.gray80],
-      ["rainbow", "transparent"],
+      ["rainbow", "rgba(0, 0, 0, 0)"],
     ])
 
     colorMapping.forEach(function (style, color) {
@@ -412,11 +416,9 @@ describe("StreamlitMarkdown", () => {
   it("properly adds background colors", () => {
     const redbg = transparentize(colors.red80, 0.9)
     const orangebg = transparentize(colors.yellow70, 0.9)
-    const yellowbg = transparentize(colors.yellow70, 0.9)
     const greenbg = transparentize(colors.green70, 0.9)
     const bluebg = transparentize(colors.blue70, 0.9)
     const violetbg = transparentize(colors.purple70, 0.9)
-    const purplebg = transparentize(colors.purple90, 0.9)
     const graybg = transparentize(colors.gray70, 0.9)
 
     const colorMapping = new Map([
@@ -427,6 +429,31 @@ describe("StreamlitMarkdown", () => {
       ["orange", orangebg],
       ["gray", graybg],
       ["grey", graybg],
+    ])
+
+    colorMapping.forEach(function (style, color) {
+      const source = `:${color}-background[text]`
+      render(<StreamlitMarkdown source={source} allowHTML={false} />)
+      const markdown = screen.getByText("text")
+      const tagName = markdown.nodeName.toLowerCase()
+      expect(tagName).toBe("span")
+      expect(markdown).toHaveStyle(`background-color: ${style}`)
+
+      // Removes rendered StreamlitMarkdown component before next case run
+      cleanup()
+    })
+  })
+
+  it("properly adds rainbow background color", () => {
+    const redbg = transparentize(colors.red80, 0.9)
+    const orangebg = transparentize(colors.yellow70, 0.9)
+    const yellowbg = transparentize(colors.yellow70, 0.9)
+    const greenbg = transparentize(colors.green70, 0.9)
+    const bluebg = transparentize(colors.blue70, 0.9)
+    const violetbg = transparentize(colors.purple70, 0.9)
+    const purplebg = transparentize(colors.purple90, 0.9)
+
+    const colorMapping = new Map([
       [
         "rainbow",
         `linear-gradient(to right, ${redbg}, ${orangebg}, ${yellowbg}, ${greenbg}, ${bluebg}, ${violetbg}, ${purplebg})`,
@@ -439,7 +466,7 @@ describe("StreamlitMarkdown", () => {
       const markdown = screen.getByText("text")
       const tagName = markdown.nodeName.toLowerCase()
       expect(tagName).toBe("span")
-      expect(markdown).toHaveStyle(`background-color: ${style}`)
+      expect(markdown).toHaveStyle(`background: ${style}`)
 
       // Removes rendered StreamlitMarkdown component before next case run
       cleanup()

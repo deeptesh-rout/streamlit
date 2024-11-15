@@ -28,7 +28,7 @@ import { DeckGlJsonChart as DeckGlJsonChartProto } from "@streamlit/lib/src/prot
 import {
   useBasicWidgetClientState,
   ValueWithSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
 import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import { useRequiredContext } from "@streamlit/lib/src/hooks/useRequiredContext"
 import { ElementFullscreenContext } from "@streamlit/lib/src/components/shared/ElementFullscreen/ElementFullscreenContext"

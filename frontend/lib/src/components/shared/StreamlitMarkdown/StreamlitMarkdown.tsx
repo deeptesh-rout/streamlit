@@ -51,6 +51,7 @@ import IsSidebarContext from "@streamlit/lib/src/components/core/IsSidebarContex
 import ErrorBoundary from "@streamlit/lib/src/components/shared/ErrorBoundary"
 import { InlineTooltipIcon } from "@streamlit/lib/src/components/shared/TooltipIcon"
 import {
+  EmotionTheme,
   getMarkdownBgColors,
   getMarkdownTextColors,
 } from "@streamlit/lib/src/theme"
@@ -158,6 +159,7 @@ const HeaderActionElements: FunctionComponent<HeadingActionElements> = ({
   help,
   hideAnchor,
 }) => {
+  const theme: EmotionTheme = useTheme()
   if (!help && hideAnchor) {
     return <></>
   }
@@ -167,7 +169,7 @@ const HeaderActionElements: FunctionComponent<HeadingActionElements> = ({
       {help && <InlineTooltipIcon content={help} />}
       {elementId && !hideAnchor && (
         <StyledLinkIcon href={`#${elementId}`}>
-          <LinkIcon size="18" />
+          <LinkIcon size={theme.iconSizes.base} />
         </StyledLinkIcon>
       )}
     </StyledHeadingActionElements>
@@ -358,8 +360,8 @@ export function RenderedMarkdown({
     h6: CustomHeading,
     ...(overrideComponents || {}),
   }
-  const theme = useTheme()
-  const { red, orange, yellow, green, blue, violet, purple, gray } =
+  const theme: EmotionTheme = useTheme()
+  const { red, orange, yellow, green, blue, violet, purple, gray, primary } =
     getMarkdownTextColors(theme)
   const {
     redbg,
@@ -370,6 +372,7 @@ export function RenderedMarkdown({
     violetbg,
     purplebg,
     graybg,
+    primarybg,
   } = getMarkdownBgColors(theme)
   const colorMapping = new Map(
     Object.entries({
@@ -380,6 +383,7 @@ export function RenderedMarkdown({
       orange: `color: ${orange}`,
       gray: `color: ${gray}`,
       grey: `color: ${gray}`,
+      primary: `color: ${primary}`,
       // Gradient from red, orange, yellow, green, blue, violet, purple
       rainbow: `color: transparent; background-clip: text; -webkit-background-clip: text; background-image: linear-gradient(to right,
         ${red}, ${orange}, ${yellow}, ${green}, ${blue}, ${violet}, ${purple});`,
@@ -390,6 +394,7 @@ export function RenderedMarkdown({
       "orange-background": `background-color: ${orangebg}`,
       "gray-background": `background-color: ${graybg}`,
       "grey-background": `background-color: ${graybg}`,
+      "primary-background": `background-color: ${primarybg}`,
       // Gradient from red, orange, yellow, green, blue, violet, purple
       "rainbow-background": `background: linear-gradient(to right,
         ${redbg}, ${orangebg}, ${yellowbg}, ${greenbg}, ${bluebg}, ${violetbg}, ${purplebg});`,
@@ -617,11 +622,12 @@ const StreamlitMarkdown: React.FC<Props> = ({
   isToast,
 }) => {
   const isInSidebar = useContext(IsSidebarContext)
+  const isInDialog = useContext(IsDialogContext)
 
   return (
     <StyledStreamlitMarkdown
       isCaption={Boolean(isCaption)}
-      isInSidebar={isInSidebar}
+      isInSidebarOrDialog={isInSidebar || isInDialog}
       isLabel={isLabel}
       boldLabel={boldLabel}
       largerLabel={largerLabel}

@@ -29,7 +29,7 @@ def test_text_area_widget_rendering(
 ):
     """Test that the st.text_area widgets are correctly rendered via screenshot matching."""
     text_area_widgets = themed_app.get_by_test_id("stTextArea")
-    expect(text_area_widgets).to_have_count(12)
+    expect(text_area_widgets).to_have_count(14)
 
     assert_snapshot(text_area_widgets.nth(0), name="st_text_area-default")
     assert_snapshot(text_area_widgets.nth(1), name="st_text_area-value_some_text")
@@ -53,7 +53,7 @@ def test_help_tooltip_works(app: Page):
 def test_text_area_has_correct_initial_values(app: Page):
     """Test that st.text_area has the correct initial values."""
     markdown_elements = app.get_by_test_id("stMarkdown")
-    expect(markdown_elements).to_have_count(13)
+    expect(markdown_elements).to_have_count(15)
 
     expected = [
         "value 1: ",
@@ -69,10 +69,18 @@ def test_text_area_has_correct_initial_values(app: Page):
         "value 10: 1234",
         "value 11: default text",
         "value 12: default text",
+        "text area 13 (value from state) - value: xyz",
+        "text area 14 (value from form) - value: ",
     ]
 
     for markdown_element, expected_text in zip(markdown_elements.all(), expected):
         expect(markdown_element).to_have_text(expected_text, use_inner_text=True)
+
+
+def test_text_area_shows_state_value(app: Page):
+    expect(
+        app.get_by_test_id("stTextArea").nth(12).locator("textarea").first
+    ).to_have_text("xyz")
 
 
 def test_text_area_shows_instructions_when_dirty(
@@ -229,6 +237,17 @@ def test_calls_callback_on_change(app: Page):
     )
     expect(app.get_by_test_id("stMarkdown").nth(9)).to_have_text(
         "text area changed: False",
+        use_inner_text=True,
+    )
+
+
+def test_text_area_in_form_with_submit_by_enter(app: Page):
+    """Test that text area in form can be submitted by pressing Command+Enter"""
+    text_area_field = app.get_by_test_id("stTextArea").nth(13).locator("textarea").first
+    text_area_field.fill("hello world")
+    text_area_field.press("Control+Enter")
+    expect(app.get_by_test_id("stMarkdown").nth(14)).to_have_text(
+        "text area 14 (value from form) - value: hello world",
         use_inner_text=True,
     )
 

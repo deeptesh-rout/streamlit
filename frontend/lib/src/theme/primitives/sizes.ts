@@ -45,4 +45,9 @@ export const sizes = {
   chatAvatarSize: "2rem",
   // Used for the clear icon used by some Input elements
   clearIconSize: "1.5em",
+  numberInputControlsWidth: "2rem",
+  emptyDropdownHeight: "5.625rem",
+  dropdownItemHeight: "2.5rem",
+  maxDropdownHeight: "18.75rem",
+  appDefaultBottomPadding: "3.5rem",
 }

@@ -130,6 +130,10 @@ describe("getKeyFromId", () => {
       input: "$$ID-899e9b72e1539f21f8e82565d36609d0-None",
       expected: undefined,
     },
+    {
+      input: "$$ID-899e9b72e1539f21f8e82565d36609d0",
+      expected: undefined,
+    },
     { input: "helloWorld", expected: undefined },
     {
       input: "$$ID-899e9b72e1539f21f8e82565d36609d0-first container",
@@ -138,6 +142,10 @@ describe("getKeyFromId", () => {
     {
       input: "$$ID-foo-bar",
       expected: "bar",
+    },
+    {
+      input: "$$ID-899e9b72e1539f21f8e82565d36609d0-bar-baz",
+      expected: "bar-baz",
     },
   ]
 

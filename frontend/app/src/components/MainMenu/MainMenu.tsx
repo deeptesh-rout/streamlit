@@ -21,7 +21,6 @@ import { PLACEMENT, StatefulPopover } from "baseui/popover"
 import { MoreVert } from "@emotion-icons/material-rounded"
 import { useTheme } from "@emotion/react"
 
-import { notNullOrUndefined } from "@streamlit/lib/src/util/utils"
 import {
   BaseButton,
   BaseButtonKind,
@@ -30,6 +29,7 @@ import {
   Icon,
   IGuestToHostMessage,
   IMenuItem,
+  notNullOrUndefined,
   PageConfig,
 } from "@streamlit/lib"
 import ScreenCastRecorder from "@streamlit/app/src/util/ScreenCastRecorder"
@@ -205,8 +205,9 @@ function buildMenuItemComponent(
 }
 
 const SubMenu = (props: SubMenuProps): ReactElement => {
-  const { colors, sizes }: EmotionTheme = useTheme()
+  const { colors, sizes, spacing }: EmotionTheme = useTheme()
   const StyledMenuItemType = props.isDevMenu ? StyledDevItem : StyledCoreItem
+
   return (
     <StatefulMenu
       items={props.menuItems}
@@ -227,6 +228,9 @@ const SubMenu = (props: SubMenuProps): ReactElement => {
             borderTopRadius: 0,
             borderLeftRadius: 0,
             borderRightRadius: 0,
+
+            paddingBottom: spacing.sm,
+            paddingTop: spacing.sm,
 
             ":focus": {
               outline: "none",

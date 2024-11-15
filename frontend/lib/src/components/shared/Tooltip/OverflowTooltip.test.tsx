@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { fireEvent, render, screen } from "@testing-library/react"
 
 import { mockTheme } from "@streamlit/lib/src/mocks/mockTheme"
@@ -27,11 +26,11 @@ import { Placement } from "./Tooltip"
 
 describe("Tooltip component", () => {
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it("should render when it fits onscreen", () => {
-    const useRefSpy = jest.spyOn(React, "useRef").mockReturnValue({
+    const useRefSpy = vi.spyOn(React, "useRef").mockReturnValue({
       current: {
         // Pretend the body is greater than its onscreen area.
         offsetWidth: 200,
@@ -39,7 +38,7 @@ describe("Tooltip component", () => {
       },
     })
 
-    jest.spyOn(React, "useEffect").mockImplementation(f => f())
+    vi.spyOn(React, "useEffect").mockImplementation(f => f())
 
     render(
       <OverflowTooltip
@@ -65,7 +64,7 @@ describe("Tooltip component", () => {
   })
 
   it("should render when ellipsized", async () => {
-    const useRefSpy = jest.spyOn(React, "useRef").mockReturnValue({
+    const useRefSpy = vi.spyOn(React, "useRef").mockReturnValue({
       current: {
         // Pretend the body is smaller than its onscreen area.
         offsetWidth: 100,
@@ -73,7 +72,7 @@ describe("Tooltip component", () => {
       },
     })
 
-    jest.spyOn(React, "useEffect").mockImplementation(f => f())
+    vi.spyOn(React, "useEffect").mockImplementation(f => f())
 
     render(
       <OverflowTooltip

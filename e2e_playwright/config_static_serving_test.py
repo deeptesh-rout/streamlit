@@ -14,7 +14,10 @@
 
 from playwright.sync_api import Page, expect
 
-from e2e_playwright.shared.app_utils import get_markdown
+from e2e_playwright.shared.app_utils import (
+    get_markdown,
+    wait_for_all_images_to_be_loaded,
+)
 
 
 def test_should_serve_existing_asset(app: Page, app_port: int):
@@ -41,7 +44,5 @@ def test_static_served_image_embedded_in_markdown(app: Page):
     """Test that an image served via the static serving can be embedded into markdown."""
     markdown_element = get_markdown(app, "Images served via static serving:")
     image_element = markdown_element.locator("img")
-
     expect(image_element).to_be_visible()
-    # Check that the image gets loaded correctly
-    app.expect_response("**/streamlit-logo.png")
+    wait_for_all_images_to_be_loaded(app)

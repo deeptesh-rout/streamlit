@@ -23,7 +23,7 @@ import { labelVisibilityProtoValueToEnum } from "@streamlit/lib/src/util/utils"
 import {
   useBasicWidgetState,
   ValueWithSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
 
 export interface Props {
   disabled: boolean

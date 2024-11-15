@@ -80,14 +80,6 @@ export const StyledMenuItem = styled.ul<ItemProps>(
           cursor: "not-allowed",
         }
       : {
-          "&:active": {
-            backgroundColor: theme.colors.primary,
-            color: theme.colors.white,
-            outline: "none",
-            [StyledMenuItemShortcut as any]: {
-              color: theme.colors.white,
-            },
-          },
           "&:focus": {
             backgroundColor: theme.colors.primary,
             color: theme.colors.white,
@@ -103,6 +95,7 @@ export const StyledMenuItem = styled.ul<ItemProps>(
       display: "block",
       flexDirection: "row",
       alignItems: "flex-start",
+      padding: theme.spacing.none,
       cursor: "pointer",
       ...(recordingStyles || {}),
       ...disabledStyles,
