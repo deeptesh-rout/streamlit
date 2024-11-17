@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+// Remove once support for URLPattern is added to all major browsers
+// https://caniuse.com/mdn-api_urlpattern
+import "urlpattern-polyfill"
+
 import take from "lodash/take"
 
 import { IS_DEV_ENV, WEBSOCKET_PORT_DEV } from "@streamlit/lib/src/baseconsts"
@@ -147,14 +151,19 @@ function isHttps(): boolean {
  * ignored.
  */
 export function isValidOrigin(
-  allowedOrigin: string,
+  allowedOriginPattern: string,
   testOrigin: string
 ): boolean {
-  let allowedUrl: URL
+  let allowedUrlPattern: URLPattern
+  let allowedPortLessPattern: URLPattern
   let testUrl: URL
 
   try {
-    allowedUrl = new URL(allowedOrigin)
+    allowedUrlPattern = new URLPattern(allowedOriginPattern)
+    allowedPortLessPattern = new URLPattern({
+      protocol: allowedUrlPattern.protocol,
+      hostname: allowedUrlPattern.hostname,
+    })
     testUrl = new URL(testOrigin)
   } catch {
     return false
@@ -163,32 +172,11 @@ export function isValidOrigin(
   // Allow localhost w/ any port for testing of host <-> guest communication
   // using hostframe.html (facilitates manual & e2e testing)
   if (
-    allowedUrl.protocol !== testUrl.protocol ||
-    (allowedUrl.port !== testUrl.port && testUrl.hostname !== "localhost")
+    testUrl.hostname === "localhost" &&
+    allowedPortLessPattern.test(testUrl)
   ) {
-    return false
+    return true
   }
 
-  const { hostname: pattern } = allowedUrl
-  const { hostname } = testUrl
-
-  if (pattern === hostname) return true
-
-  // Web browsers will encode the wildcard character in the pattern being
-  // tested into %2A when parsing allowedOrigin into a URL, so we either have
-  // to convert it back here or test against "%2A" below. There's unfortunately
-  // no great way to write a unit test for this because the behavior differs
-  // between nodejs test environments and a real browser :(
-  const splitPattern = pattern.replace(/%2A/g, "*").split(".")
-  const splitHostname = hostname.split(".")
-
-  if (splitPattern.length !== splitHostname.length) return false
-
-  return splitPattern.every((el, index) => {
-    if (el === "*") {
-      return true
-    }
-
-    return el === splitHostname[index]
-  })
+  return allowedUrlPattern.test(testUrl)
 }

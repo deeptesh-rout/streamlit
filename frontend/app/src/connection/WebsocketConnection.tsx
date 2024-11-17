@@ -19,11 +19,6 @@ import React, { Fragment } from "react"
 import styled from "@emotion/styled"
 import axios from "axios"
 
-import { StyledPre } from "@streamlit/lib/src/components/elements/CodeBlock/styled-components"
-import {
-  isNullOrUndefined,
-  notNullOrUndefined,
-} from "@streamlit/lib/src/util/utils"
 import {
   BackMsg,
   BaseUriParts,
@@ -33,13 +28,16 @@ import {
   ForwardMsgCache,
   IBackMsg,
   IHostConfigResponse,
+  isNullOrUndefined,
   logError,
   logMessage,
   logWarning,
+  notNullOrUndefined,
   PerformanceEvents,
   Resolver,
   SessionInfo,
   StreamlitEndpoints,
+  StreamlitMarkdown,
 } from "@streamlit/lib"
 import { ConnectionState } from "@streamlit/app/src/connection/ConnectionState"
 
@@ -655,17 +653,14 @@ export function doInitPings(
     const uri = new URL(buildHttpUri(uriParts, ""))
 
     if (uri.hostname === "localhost") {
-      retry(
-        <Fragment>
-          <p>
-            Is Streamlit still running? If you accidentally stopped Streamlit,
-            just restart it in your terminal:
-          </p>
-          <StyledPre>
-            <StyledBashCode>streamlit run yourscript.py</StyledBashCode>
-          </StyledPre>
-        </Fragment>
-      )
+      const markdownMessage = `
+Is Streamlit still running? If you accidentally stopped Streamlit, just restart it in your terminal:
+
+\`\`\`bash
+streamlit run yourscript.py
+\`\`\`
+      `
+      retry(<StreamlitMarkdown source={markdownMessage} allowHTML={false} />)
     } else {
       retry("Connection failed with status 0.")
     }

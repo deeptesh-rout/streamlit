@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import React from "react"
-
-import { screen } from "@testing-library/react"
-
-import { render } from "@streamlit/lib"
-
-import EventContainer from "./EventContainer"
-
-describe("EventContainer Component", () => {
-  test("renders Toast Container", () => {
-    render(<EventContainer scriptRunId="123" />)
-
-    const toastContainer = screen.getByTestId("stToastContainer")
-    expect(toastContainer).toBeInTheDocument()
-    expect(toastContainer).toHaveClass("stToastContainer")
-  })
-})
+module.exports = {
+  extends: ["../.eslintrc.js"], // Extend from the root configuration
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["@streamlit/lib/src/*"],
+            message:
+              "Direct imports from '@streamlit/lib/src/*' are not allowed. Please import from '@streamlit/lib' instead.",
+          },
+        ],
+      },
+    ],
+  },
+}

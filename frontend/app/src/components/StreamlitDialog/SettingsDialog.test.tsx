@@ -19,9 +19,9 @@ import React from "react"
 import { userEvent } from "@testing-library/user-event"
 import { screen } from "@testing-library/react"
 
-import { customRenderLibContext } from "@streamlit/lib/src/test_util"
 import {
   createPresetThemes,
+  customRenderLibContext,
   darkTheme,
   LibContextProps,
   lightTheme,

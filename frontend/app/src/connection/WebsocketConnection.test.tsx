@@ -31,10 +31,8 @@ import {
   Args,
   CORS_ERROR_MESSAGE_DOCUMENTATION_LINK,
   doInitPings,
-  StyledBashCode,
   WebsocketConnection,
 } from "@streamlit/app/src/connection/WebsocketConnection"
-import { StyledPre } from "@streamlit/lib/src/components/elements/CodeBlock/styled-components"
 
 const MOCK_ALLOWED_ORIGINS_CONFIG = {
   allowedOrigins: ["list", "of", "allowed", "origins"],
@@ -283,18 +281,6 @@ describe("doInitPings", () => {
       },
     }
 
-    const NoResponse = (
-      <Fragment>
-        <p>
-          Is Streamlit still running? If you accidentally stopped Streamlit,
-          just restart it in your terminal:
-        </p>
-        <StyledPre>
-          <StyledBashCode>streamlit run yourscript.py</StyledBashCode>
-        </StyledPre>
-      </Fragment>
-    )
-
     axios.get = vi
       .fn()
       // First Connection attempt
@@ -314,7 +300,7 @@ describe("doInitPings", () => {
 
     expect(MOCK_PING_DATA_LOCALHOST.retryCallback).toHaveBeenCalledWith(
       1,
-      NoResponse,
+      expect.anything(),
       expect.anything()
     )
   })

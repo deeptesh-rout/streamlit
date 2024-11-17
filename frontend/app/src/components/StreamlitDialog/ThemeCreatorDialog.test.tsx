@@ -19,6 +19,7 @@ import React from "react"
 import { fireEvent, screen, within } from "@testing-library/react"
 
 import {
+  customRenderLibContext,
   CustomThemeConfig,
   darkTheme,
   fonts,
@@ -28,7 +29,6 @@ import {
   toThemeInput,
 } from "@streamlit/lib"
 import { MetricsManager } from "@streamlit/app/src/MetricsManager"
-import { customRenderLibContext } from "@streamlit/lib/src/test_util"
 
 import ThemeCreatorDialog, {
   Props as ThemeCreatorDialogProps,

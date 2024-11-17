@@ -119,6 +119,15 @@ function TimeInput({
             }),
           },
 
+          DropdownListItem: {
+            style: () => ({
+              paddingRight: theme.spacing.lg,
+              paddingLeft: theme.spacing.lg,
+              paddingTop: theme.spacing.sm,
+              paddingBottom: theme.spacing.sm,
+            }),
+          },
+
           // Nudge the dropdown menu by 1px so the focus state doesn't get cut off
           Popover: {
             props: {

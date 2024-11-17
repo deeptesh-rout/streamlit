@@ -31,6 +31,7 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
+  StreamlitMarkdown,
   ThemeConfig,
   UISelectbox,
 } from "@streamlit/lib"
@@ -43,7 +44,6 @@ import {
   StyledFullRow,
   StyledHeader,
   StyledLabel,
-  StyledSmall,
 } from "./styled-components"
 import { UserSettings } from "./UserSettings"
 
@@ -150,10 +150,11 @@ export const SettingsDialog: FC<Props> = memo(function SettingsDialog({
                   />{" "}
                   Run on save
                 </label>
-                <StyledSmall>
-                  Automatically updates the app when the underlying code is
-                  updated.
-                </StyledSmall>
+                <StreamlitMarkdown
+                  source="Automatically updates the app when the underlying code is updated."
+                  allowHTML={false}
+                  isCaption
+                />
               </StyledFullRow>
             </React.Fragment>
           )}
@@ -169,9 +170,11 @@ export const SettingsDialog: FC<Props> = memo(function SettingsDialog({
               />{" "}
               Wide mode
             </label>
-            <StyledSmall>
-              Turn on to make this app occupy the entire width of the screen
-            </StyledSmall>
+            <StreamlitMarkdown
+              source=" Turn on to make this app occupy the entire width of the screen."
+              allowHTML={false}
+              isCaption
+            />
           </StyledFullRow>
 
           {!!libContext.availableThemes.length && (

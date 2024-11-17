@@ -64,11 +64,29 @@ const VirtualDropdown = React.forwardRef<any, any>((props, ref) => {
     const childrenProps = children[0] ? children[0].props : {}
     return (
       <StyledList
-        $style={{ height: theme.sizes.emptyDropdownHeight }}
+        $style={{
+          height: theme.sizes.emptyDropdownHeight,
+          paddingBottom: theme.spacing.none,
+          paddingTop: theme.spacing.none,
+          paddingLeft: theme.spacing.none,
+          paddingRight: theme.spacing.none,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
         ref={ref}
         data-testid="stSelectboxVirtualDropdownEmpty"
       >
-        <StyledEmptyState {...childrenProps} />
+        <StyledEmptyState
+          $style={{
+            paddingBottom: theme.spacing.none,
+            paddingTop: theme.spacing.none,
+            paddingLeft: theme.spacing.none,
+            paddingRight: theme.spacing.none,
+            color: theme.colors.fadedText60,
+          }}
+          {...childrenProps}
+        />
       </StyledList>
     )
   }

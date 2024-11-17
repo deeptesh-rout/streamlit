@@ -16,7 +16,6 @@
 
 import axios, { AxiosRequestConfig, AxiosResponse, CancelToken } from "axios"
 
-import { notNullOrUndefined } from "@streamlit/lib/src/util/utils"
 import {
   BaseUriParts,
   buildHttpUri,
@@ -25,6 +24,7 @@ import {
   IAppPage,
   JWTHeader,
   makePath,
+  notNullOrUndefined,
   StreamlitEndpoints,
 } from "@streamlit/lib"
 

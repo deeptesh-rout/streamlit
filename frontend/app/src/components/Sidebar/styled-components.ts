@@ -17,8 +17,7 @@
 import styled from "@emotion/styled"
 import { transparentize } from "color2k"
 
-import { StyledMaterialIcon } from "@streamlit/lib/src/components/shared/Icon/Material/styled-components"
-import { hasLightBackgroundColor } from "@streamlit/lib/src/theme"
+import { hasLightBackgroundColor } from "@streamlit/lib"
 
 // Check for custom text color & handle colors in SidebarNav accordingly
 const conditionalCustomColor = (
@@ -101,6 +100,35 @@ export const StyledSidebarNavLinkContainer = styled.div({
   flexDirection: "column",
 })
 
+export interface StyledSidebarNavIconProps {
+  isActive: boolean
+}
+
+export const StyledSidebarNavIcon = styled.span<StyledSidebarNavIconProps>(
+  ({ theme, isActive }) => {
+    const svgColor = conditionalCustomColor(
+      theme,
+      theme.colors.fadedText60,
+      theme.colors.navIconColor
+    )
+    const activeSvgColor = conditionalCustomColor(
+      theme,
+      theme.colors.bodyText,
+      theme.colors.navActiveTextColor
+    )
+
+    return {
+      display: "inline-flex",
+      span: {
+        color: isActive ? activeSvgColor : svgColor,
+        fontWeight: isActive
+          ? theme.fontWeights.bold
+          : theme.fontWeights.normal,
+      },
+    }
+  }
+)
+
 export interface StyledSidebarNavLinkProps {
   isActive: boolean
 }
@@ -111,16 +139,6 @@ export const StyledSidebarNavLink = styled.a<StyledSidebarNavLinkProps>(
       theme,
       theme.colors.bodyText,
       theme.colors.navTextColor
-    )
-    const svgColor = conditionalCustomColor(
-      theme,
-      theme.colors.fadedText60,
-      theme.colors.navIconColor
-    )
-    const activeSvgColor = conditionalCustomColor(
-      theme,
-      theme.colors.bodyText,
-      theme.colors.navActiveTextColor
     )
 
     const defaultPageLinkStyles = {
@@ -145,13 +163,6 @@ export const StyledSidebarNavLink = styled.a<StyledSidebarNavLinkProps>(
 
       color,
       backgroundColor: isActive ? theme.colors.darkenedBgMix25 : "transparent",
-
-      [StyledMaterialIcon as any]: {
-        color: isActive ? activeSvgColor : svgColor,
-        fontWeight: isActive
-          ? theme.fontWeights.bold
-          : theme.fontWeights.normal,
-      },
 
       "&:hover": {
         backgroundColor: transparentize(theme.colors.darkenedBgMix25, 0.1),

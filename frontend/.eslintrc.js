@@ -72,6 +72,8 @@ module.exports = {
     "no-var": "error",
     // Prevent unintentional use of `console.log`
     "no-console": "error",
+    // Prevent unintentional use of `debugger`
+    "no-debugger": "error",
     // We don't use PropTypes
     "react/prop-types": "off",
     // We don't escape entities
