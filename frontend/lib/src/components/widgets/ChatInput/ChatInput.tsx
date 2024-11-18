@@ -579,7 +579,7 @@ function ChatInput({
                   resize: "none",
                   "::placeholder": {
                     opacity: "0.7",
-                  }
+                  },
                   height: isInputExtended
                     ? `${scrollHeight + ROUNDING_OFFSET}px`
                     : "auto",
