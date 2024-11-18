@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -27,15 +26,15 @@ import { WidgetStateManager as ElementStateManager } from "@streamlit/lib/src/Wi
 import Video, { VideoProps } from "./Video"
 
 describe("Video Element", () => {
-  const buildMediaURL = jest.fn().mockReturnValue("https://mock.media.url")
+  const buildMediaURL = vi.fn().mockReturnValue("https://mock.media.url")
 
-  const mockSetElementState = jest.fn()
-  const mockGetElementState = jest.fn()
+  const mockSetElementState = vi.fn()
+  const mockGetElementState = vi.fn()
   const elementMgrMock = {
     setElementState: mockSetElementState,
     getElementState: mockGetElementState,
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }
 
   const getProps = (elementProps: Partial<VideoProto> = {}): VideoProps => ({
@@ -51,7 +50,7 @@ describe("Video Element", () => {
   })
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it("renders without crashing", () => {
@@ -89,7 +88,7 @@ describe("Video Element", () => {
   })
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockGetElementState.mockReturnValue(false) // By default, assume autoplay is not prevented
   })
 
@@ -135,7 +134,12 @@ describe("Video Element", () => {
         type: VideoProto.Type.YOUTUBE_IFRAME,
       })
       render(<Video {...props} />)
-      expect(document.body).toMatchSnapshot()
+      const videoElement = screen.getByTestId("stVideo")
+      expect(videoElement).toBeInstanceOf(HTMLIFrameElement)
+      expect(videoElement).toHaveAttribute(
+        "src",
+        "https://www.w3schools.com/html/mov_bbb.mp4"
+      )
     })
 
     it("renders a youtube iframe with an starting time", () => {
@@ -144,7 +148,12 @@ describe("Video Element", () => {
         startTime: 10,
       })
       render(<Video {...props} />)
-      expect(document.body).toMatchSnapshot()
+      const videoElement = screen.getByTestId("stVideo")
+      expect(videoElement).toBeInstanceOf(HTMLIFrameElement)
+      expect(videoElement).toHaveAttribute(
+        "src",
+        "https://www.w3schools.com/html/mov_bbb.mp4?start=10"
+      )
     })
   })
 

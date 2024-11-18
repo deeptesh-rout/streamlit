@@ -55,6 +55,7 @@ import {
   parseArgs,
   sendRenderMessage,
 } from "./componentUtils"
+import { StyledComponentIframe } from "./styled-components"
 
 /**
  * If we haven't received a COMPONENT_READY message this many seconds
@@ -379,14 +380,14 @@ function ComponentInstance(props: Props): ReactElement {
   // We may ultimately want to give components control over the "scrolling"
   // property.
   //
-  // While the custom component is not in ready-state, show the loading Skeletion instead
+  // While the custom component is not in ready-state, show the loading Skeleton instead
   //
   // TODO: make sure horizontal scrolling still works!
   return (
     <>
       {loadingSkeleton}
       {warns}
-      <iframe
+      <StyledComponentIframe
         className="stCustomComponentV1"
         data-testid="stCustomComponentV1"
         allow={DEFAULT_IFRAME_FEATURE_POLICY}
@@ -395,13 +396,10 @@ function ComponentInstance(props: Props): ReactElement {
         width={width}
         // for undefined height we set the height to 0 to avoid inconsistent behavior
         height={frameHeight ?? 0}
-        style={{
-          colorScheme: "normal",
-          display: isReadyRef.current ? "initial" : "none",
-        }}
         scrolling="no"
         sandbox={DEFAULT_IFRAME_SANDBOX_POLICY}
         title={componentName}
+        componentReady={isReadyRef.current}
       />
     </>
   )

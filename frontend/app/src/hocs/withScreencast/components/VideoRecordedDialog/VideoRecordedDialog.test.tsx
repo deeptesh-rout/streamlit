@@ -17,18 +17,17 @@
 import React from "react"
 
 import { BaseProvider, LightTheme } from "baseui"
-import "@testing-library/jest-dom"
 import { fireEvent, screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib"
 
 import VideoRecordedDialog, { Props } from "./VideoRecordedDialog"
 
-URL.createObjectURL = jest.fn()
+URL.createObjectURL = vi.fn()
 
 const getProps = (props: Partial<Props> = {}): Props => ({
   fileName: "test",
-  onClose: jest.fn(),
+  onClose: vi.fn(),
   videoBlob: new Blob(),
   ...props,
 })

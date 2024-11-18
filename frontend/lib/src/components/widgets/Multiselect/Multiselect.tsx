@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { FC, useCallback, useMemo } from "react"
+import React, { FC, memo, useCallback, useMemo } from "react"
 
 import { ChevronDown } from "baseui/icon"
 import {
@@ -42,8 +42,8 @@ import { labelVisibilityProtoValueToEnum } from "@streamlit/lib/src/util/utils"
 import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import {
   useBasicWidgetState,
-  ValueWSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+  ValueWithSource,
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
 
 export interface Props {
   disabled: boolean
@@ -82,7 +82,7 @@ const getCurrStateFromProto = (
 const updateWidgetMgrState = (
   element: MultiSelectProto,
   widgetMgr: WidgetStateManager,
-  valueWithSource: ValueWSource<MultiselectValue>,
+  valueWithSource: ValueWithSource<MultiselectValue>,
   fragmentId?: string
 ): void => {
   widgetMgr.setIntArrayValue(
@@ -97,7 +97,7 @@ const Multiselect: FC<Props> = props => {
   const { element, widgetMgr, width, fragmentId } = props
 
   const theme: EmotionTheme = useTheme()
-  const [value, setValueWSource] = useBasicWidgetState<
+  const [value, setValueWithSource] = useBasicWidgetState<
     MultiselectValue,
     MultiSelectProto
   >({
@@ -164,12 +164,12 @@ const Multiselect: FC<Props> = props => {
       ) {
         return
       }
-      setValueWSource({
+      setValueWithSource({
         value: generateNewState(params),
         fromUi: true,
       })
     },
-    [element.maxSelections, generateNewState, setValueWSource, value.length]
+    [element.maxSelections, generateNewState, setValueWithSource, value.length]
   )
 
   const filterOptions = useCallback(
@@ -378,4 +378,4 @@ const Multiselect: FC<Props> = props => {
   )
 }
 
-export default Multiselect
+export default memo(Multiselect)

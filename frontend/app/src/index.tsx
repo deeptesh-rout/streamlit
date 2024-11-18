@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-// NOTE: The following line needs to be the first import to ensure that we
-// correctly configure where chunked static assets are fetched from.
-import "./setWebpackPublicPath"
+// Timestamp when the Streamlit execution started for GUEST_READY message
+const streamlitExecutionStartedAt = Date.now()
 
 import React from "react"
 
@@ -30,9 +29,10 @@ const engine = new Styletron({ prefix: "st-" })
 
 // TODO: Deprecated in React 18 - Need to revise to new API
 // react-18-upgrade
+// eslint-disable-next-line react/no-deprecated
 ReactDOM.render(
   <StyletronProvider value={engine}>
-    <ThemedApp />
+    <ThemedApp streamlitExecutionStartedAt={streamlitExecutionStartedAt} />
   </StyletronProvider>,
   document.getElementById("root")
 )

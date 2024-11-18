@@ -19,7 +19,6 @@ import React from "react"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
-import "@testing-library/jest-dom"
 import Snow, {
   NUM_FLAKES,
   SnowProps,
@@ -30,11 +29,11 @@ const getProps = (): SnowProps => ({
 })
 
 describe("Snow element", () => {
-  jest.useFakeTimers()
+  vi.useFakeTimers()
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.clearAllTimers()
+    vi.clearAllMocks()
+    vi.clearAllTimers()
   })
 
   it("renders without crashing", () => {

@@ -51,22 +51,25 @@ export const StyledThumbValue = styled.div<StyledSliderProps>(
   ({ disabled, theme }) => ({
     fontFamily: theme.genericFonts.codeFont,
     fontSize: theme.fontSizes.sm,
-    paddingBottom: theme.spacing.twoThirdsSmFont,
     color: disabled ? theme.colors.gray : theme.colors.primary,
-    top: "-22px",
+    top: "-1.6em",
     position: "absolute",
     whiteSpace: "nowrap",
     backgroundColor: theme.colors.transparent,
     lineHeight: theme.lineHeights.base,
     fontWeight: theme.fontWeights.normal,
+    // If values are clickable, it's hard to move the right thumb when they're
+    // very close. So make them unclickable:
+    pointerEvents: "none",
   })
 )
 
 export const StyledTickBar = styled.div(({ theme }) => ({
+  fontSize: theme.fontSizes.sm,
   paddingBottom: theme.spacing.none,
   paddingLeft: theme.spacing.none,
   paddingRight: theme.spacing.none,
-  paddingTop: theme.spacing.twoThirdsSmFont,
+  paddingTop: "0.65em",
   justifyContent: "space-between",
   alignItems: "center",
   display: "flex",
@@ -76,7 +79,6 @@ export const StyledTickBarItem = styled.div<StyledSliderProps>(
   ({ disabled, theme }) => ({
     lineHeight: theme.lineHeights.base,
     fontWeight: theme.fontWeights.normal,
-    fontSize: theme.fontSizes.sm,
     fontFamily: theme.genericFonts.codeFont,
     color: disabled ? theme.colors.fadedText40 : "inherit",
   })

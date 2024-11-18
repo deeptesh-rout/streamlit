@@ -28,6 +28,7 @@ from typing import (
     Final,
     Iterable,
     Literal,
+    Mapping,
     NamedTuple,
     Protocol,
     Sequence,
@@ -47,6 +48,7 @@ if TYPE_CHECKING:
     from plotly.graph_objs import Figure
     from pydeck import Deck
 
+    from streamlit.delta_generator import DeltaGenerator
 
 T = TypeVar("T")
 
@@ -264,6 +266,14 @@ def _is_probably_plotly_dict(obj: object) -> TypeGuard[dict[str, Any]]:
     return False
 
 
+def is_delta_generator(obj: object) -> TypeGuard[DeltaGenerator]:
+    """True if input looks like a DeltaGenerator."""
+
+    # We are using a string here to avoid circular import warnings
+    # when importing DeltaGenerator.
+    return is_type(obj, "streamlit.delta_generator.DeltaGenerator")
+
+
 def is_function(x: object) -> TypeGuard[types.FunctionType]:
     """Return True if x is a function."""
     return isinstance(x, types.FunctionType)
@@ -271,7 +281,13 @@ def is_function(x: object) -> TypeGuard[types.FunctionType]:
 
 def has_callable_attr(obj: object, name: str) -> bool:
     """True if obj has the specified attribute that is callable."""
-    return hasattr(obj, name) and callable(getattr(obj, name))
+    return (
+        hasattr(obj, name)
+        and callable(getattr(obj, name))
+        # DeltaGenerator will return a callable wrapper for any method name,
+        # even if it doesn't exist.
+        and not is_delta_generator(obj)
+    )
 
 
 def is_namedtuple(x: object) -> TypeGuard[NamedTuple]:
@@ -304,24 +320,19 @@ def is_pydantic_model(obj) -> bool:
     return _is_type_instance(obj, "pydantic.main.BaseModel")
 
 
+def _is_from_streamlit(obj: object) -> bool:
+    """True if the object is from the the streamlit package."""
+    return obj.__class__.__module__.startswith("streamlit")
+
+
 def is_custom_dict(obj: object) -> TypeGuard[CustomDict]:
     """True if input looks like one of the Streamlit custom dictionaries."""
-    from streamlit.runtime.context import StreamlitCookies, StreamlitHeaders
-    from streamlit.runtime.secrets import Secrets
-    from streamlit.runtime.state import QueryParamsProxy, SessionStateProxy
-    from streamlit.user_info import UserInfoProxy
 
-    return isinstance(
-        obj,
-        (
-            SessionStateProxy,
-            UserInfoProxy,
-            QueryParamsProxy,
-            StreamlitHeaders,
-            StreamlitCookies,
-            Secrets,
-        ),
-    ) and has_callable_attr(obj, "to_dict")
+    return (
+        isinstance(obj, Mapping)
+        and _is_from_streamlit(obj)
+        and has_callable_attr(obj, "to_dict")
+    )
 
 
 def is_iterable(obj: object) -> TypeGuard[Iterable[Any]]:

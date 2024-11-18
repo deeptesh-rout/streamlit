@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -42,8 +41,10 @@ describe("Widget Label", () => {
     render(<WidgetLabel {...props} />)
 
     expect(screen.getByTestId("stWidgetLabel")).toBeInTheDocument()
-    // Test that isLabel prop is true, which makes font size smaller
-    expect(screen.getByText(`${props.label}`)).toHaveStyle(`font-size: 14px`)
+
+    // Use the smaller font size for the markdown container
+    const markdownContainer = screen.getByTestId("stMarkdownContainer")
+    expect(markdownContainer).toHaveStyle("font-size: 14px")
   })
 
   it("can be disabled", () => {

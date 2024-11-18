@@ -16,7 +16,7 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
+import { Mock } from "vitest"
 import { screen } from "@testing-library/react"
 import { graphviz } from "d3-graphviz"
 
@@ -24,16 +24,16 @@ import { logError } from "@streamlit/lib/src/util/log"
 import { render } from "@streamlit/lib/src/test_util"
 import { GraphVizChart as GraphVizChartProto } from "@streamlit/lib/src/proto"
 
-import { GraphVizChart, GraphVizChartProps } from "./GraphVizChart"
+import GraphVizChart, { GraphVizChartProps } from "./GraphVizChart"
 
-jest.mock("d3-graphviz", () => ({
-  graphviz: jest.fn().mockReturnValue({
+vi.mock("d3-graphviz", () => ({
+  graphviz: vi.fn().mockReturnValue({
     zoom: () => ({
       fit: () => ({
         scale: () => ({
           engine: () => ({
             renderDot: () => ({
-              on: jest.fn(),
+              on: vi.fn(),
             }),
           }),
         }),
@@ -41,9 +41,9 @@ jest.mock("d3-graphviz", () => ({
     }),
   }),
 }))
-jest.mock("@streamlit/lib/src/util/log", () => ({
-  logError: jest.fn(),
-  logMessage: jest.fn(),
+vi.mock("@streamlit/lib/src/util/log", () => ({
+  logError: vi.fn(),
+  logMessage: vi.fn(),
 }))
 
 const getProps = (
@@ -54,7 +54,7 @@ const getProps = (
     elementId: "1",
     ...elementProps,
   }),
-  isFullScreen: false,
+  width: 700,
 })
 
 describe("GraphVizChart Element", () => {
@@ -82,17 +82,17 @@ describe("GraphVizChart Element", () => {
 
   it("should update chart and log error when crashes", () => {
     // Mock graphviz().renderDot() to throw an error for the "crash" spec
-    const mockRenderDot = jest.fn().mockImplementation(spec => {
+    const mockRenderDot = vi.fn().mockImplementation(spec => {
       if (spec === "crash") {
         throw new Error("Simulated GraphViz crash")
       }
       return {
-        on: jest.fn(),
+        on: vi.fn(),
       }
     })
 
     // Modify the graphviz mock to use the mockRenderDot
-    ;(graphviz as jest.Mock).mockReturnValue({
+    ;(graphviz as Mock).mockReturnValue({
       zoom: () => ({
         fit: () => ({
           scale: () => ({
@@ -123,18 +123,6 @@ describe("GraphVizChart Element", () => {
 
     expect(screen.getByTestId("stGraphVizChart")).toHaveStyle(
       "height: auto; width: auto"
-    )
-  })
-
-  it("shoud render with height and width set to 100%", () => {
-    const props = {
-      ...getProps(),
-      isFullScreen: true,
-    }
-    render(<GraphVizChart {...props} />)
-
-    expect(screen.getByTestId("stGraphVizChart")).toHaveStyle(
-      "height: 100%; width: 100%"
     )
   })
 })

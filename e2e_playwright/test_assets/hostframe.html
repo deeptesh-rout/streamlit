@@ -117,6 +117,18 @@ Usage:
     })
   }
 
+  function setFileUploadClientConfig() {
+    sendMessage({
+      type: "SET_FILE_UPLOAD_CLIENT_CONFIG",
+      prefix:
+        "https://some-prefix.com/somethingelse/",
+      headers: {
+        header1: "header1value",
+        header2: "header2value",
+      },
+    })
+  }
+
   function closeModal() {
     sendMessage({
       type: "CLOSE_MODAL",
@@ -267,6 +279,7 @@ Usage:
   <button onclick="setHideSidebarNav()">Hide Sidebar Nav</button>
   <button onclick="setSidebarDownshift()">Sidebar Chevron Downshift</button>
   <button onclick="setAuthToken()">Set Auth Token</button>
+  <button onclick="setFileUploadClientConfig()">Set file upload config</button>
   <button onclick="restartWebsocketConnection()">Restart Websocket</button>
   <button onclick="terminateWebsocketConnection()">Terminate Websocket</button>
 </div>

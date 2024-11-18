@@ -16,8 +16,8 @@
 
 import React, { ReactElement } from "react"
 
-import "@testing-library/jest-dom"
 import ReactMarkdown from "react-markdown"
+// eslint-disable-next-line testing-library/no-manual-cleanup
 import { cleanup, screen } from "@testing-library/react"
 import { transparentize } from "color2k"
 
@@ -214,6 +214,50 @@ describe("StreamlitMarkdown", () => {
     }
   )
 
+  it("renders streamlit logo in markdown when isLabel is true", () => {
+    render(
+      <StreamlitMarkdown source={":streamlit:"} allowHTML={false} isLabel />
+    )
+    const image = screen.getByRole("img")
+    expect(image).toHaveAttribute("alt", "Streamlit logo")
+    expect(image).toHaveAttribute(
+      "src",
+      expect.stringContaining("streamlit-mark-color")
+    )
+  })
+
+  // Typographical symbol replacements
+  const symbolReplacementCases = [
+    { input: "a -> b", tag: "p", expected: "a → b" },
+    { input: "a <- b", tag: "p", expected: "a ← b" },
+    { input: "a <-> b", tag: "p", expected: "a ↔ b" },
+    { input: "a -- b", tag: "p", expected: "a — b" },
+    { input: "a >= b", tag: "p", expected: "a ≥ b" },
+    { input: "a <= b", tag: "p", expected: "a ≤ b" },
+    { input: "a ~= b", tag: "p", expected: "a ≈ b" },
+    {
+      input: "[Link ->](https://example.com/arrow->)",
+      tag: "a",
+      expected: "Link ->",
+    },
+    { input: "`Code ->`", tag: "code", expected: "Code ->" },
+  ]
+
+  test.each(symbolReplacementCases)(
+    "replaces symbols with nicer typographical symbols - $input",
+    ({ input, tag, expected }) => {
+      render(<StreamlitMarkdown source={input} allowHTML={false} isLabel />)
+      const markdownText = screen.getByText(expected)
+      expect(markdownText).toBeInTheDocument()
+
+      const expectedTag = markdownText.nodeName.toLowerCase()
+      expect(expectedTag).toEqual(tag)
+
+      // Removes rendered StreamlitMarkdown component before next case run
+      cleanup()
+    }
+  )
+
   // Invalid Markdown - images, table elements, headings, unordered/ordered lists, task lists, horizontal rules, & blockquotes
   const table = `| Syntax | Description |
   | ----------- | ----------- |
@@ -268,15 +312,6 @@ describe("StreamlitMarkdown", () => {
     }
   )
 
-  it("doesn't render images when isLabel is true", () => {
-    const source =
-      "![Image Text](https://dictionary.cambridge.org/us/images/thumb/corgi_noun_002_08554.jpg?version=5.0.297)"
-
-    render(<StreamlitMarkdown source={source} allowHTML={false} isLabel />)
-    const image = screen.queryByAltText("Image Text")
-    expect(image).not.toBeInTheDocument()
-  })
-
   it("doesn't render links when disableLinks is true", () => {
     // Valid markdown further restricted with buttons to eliminate links
     const source = "[Link text](www.example.com)"
@@ -297,7 +332,11 @@ describe("StreamlitMarkdown", () => {
     render(<StreamlitMarkdown source={source} allowHTML={false} isToast />)
 
     const textTag = screen.getByText("Here is some toast text")
-    expect(textTag).toHaveStyle("font-size: 14px")
+    expect(textTag).toBeInTheDocument()
+
+    // Use the smaller font size for the markdown container
+    const markdownContainer = screen.getByTestId("stMarkdownContainer")
+    expect(markdownContainer).toHaveStyle("font-size: 14px")
   })
 
   it("renders regular text sizing when largerLabel is true", () => {
@@ -340,7 +379,7 @@ describe("StreamlitMarkdown", () => {
       ["orange", colors.orange100],
       ["gray", colors.gray80],
       ["grey", colors.gray80],
-      ["rainbow", "transparent"],
+      ["rainbow", "rgba(0, 0, 0, 0)"],
     ])
 
     colorMapping.forEach(function (style, color) {
@@ -377,11 +416,9 @@ describe("StreamlitMarkdown", () => {
   it("properly adds background colors", () => {
     const redbg = transparentize(colors.red80, 0.9)
     const orangebg = transparentize(colors.yellow70, 0.9)
-    const yellowbg = transparentize(colors.yellow70, 0.9)
     const greenbg = transparentize(colors.green70, 0.9)
     const bluebg = transparentize(colors.blue70, 0.9)
     const violetbg = transparentize(colors.purple70, 0.9)
-    const purplebg = transparentize(colors.purple90, 0.9)
     const graybg = transparentize(colors.gray70, 0.9)
 
     const colorMapping = new Map([
@@ -392,6 +429,31 @@ describe("StreamlitMarkdown", () => {
       ["orange", orangebg],
       ["gray", graybg],
       ["grey", graybg],
+    ])
+
+    colorMapping.forEach(function (style, color) {
+      const source = `:${color}-background[text]`
+      render(<StreamlitMarkdown source={source} allowHTML={false} />)
+      const markdown = screen.getByText("text")
+      const tagName = markdown.nodeName.toLowerCase()
+      expect(tagName).toBe("span")
+      expect(markdown).toHaveStyle(`background-color: ${style}`)
+
+      // Removes rendered StreamlitMarkdown component before next case run
+      cleanup()
+    })
+  })
+
+  it("properly adds rainbow background color", () => {
+    const redbg = transparentize(colors.red80, 0.9)
+    const orangebg = transparentize(colors.yellow70, 0.9)
+    const yellowbg = transparentize(colors.yellow70, 0.9)
+    const greenbg = transparentize(colors.green70, 0.9)
+    const bluebg = transparentize(colors.blue70, 0.9)
+    const violetbg = transparentize(colors.purple70, 0.9)
+    const purplebg = transparentize(colors.purple90, 0.9)
+
+    const colorMapping = new Map([
       [
         "rainbow",
         `linear-gradient(to right, ${redbg}, ${orangebg}, ${yellowbg}, ${greenbg}, ${bluebg}, ${violetbg}, ${purplebg})`,
@@ -404,7 +466,7 @@ describe("StreamlitMarkdown", () => {
       const markdown = screen.getByText("text")
       const tagName = markdown.nodeName.toLowerCase()
       expect(tagName).toBe("span")
-      expect(markdown).toHaveStyle(`background-color: ${style}`)
+      expect(markdown).toHaveStyle(`background: ${style}`)
 
       // Removes rendered StreamlitMarkdown component before next case run
       cleanup()
@@ -466,8 +528,13 @@ describe("CustomCodeTag Element", () => {
   it("should render inline", () => {
     const props = getCustomCodeTagProps({ inline: true })
     const { baseElement } = render(<CustomCodeTag {...props} />)
-    expect(baseElement.innerHTML).toBe(
-      "<div><code>" +
+    const codeWithoutClass = baseElement.innerHTML.replace(
+      /class="(.*)"/,
+      'class="foo"'
+    )
+
+    expect(codeWithoutClass).toBe(
+      '<div><code class="foo">' +
         "import streamlit as st\n\n" +
         'st.write("Hello")\n' +
         "</code></div>"

@@ -19,7 +19,6 @@ import React from "react"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib"
-import "@testing-library/jest-dom"
 
 import Countdown from "./Countdown"
 
@@ -28,6 +27,6 @@ describe("Countdown Component", () => {
     render(<Countdown countdown={10} />)
     const countdownElement = screen.getByText("10")
 
-    expect(countdownElement).toBeInTheDocument()
+    expect(countdownElement).toBeVisible()
   })
 })

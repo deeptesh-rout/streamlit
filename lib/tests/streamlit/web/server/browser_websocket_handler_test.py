@@ -64,7 +64,7 @@ class BrowserWebSocketHandlerTest(ServerTestCase):
 
     @tornado.testing.gen_test
     async def test_write_forward_msg_reraises_websocket_closed_error(self):
-        """`write_forward_msg` should re-raise WebSocketClosedError as
+        """`write_forward_msg` should re-raise WebSocketClosedError
         as SessionClientDisconnectedError.
         """
 

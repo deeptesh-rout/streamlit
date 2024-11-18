@@ -14,6 +14,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from streamlit.testing.v1 import AppTest
@@ -40,8 +42,13 @@ def test_smoke():
     assert at.radio.values == ["b", "c"]
 
 
-def test_from_file():
+def test_from_file_str():
     script = AppTest.from_file("../test_data/widgets_script.py")
+    script.run()
+
+
+def test_from_file_path():
+    script = AppTest.from_file(Path("../test_data/widgets_script.py"))
     script.run()
 
 

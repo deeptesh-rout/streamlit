@@ -16,12 +16,13 @@
 
 import React, { PureComponent } from "react"
 
-import { Global, withTheme } from "@emotion/react"
+import { Global, useTheme } from "@emotion/react"
 import embed from "vega-embed"
 import * as vega from "vega"
 import { SignalValue } from "vega"
 import { expressionInterpreter } from "vega-interpreter"
 import isEqual from "lodash/isEqual"
+import { JSX } from "react/jsx-runtime"
 
 import {
   debounce,
@@ -33,11 +34,16 @@ import {
   WidgetStateManager,
 } from "@streamlit/lib/src/WidgetStateManager"
 import { logMessage, logWarning } from "@streamlit/lib/src/util/log"
-import { withFullScreenWrapper } from "@streamlit/lib/src/components/shared/FullScreenWrapper"
 import { ensureError } from "@streamlit/lib/src/util/ErrorHandling"
 import { Quiver } from "@streamlit/lib/src/dataframes/Quiver"
 import { EmotionTheme } from "@streamlit/lib/src/theme"
 import { FormClearHelper } from "@streamlit/lib/src/components/widgets/Form"
+import Toolbar, {
+  StyledToolbarElementContainer,
+} from "@streamlit/lib/src/components/shared/Toolbar"
+import { ElementFullscreenContext } from "@streamlit/lib/src/components/shared/ElementFullscreen/ElementFullscreenContext"
+import { useRequiredContext } from "@streamlit/lib/src/hooks/useRequiredContext"
+import { withFullScreenWrapper } from "@streamlit/lib/src/components/shared/FullScreenWrapper"
 
 import {
   dataIsAnAppendOfPrev,
@@ -76,15 +82,18 @@ export interface VegaLiteState {
 
 interface Props {
   element: VegaLiteChartElement
-  theme: EmotionTheme
   width: number
   widgetMgr: WidgetStateManager
   fragmentId?: string
+  disableFullscreenMode?: boolean
 }
 
-export interface PropsWithFullScreen extends Props {
+export interface PropsWithFullScreenAndTheme extends Props {
   height?: number
+  theme: EmotionTheme
   isFullScreen: boolean
+  expand?: () => void
+  collapse?: () => void
 }
 
 interface State {
@@ -142,7 +151,7 @@ export function prepareSpecForSelections(spec: any): void {
 }
 
 export class ArrowVegaLiteChart extends PureComponent<
-  PropsWithFullScreen,
+  PropsWithFullScreenAndTheme,
   State
 > {
   /**
@@ -202,7 +211,7 @@ export class ArrowVegaLiteChart extends PureComponent<
   }
 
   public async componentDidUpdate(
-    prevProps: PropsWithFullScreen
+    prevProps: PropsWithFullScreenAndTheme
   ): Promise<void> {
     const { element: prevElement, theme: prevTheme } = prevProps
     const { element, theme } = this.props
@@ -589,12 +598,22 @@ export class ArrowVegaLiteChart extends PureComponent<
       // eslint-disable-next-line @typescript-eslint/no-throw-literal
       throw this.state.error
     }
-
     // Create the container inside which Vega draws its content.
     // To style the Vega tooltip, we need to apply global styles since
     // the tooltip element is drawn outside of this component.
     return (
-      <>
+      <StyledToolbarElementContainer
+        width={this.props.width}
+        height={this.props.height}
+        useContainerWidth={this.props.element.useContainerWidth}
+      >
+        <Toolbar
+          target={StyledToolbarElementContainer}
+          isFullScreen={this.props.isFullScreen}
+          onExpand={this.props.expand}
+          onCollapse={this.props.collapse}
+          disableFullscreenMode={this.props.disableFullscreenMode}
+        ></Toolbar>
         <Global styles={StyledVegaLiteChartTooltips} />
         <StyledVegaLiteChartContainer
           data-testid="stVegaLiteChart"
@@ -605,9 +624,32 @@ export class ArrowVegaLiteChart extends PureComponent<
             this.element = c
           }}
         />
-      </>
+      </StyledToolbarElementContainer>
     )
   }
 }
 
-export default withTheme(withFullScreenWrapper(ArrowVegaLiteChart))
+const ArrowVegaLiteChartWrapper = (props: Props): React.ReactElement => {
+  const theme = useTheme()
+  const {
+    expanded: isFullScreen,
+    width,
+    height,
+    expand,
+    collapse,
+  } = useRequiredContext(ElementFullscreenContext)
+
+  return (
+    <ArrowVegaLiteChart
+      theme={theme}
+      isFullScreen={isFullScreen}
+      {...props}
+      height={height}
+      width={isFullScreen ? width : props.width}
+      expand={expand}
+      collapse={collapse}
+    />
+  )
+}
+
+export default withFullScreenWrapper(ArrowVegaLiteChartWrapper)

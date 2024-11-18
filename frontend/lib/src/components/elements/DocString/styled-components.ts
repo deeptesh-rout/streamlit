@@ -27,7 +27,7 @@ export const StyledDocName = styled.span(({ theme }) => ({
 }))
 
 export const StyledDocType = styled.span(({ theme }) => ({
-  color: theme.colors.green70,
+  color: theme.colors.docStringTypeText,
 }))
 
 export const StyledDocValue = styled.span()
@@ -41,7 +41,7 @@ export const StyledDocContainer = styled.span<StyledDocContainerProps>(
     display: "flex",
     flexDirection: "column",
     borderRadius: theme.radii.default,
-    border: `${theme.sizes.borderWidth} solid ${theme.colors.borderColorLight}`,
+    border: `${theme.sizes.borderWidth} solid ${theme.colors.borderColor}`,
     fontFamily: theme.genericFonts.codeFont,
     fontSize: theme.fontSizes.sm,
   })
@@ -51,6 +51,10 @@ export const StyledDocHeader = styled.div(({ theme }) => ({
   padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
   backgroundColor: theme.colors.docStringContainerBackground,
   borderBottom: `${theme.sizes.borderWidth} solid ${theme.colors.borderColorLight}`,
+  // Add rounded corners to the top of the container to prevent the background
+  // color from bleeding into the surrounding area.
+  borderTopLeftRadius: theme.radii.default,
+  borderTopRightRadius: theme.radii.default,
   fontSize: theme.fontSizes.sm,
   overflow: ["auto", "overlay"],
 }))

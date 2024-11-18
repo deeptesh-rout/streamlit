@@ -34,7 +34,6 @@ import {
 
 export interface TooltipIconProps {
   placement?: Placement
-  iconSize?: string
   isLatex?: boolean
   content: string
   children?: ReactNode
@@ -44,7 +43,6 @@ export interface TooltipIconProps {
 
 function TooltipIcon({
   placement = Placement.AUTO,
-  iconSize = "16",
   isLatex = false,
   content,
   children,
@@ -71,7 +69,9 @@ function TooltipIcon({
         onMouseEnterDelay={onMouseEnterDelay}
         inline
       >
-        {children || <HelpCircleIcon className="icon" size={iconSize} />}
+        {children || (
+          <HelpCircleIcon className="icon" size={theme.iconSizes.base} />
+        )}
       </Tooltip>
     </StyledTooltipIconWrapper>
   )
@@ -79,7 +79,6 @@ function TooltipIcon({
 
 export const InlineTooltipIcon = ({
   placement = Placement.TOP_RIGHT,
-  iconSize = "16",
   isLatex = false,
   content,
   children,
@@ -89,7 +88,6 @@ export const InlineTooltipIcon = ({
     <StyledLabelHelpInline>
       <TooltipIcon
         placement={placement}
-        iconSize={iconSize}
         isLatex={isLatex}
         content={content}
         markdownProps={markdownProps}

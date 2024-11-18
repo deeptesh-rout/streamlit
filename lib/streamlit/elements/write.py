@@ -418,6 +418,9 @@ class WriteMixin:
             elif isinstance(arg, Exception):
                 flush_buffer()
                 self.dg.exception(arg)
+            elif type_util.is_delta_generator(arg):
+                flush_buffer()
+                self.dg.help(arg)
             elif dataframe_util.is_dataframe_like(arg):
                 flush_buffer()
                 self.dg.dataframe(arg)

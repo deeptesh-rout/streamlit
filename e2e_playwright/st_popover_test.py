@@ -144,9 +144,6 @@ def test_fullscreen_mode_is_disabled_in_popover(app: Page):
     popover_container = app.get_by_test_id("stPopoverBody")
     expect(popover_container).to_be_visible()
 
-    # check that the image does not have the fullscreen button
-    expect(popover_container.get_by_test_id("StyledFullScreenButton")).to_have_count(0)
-
     # Check dataframe toolbar:
     dataframe_element = popover_container.get_by_test_id("stDataFrame").nth(0)
     expect(dataframe_element).to_be_visible()

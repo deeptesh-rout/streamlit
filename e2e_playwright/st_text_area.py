@@ -75,3 +75,22 @@ try:
     st.text_area("text area 13 (height=65)", "default text", height=65)
 except StreamlitAPIException as ex:
     st.exception(ex)
+
+if "text_area_13" not in st.session_state:
+    st.session_state["text_area_13"] = "xyz"
+
+v13 = st.text_area(
+    "text area 13 (value from state)",
+    value=None,
+    key="text_area_13",
+)
+st.write("text area 13 (value from state) - value: ", v13)
+
+with st.form("form"):
+    st.text_area("text area 14 (value from form)", key="text_area_14")
+    st.form_submit_button("submit")
+
+form_value = (
+    st.session_state["text_area_14"] if "text_area_14" in st.session_state else None
+)
+st.write("text area 14 (value from form) - value: ", form_value)

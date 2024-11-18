@@ -16,10 +16,20 @@
 
 import styled from "@emotion/styled"
 
-export const StyledPreError = styled.pre(({ theme }) => ({
-  padding: theme.spacing.twoXS,
+export const StyledStackTrace = styled.pre(({ theme }) => ({
   whiteSpace: "pre-wrap",
   wordWrap: "break-word",
   color: "inherit",
   fontSize: theme.fontSizes.sm,
+  fontFamily: theme.genericFonts.codeFont,
+  backgroundColor: theme.colors.transparent,
+  overflowX: "auto",
+  margin: `0 0 ${theme.spacing.lg} 0`,
+  borderRadius: theme.radii.default,
+  padding: theme.spacing.lg,
+  border: `${theme.sizes.borderWidth} solid ${theme.colors.borderColor}`,
+}))
+
+export const StyledErrorName = styled.strong(({ theme }) => ({
+  fontWeight: theme.fontWeights.bold,
 }))

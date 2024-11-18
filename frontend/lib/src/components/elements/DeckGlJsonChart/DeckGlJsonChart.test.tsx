@@ -19,7 +19,7 @@ import React, { FC } from "react"
 import JSON5 from "json5"
 import { act, screen } from "@testing-library/react"
 import { PickingInfo } from "@deck.gl/core"
-import userEvent from "@testing-library/user-event"
+import { userEvent } from "@testing-library/user-event"
 
 import {
   render,
@@ -30,7 +30,6 @@ import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import { mockTheme } from "@streamlit/lib/src/mocks/mockTheme"
 import { ElementFullscreenContext } from "@streamlit/lib/src/components/shared/ElementFullscreen/ElementFullscreenContext"
 import { useRequiredContext } from "@streamlit/lib/src/hooks/useRequiredContext"
-import "@testing-library/jest-dom"
 
 import type { DeckGLProps } from "./types"
 import { useDeckGl, UseDeckGlProps } from "./useDeckGl"
@@ -46,9 +45,9 @@ const mockInitialViewState = {
   zoom: 6,
 }
 
-jest.mock("@streamlit/lib/src/theme", () => ({
-  ...jest.requireActual("@streamlit/lib/src/theme"),
-  hasLightBackgroundColor: jest.fn(() => false),
+vi.mock("@streamlit/lib/src/theme", async () => ({
+  ...(await vi.importActual("@streamlit/lib/src/theme")),
+  hasLightBackgroundColor: vi.fn(() => false),
 }))
 
 const getProps = (
@@ -87,8 +86,8 @@ const getProps = (
     }),
     mapboxToken: "mapboxToken",
     widgetMgr: new WidgetStateManager({
-      sendRerunBackMsg: jest.fn(),
-      formsDataChanged: jest.fn(),
+      sendRerunBackMsg: vi.fn(),
+      formsDataChanged: vi.fn(),
     }),
     fragmentId: "myFragmentId",
   }
@@ -245,7 +244,7 @@ describe("#useDeckGl", () => {
       mapStyle: "mapbox://styles/mapbox/light-v9",
     }
 
-    const mockJsonParse = jest.fn().mockReturnValue(newJson)
+    const mockJsonParse = vi.fn().mockReturnValue(newJson)
 
     beforeEach(() => {
       JSON5.parse = mockJsonParse
@@ -380,7 +379,7 @@ describe("#useDeckGl", () => {
       expect(result.current.hasActiveSelection).toBe(false)
     })
 
-    it("should be true when selection is not empty", async () => {
+    it("should be true when selection is not empty", () => {
       const initialProps = getUseDeckGlProps({
         selectionMode: [DeckGlJsonChartProto.SelectionMode.SINGLE_OBJECT],
       })
@@ -388,7 +387,7 @@ describe("#useDeckGl", () => {
         initialProps,
       })
 
-      await act(async () => {
+      act(() => {
         result.current.setSelection({
           fromUi: true,
           value: {

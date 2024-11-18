@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -35,8 +34,8 @@ const getProps = (props: Partial<HocProps> = {}): HocProps => ({
 })
 
 describe("withPagination HOC", () => {
-  const setState = jest.fn()
-  const useStateSpy = jest.spyOn(React, "useState")
+  const setState = vi.fn()
+  const useStateSpy = vi.spyOn(React, "useState")
   // @ts-expect-error
   useStateSpy.mockImplementation(init => [init, setState])
 

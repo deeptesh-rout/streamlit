@@ -19,7 +19,6 @@ import React, { FC } from "react"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
-import "@testing-library/jest-dom"
 
 import Particles, { ParticleProps, Props } from "./Particles"
 
@@ -36,11 +35,11 @@ const getProps = (): Props => ({
 })
 
 describe("Particles element", () => {
-  jest.useFakeTimers()
+  vi.useFakeTimers()
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.clearAllTimers()
+    vi.clearAllMocks()
+    vi.clearAllTimers()
   })
 
   it("renders without crashing", () => {

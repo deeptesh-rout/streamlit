@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 import Clipboard from "clipboard"
 
@@ -24,11 +23,11 @@ import { render } from "@streamlit/lib/src/test_util"
 
 import CopyButton from "./CopyButton"
 
-jest.mock("clipboard")
+vi.mock("clipboard")
 
 describe("CopyButton Element", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it("renders without crashing", () => {

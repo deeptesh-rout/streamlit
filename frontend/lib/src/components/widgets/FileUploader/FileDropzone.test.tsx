@@ -21,12 +21,11 @@ import { screen } from "@testing-library/react"
 import { render } from "@streamlit/lib/src/test_util"
 
 import FileDropzone, { Props } from "./FileDropzone"
-import "@testing-library/jest-dom"
 
 const getProps = (props: Partial<Props> = {}): Props => ({
   disabled: false,
   label: "LABEL",
-  onDrop: jest.fn(),
+  onDrop: vi.fn(),
   multiple: true,
   acceptedExtensions: [],
   maxSizeBytes: 200,

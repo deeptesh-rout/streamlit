@@ -17,11 +17,7 @@
 import styled from "@emotion/styled"
 import { transparentize } from "color2k"
 
-import { StyledMaterialIcon } from "@streamlit/lib/src/components/shared/Icon/Material/styled-components"
-import {
-  getWrappedHeadersStyle,
-  hasLightBackgroundColor,
-} from "@streamlit/lib/src/theme/utils"
+import { hasLightBackgroundColor } from "@streamlit/lib"
 
 // Check for custom text color & handle colors in SidebarNav accordingly
 const conditionalCustomColor = (
@@ -93,6 +89,9 @@ export const StyledSidebarNavItems = styled.ul(({ theme }) => {
     listStyle: "none",
     margin: theme.spacing.none,
     paddingBottom: theme.spacing.threeXS,
+    paddingTop: theme.spacing.none,
+    paddingRight: theme.spacing.none,
+    paddingLeft: theme.spacing.none,
   }
 })
 
@@ -100,6 +99,35 @@ export const StyledSidebarNavLinkContainer = styled.div({
   display: "flex",
   flexDirection: "column",
 })
+
+export interface StyledSidebarNavIconProps {
+  isActive: boolean
+}
+
+export const StyledSidebarNavIcon = styled.span<StyledSidebarNavIconProps>(
+  ({ theme, isActive }) => {
+    const svgColor = conditionalCustomColor(
+      theme,
+      theme.colors.fadedText60,
+      theme.colors.navIconColor
+    )
+    const activeSvgColor = conditionalCustomColor(
+      theme,
+      theme.colors.bodyText,
+      theme.colors.navActiveTextColor
+    )
+
+    return {
+      display: "inline-flex",
+      span: {
+        color: isActive ? activeSvgColor : svgColor,
+        fontWeight: isActive
+          ? theme.fontWeights.bold
+          : theme.fontWeights.normal,
+      },
+    }
+  }
+)
 
 export interface StyledSidebarNavLinkProps {
   isActive: boolean
@@ -111,16 +139,6 @@ export const StyledSidebarNavLink = styled.a<StyledSidebarNavLinkProps>(
       theme,
       theme.colors.bodyText,
       theme.colors.navTextColor
-    )
-    const svgColor = conditionalCustomColor(
-      theme,
-      theme.colors.fadedText60,
-      theme.colors.navIconColor
-    )
-    const activeSvgColor = conditionalCustomColor(
-      theme,
-      theme.colors.bodyText,
-      theme.colors.navActiveTextColor
     )
 
     const defaultPageLinkStyles = {
@@ -145,13 +163,6 @@ export const StyledSidebarNavLink = styled.a<StyledSidebarNavLinkProps>(
 
       color,
       backgroundColor: isActive ? theme.colors.darkenedBgMix25 : "transparent",
-
-      [StyledMaterialIcon as any]: {
-        color: isActive ? activeSvgColor : svgColor,
-        fontWeight: isActive
-          ? theme.fontWeights.bold
-          : theme.fontWeights.normal,
-      },
 
       "&:hover": {
         backgroundColor: transparentize(theme.colors.darkenedBgMix25, 0.1),
@@ -209,8 +220,6 @@ export const StyledSidebarUserContent =
     paddingBottom: theme.sizes.sidebarTopSpace,
     paddingLeft: theme.spacing.twoXL,
     paddingRight: theme.spacing.twoXL,
-
-    ...getWrappedHeadersStyle(theme),
   }))
 
 export const StyledSidebarContent = styled.div(({}) => ({
@@ -274,7 +283,7 @@ export const StyledLogo = styled.img<StyledLogoProps>(
     marginLeft: theme.spacing.none,
     zIndex: theme.zIndices.header,
     objectFit: "contain",
-
+    verticalAlign: "middle",
     ...(sidebarWidth && {
       // Control max width of logo so sidebar collapse button always shows (issue #8707)
       // L & R padding (twoXL) + R margin (sm) + collapse button (2.25rem)
@@ -392,6 +401,7 @@ export const StyledViewButton = styled.button(({ theme }) => {
 
   return {
     fontSize: theme.fontSizes.sm,
+    fontFamily: "inherit",
     lineHeight: theme.lineHeights.base,
     color,
     backgroundColor: theme.colors.transparent,
@@ -399,6 +409,8 @@ export const StyledViewButton = styled.button(({ theme }) => {
     borderRadius: theme.radii.default,
     marginTop: theme.spacing.twoXS,
     marginLeft: theme.spacing.xl,
+    marginBottom: theme.spacing.none,
+    marginRight: theme.spacing.none,
     padding: `${theme.spacing.threeXS} ${theme.spacing.sm}`,
     "&:hover, &:active, &:focus": {
       border: "none",

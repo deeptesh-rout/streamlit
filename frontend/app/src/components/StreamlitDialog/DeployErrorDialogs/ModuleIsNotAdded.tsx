@@ -16,17 +16,21 @@
 
 import React from "react"
 
+import { StreamlitMarkdown } from "@streamlit/lib"
+
 import { IDeployErrorDialog } from "./types"
-import { StyledParagraph } from "./styled-components"
 
 function ModuleIsNotAdded(module: string): IDeployErrorDialog {
   return {
     title: "Unable to deploy",
     body: (
-      <StyledParagraph>
-        The app’s main file <code>{module}</code> has not been pushed to
-        GitHub. Please add it to continue.
-      </StyledParagraph>
+      <StreamlitMarkdown
+        source={`
+The app's main file \`${module}\` has
+not been pushed to GitHub. Please add it to continue.
+`}
+        allowHTML={false}
+      />
     ),
   }
 }

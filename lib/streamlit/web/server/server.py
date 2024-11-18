@@ -369,7 +369,12 @@ class Server:
             routes.extend(
                 [
                     (
-                        make_url_path_regex(base, "(.*)", trailing_slash="required"),
+                        # We want to remove paths with a trailing slash, but if the path
+                        # starts with a double slash //, the redirect will point
+                        # the browser to the wrong host.
+                        make_url_path_regex(
+                            base, "(?!/)(.*)", trailing_slash="required"
+                        ),
                         RemoveSlashHandler,
                     ),
                     (

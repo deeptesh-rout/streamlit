@@ -21,7 +21,7 @@ from setuptools.command.install import install
 
 THIS_DIRECTORY = Path(__file__).parent
 
-VERSION = "1.39.0"  # PEP-440
+VERSION = "1.40.1"  # PEP-440
 
 # IMPORTANT: We should try very hard *not* to add dependencies to Streamlit.
 # And if you do add one, make the required version as general as possible:
@@ -38,7 +38,7 @@ INSTALL_REQUIRES = [
     # Pandas <1.4 has a bug related to deleting columns in a DataFrame changing
     # the index dtype.
     "pandas>=1.4.0, <3",
-    "pillow>=7.1.0, <11",
+    "pillow>=7.1.0, <12",
     # `protoc` < 3.20 is not able to generate protobuf code compatible with protobuf >= 3.20.
     "protobuf>=3.20, <6",
     # pyarrow is not semantically versioned, gets new major versions frequently, and
@@ -52,7 +52,7 @@ INSTALL_REQUIRES = [
     "typing-extensions>=4.3.0, <5",
     # Don't require watchdog on MacOS, since it'll fail without xcode tools.
     # Without watchdog, we fallback to a polling file watcher to check for app changes.
-    "watchdog>=2.1.5, <6; platform_system != 'Darwin'",
+    "watchdog>=2.1.5, <7; platform_system != 'Darwin'",
 ]
 
 # We want to exclude some dependencies in our internal Snowpark conda distribution of

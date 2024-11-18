@@ -11,17 +11,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Restore pre-commit cache
-      id: cache-pre-commit
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pre-commit
-        key: v1-pre-commit-${{ env.pythonLocation }}-${{ hashFiles('**/.pre-commit-config.yaml') }}
-    - name: Install pre-commit
-      run: |
-        pip install pre-commit
-        pre-commit install-hooks
-      shell: bash
     - name: Setup Node
       uses: actions/setup-node@v4
       with:

@@ -21,7 +21,7 @@ describe("localStorageAvailable", () => {
   // doesn't work. Accessing .__proto__ here isn't too bad of a crime since
   // it's test code.
   const breakLocalStorage = (): void => {
-    jest
+    vi
       // eslint-disable-next-line no-proto
       .spyOn(window.localStorage.__proto__, "setItem")
       .mockImplementation(() => {
@@ -30,7 +30,7 @@ describe("localStorageAvailable", () => {
   }
 
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
     window.localStorage.clear()
   })
 

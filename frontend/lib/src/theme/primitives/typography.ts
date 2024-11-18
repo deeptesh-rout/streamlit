@@ -56,8 +56,8 @@ export const fontWeights = {
 }
 
 export const lineHeights = {
-  normal: "normal",
   none: 1,
+  headings: 1.2,
   tight: 1.25,
   inputWidget: 1.4,
   small: 1.5,

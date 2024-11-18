@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import React, { forwardRef, memo, ReactElement, Ref, useMemo } from "react"
+import React, {
+  forwardRef,
+  memo,
+  ReactElement,
+  Ref,
+  useCallback,
+  useMemo,
+} from "react"
 
 import { useTheme } from "@emotion/react"
 import { ButtonGroup as BasewebButtonGroup, MODE } from "baseui/button-group"
@@ -40,8 +47,8 @@ import { Placement } from "@streamlit/lib/src/components/shared/Tooltip"
 import { labelVisibilityProtoValueToEnum } from "@streamlit/lib/src/util/utils"
 import {
   useBasicWidgetState,
-  ValueWSource,
-} from "@streamlit/lib/src/useBasicWidgetState"
+  ValueWithSource,
+} from "@streamlit/lib/src/hooks/useBasicWidgetState"
 
 export interface Props {
   disabled: boolean
@@ -83,7 +90,7 @@ function getSingleSelection(currentSelection: number[]): number {
 function syncWithWidgetManager(
   element: ButtonGroupProto,
   widgetMgr: WidgetStateManager,
-  valueWithSource: ValueWSource<ButtonGroupValue>,
+  valueWithSource: ValueWithSource<ButtonGroupValue>,
   fragmentId?: string
 ): void {
   widgetMgr.setIntArrayValue(
@@ -104,7 +111,7 @@ export function getContentElement(
       ? BaseButtonKind.PILLS
       : style === ButtonGroupProto.Style.BORDERLESS
       ? BaseButtonKind.BORDERLESS_ICON
-      : BaseButtonKind.SEGMENT
+      : BaseButtonKind.SEGMENTED_CONTROL
   const size =
     style === ButtonGroupProto.Style.BORDERLESS
       ? BaseButtonSize.XSMALL
@@ -165,6 +172,42 @@ function getButtonKindAndSize(
   }
 
   return buttonKind
+}
+
+function getButtonGroupOverridesStyle(
+  style: ButtonGroupProto.Style,
+  spacing: EmotionTheme["spacing"]
+): Record<string, any> {
+  const baseStyle = { flexWrap: "wrap", maxWidth: "fit-content" }
+
+  switch (style) {
+    case ButtonGroupProto.Style.BORDERLESS:
+      return {
+        ...baseStyle,
+        columnGap: spacing.threeXS,
+        rowGap: spacing.threeXS,
+      }
+    case ButtonGroupProto.Style.PILLS:
+      return {
+        ...baseStyle,
+        columnGap: spacing.twoXS,
+        rowGap: spacing.twoXS,
+      }
+    case ButtonGroupProto.Style.SEGMENTED_CONTROL:
+      return {
+        ...baseStyle,
+        columnGap: spacing.none,
+        rowGap: spacing.twoXS,
+        // Adding an empty pseudo-element after the last button in the group.
+        // This will make buttons only as big as needed without stretching to the whole container width (aka let them 'hug' to the side)
+        "::after": {
+          content: "''",
+          flex: 10000,
+        },
+      }
+    default:
+      return baseStyle
+  }
 }
 
 function createOptionChild(
@@ -248,7 +291,7 @@ function ButtonGroup(props: Readonly<Props>): ReactElement {
   } = element
   const theme: EmotionTheme = useTheme()
 
-  const [value, setValueWSource] = useBasicWidgetState<
+  const [value, setValueWithSource] = useBasicWidgetState<
     ButtonGroupValue,
     ButtonGroupProto
   >({
@@ -266,7 +309,7 @@ function ButtonGroup(props: Readonly<Props>): ReactElement {
     index: number
   ): void => {
     const newSelected = handleSelection(clickMode, index, value)
-    setValueWSource({ value: newSelected, fromUi: true })
+    setValueWithSource({ value: newSelected, fromUi: true })
   }
 
   let mode = undefined
@@ -292,10 +335,6 @@ function ButtonGroup(props: Readonly<Props>): ReactElement {
     [clickMode, options, selectionVisualization, style, value]
   )
 
-  const gap =
-    style === ButtonGroupProto.Style.BORDERLESS
-      ? theme.spacing.threeXS
-      : theme.spacing.twoXS
   return (
     <div className="stButtonGroup" data-testid="stButtonGroup">
       <WidgetLabel
@@ -323,10 +362,10 @@ function ButtonGroup(props: Readonly<Props>): ReactElement {
         }
         overrides={{
           Root: {
-            style: {
-              flexWrap: "wrap",
-              gap: gap,
-            },
+            style: useCallback(
+              () => getButtonGroupOverridesStyle(style, theme.spacing),
+              [style, theme.spacing]
+            ),
           },
         }}
       >

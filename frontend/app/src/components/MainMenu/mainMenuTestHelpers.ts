@@ -17,10 +17,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { fireEvent, RenderResult, Screen } from "@testing-library/react"
 
-export async function openMenu(screen: Screen): Promise<void> {
+export function openMenu(screen: Screen): void {
   fireEvent.click(screen.getByRole("button"))
   // Each SubMenu is a listbox, so need to use findAllByRole (findByRole throws error if multiple matches)
-  const menu = await screen.findAllByRole("listbox")
+  vi.runOnlyPendingTimers()
+  const menu = screen.getAllByRole("listbox")
   expect(menu).toBeDefined()
 }
 

@@ -18,10 +18,9 @@ import React from "react"
 
 import { render, screen } from "@testing-library/react"
 
-import "@testing-library/jest-dom"
 import ThemedApp from "./ThemedApp"
 
-jest.mock("@streamlit/app/src/connection/ConnectionManager")
+vi.mock("@streamlit/app/src/connection/ConnectionManager")
 
 // Mock needed for Block.tsx
 class ResizeObserver {
@@ -39,27 +38,27 @@ describe("ThemedApp", () => {
     // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
     Object.defineProperty(window, "matchMedia", {
       writable: true,
-      value: jest.fn().mockImplementation(query => ({
+      value: vi.fn().mockImplementation(query => ({
         matches: false,
         media: query,
         onchange: null,
-        addListener: jest.fn(), // deprecated
-        removeListener: jest.fn(), // deprecated
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
+        addListener: vi.fn(), // deprecated
+        removeListener: vi.fn(), // deprecated
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
       })),
     })
   })
 
   it("renders without crashing", () => {
-    render(<ThemedApp />)
+    render(<ThemedApp streamlitExecutionStartedAt={Date.now()} />)
 
     expect(screen.getByTestId("stApp")).toBeInTheDocument()
   })
 
   it("contains the overlay portal required by the interactive table", () => {
-    render(<ThemedApp />)
+    render(<ThemedApp streamlitExecutionStartedAt={Date.now()} />)
     const portalElement = screen.getByTestId("portal")
     expect(portalElement).toBeInTheDocument()
   })

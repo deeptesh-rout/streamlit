@@ -16,11 +16,10 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { fireEvent, screen } from "@testing-library/react"
 
 import { mockSessionInfo, render } from "@streamlit/lib"
-import { SegmentMetricsManager } from "@streamlit/app/src/SegmentMetricsManager"
+import { MetricsManager } from "@streamlit/app/src/MetricsManager"
 
 import ToolbarActions, {
   ActionButton,
@@ -34,7 +33,7 @@ describe("ActionButton", () => {
   ): ActionButtonProps => ({
     label: "the label",
     icon: "star.svg",
-    onClick: jest.fn(),
+    onClick: vi.fn(),
     ...extended,
   })
 
@@ -71,8 +70,8 @@ describe("ToolbarActions", () => {
       { key: "favorite", icon: "star.svg" },
       { key: "share", label: "Share" },
     ],
-    sendMessageToHost: jest.fn(),
-    metricsMgr: new SegmentMetricsManager(mockSessionInfo()),
+    sendMessageToHost: vi.fn(),
+    metricsMgr: new MetricsManager(mockSessionInfo()),
     ...extended,
   })
 

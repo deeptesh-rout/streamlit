@@ -196,7 +196,7 @@ class RemoveSlashHandlerTest(tornado.testing.AsyncHTTPTestCase):
         return tornado.web.Application(
             [
                 (
-                    r"/(.*)/",
+                    r"^/(?!/)(.*)",
                     RemoveSlashHandler,
                 )
             ]
@@ -209,6 +209,13 @@ class RemoveSlashHandlerTest(tornado.testing.AsyncHTTPTestCase):
         for idx, r in enumerate(responses):
             assert r.code == 301
             assert r.headers["Location"] == paths[idx].rstrip("/")
+
+    def test_parse_url_path_404(self):
+        paths = ["//page1/", "//page2/page3/"]
+        responses = [self.fetch(path, follow_redirects=False) for path in paths]
+
+        for r in responses:
+            assert r.code == 404
 
 
 class AddSlashHandlerTest(tornado.testing.AsyncHTTPTestCase):
@@ -257,6 +264,7 @@ class HostConfigHandlerTest(tornado.testing.AsyncHTTPTestCase):
                 # Default host configuration settings:
                 "enableCustomParentMessages": False,
                 "enforceDownloadInNewTab": False,
+                "metricsUrl": "",
             },
             response_body,
         )

@@ -95,7 +95,7 @@ class Sidebar extends PureComponent<SidebarProps, State> {
     )
 
     const cachedSidebarWidth = localStorageAvailable()
-      ? localStorage.getItem("sidebarWidth")
+      ? window.localStorage.getItem("sidebarWidth")
       : undefined
 
     this.state = {

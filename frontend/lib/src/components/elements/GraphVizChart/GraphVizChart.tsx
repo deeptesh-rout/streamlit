@@ -20,21 +20,35 @@ import { select } from "d3"
 import { Engine, graphviz } from "d3-graphviz"
 
 import { logError } from "@streamlit/lib/src/util/log"
-import { withFullScreenWrapper } from "@streamlit/lib/src/components/shared/FullScreenWrapper"
 import { GraphVizChart as GraphVizChartProto } from "@streamlit/lib/src/proto"
+import Toolbar, {
+  StyledToolbarElementContainer,
+} from "@streamlit/lib/src/components/shared/Toolbar"
+import { ElementFullscreenContext } from "@streamlit/lib/src/components/shared/ElementFullscreen/ElementFullscreenContext"
+import { useRequiredContext } from "@streamlit/lib/src/hooks/useRequiredContext"
+import { withFullScreenWrapper } from "@streamlit/lib/src/components/shared/FullScreenWrapper"
 
 import { StyledGraphVizChart } from "./styled-components"
 
 export interface GraphVizChartProps {
   element: GraphVizChartProto
-  isFullScreen: boolean
+  width: number
+  disableFullscreenMode?: boolean
 }
 
-export function GraphVizChart({
+function GraphVizChart({
   element,
-  isFullScreen,
+  disableFullscreenMode,
 }: Readonly<GraphVizChartProps>): ReactElement {
   const chartId = `st-graphviz-chart-${element.elementId}`
+
+  const {
+    expanded: isFullScreen,
+    width,
+    height,
+    expand,
+    collapse,
+  } = useRequiredContext(ElementFullscreenContext)
 
   useEffect(() => {
     try {
@@ -64,12 +78,25 @@ export function GraphVizChart({
   ])
 
   return (
-    <StyledGraphVizChart
-      className="stGraphVizChart"
-      data-testid="stGraphVizChart"
-      id={chartId}
-      isFullScreen={isFullScreen}
-    />
+    <StyledToolbarElementContainer
+      width={width}
+      height={height}
+      useContainerWidth={isFullScreen || element.useContainerWidth}
+    >
+      <Toolbar
+        target={StyledToolbarElementContainer}
+        isFullScreen={isFullScreen}
+        onExpand={expand}
+        onCollapse={collapse}
+        disableFullscreenMode={disableFullscreenMode}
+      ></Toolbar>
+      <StyledGraphVizChart
+        className="stGraphVizChart"
+        data-testid="stGraphVizChart"
+        id={chartId}
+        isFullScreen={isFullScreen}
+      />
+    </StyledToolbarElementContainer>
   )
 }
 

@@ -126,3 +126,9 @@ def test_check_top_level_class(app: Page):
 def test_custom_css_class_via_key(app: Page):
     """Test that the element can have a custom css class via the key argument."""
     expect(get_element_by_key(app, "button")).to_be_visible()
+
+
+def test_shows_cursor_pointer(app: Page):
+    """Test that the button shows cursor pointer when hovered."""
+    button_element = app.get_by_test_id("stButton").first
+    expect(button_element.locator("button")).to_have_css("cursor", "pointer")

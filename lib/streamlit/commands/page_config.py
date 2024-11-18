@@ -15,12 +15,13 @@
 from __future__ import annotations
 
 import random
+from pathlib import Path
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Final, Literal, Mapping, Union, cast
 
 from typing_extensions import TypeAlias
 
-from streamlit.elements import image
+from streamlit.elements.lib.image_utils import AtomicImage, image_to_url
 from streamlit.errors import (
     StreamlitInvalidMenuItemKeyError,
     StreamlitInvalidPageLayoutError,
@@ -41,7 +42,7 @@ GET_HELP_KEY: Final = "get help"
 REPORT_A_BUG_KEY: Final = "report a bug"
 ABOUT_KEY: Final = "about"
 
-PageIcon: TypeAlias = Union[image.AtomicImage, str]
+PageIcon: TypeAlias = Union[AtomicImage, str]
 Layout: TypeAlias = Literal["centered", "wide"]
 InitialSideBarState: TypeAlias = Literal["auto", "expanded", "collapsed"]
 _GetHelp: TypeAlias = Literal["Get help", "Get Help", "get help"]
@@ -105,9 +106,13 @@ def _get_favicon_string(page_icon: PageIcon) -> str:
     if isinstance(page_icon, str) and page_icon.startswith(":material"):
         return validate_material_icon(page_icon)
 
+    # Convert Path to string if necessary
+    if isinstance(page_icon, Path):
+        page_icon = str(page_icon)
+
     # Fall back to image_to_url.
     try:
-        return image.image_to_url(
+        return image_to_url(
             page_icon,
             width=-1,  # Always use full width for favicons
             clamp=False,

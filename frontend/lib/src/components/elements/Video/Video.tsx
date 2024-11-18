@@ -16,10 +16,12 @@
 
 import React, { ReactElement, useEffect, useMemo, useRef } from "react"
 
-import { Video as VideoProto } from "@streamlit/lib/src/proto"
+import { ISubtitleTrack, Video as VideoProto } from "@streamlit/lib/src/proto"
 import { StreamlitEndpoints } from "@streamlit/lib/src/StreamlitEndpoints"
 import { IS_DEV_ENV } from "@streamlit/lib/src/baseconsts"
 import { WidgetStateManager as ElementStateManager } from "@streamlit/lib/src/WidgetStateManager"
+
+import { StyledVideoIframe } from "./styled-components"
 
 const DEFAULT_HEIGHT = 528
 
@@ -186,28 +188,15 @@ export default function Video({
     return youtubeUrl.toString()
   }
 
-  /* Is this a YouTube link? If so we need a fancier tag.
-       NOTE: This part assumes the URL is already an "embed" link.
-    */
+  // Is this a YouTube link? If so we need a fancier tag.
+  // NOTE: This part assumes the URL is already an "embed" link.
   if (type === VideoProto.Type.YOUTUBE_IFRAME) {
-    // At some point the width 0 will be passed to this component
-    // which is caused by the AutoSizer of the VerticalLayout
-    // Width 0 will result in height being 0, which results in issue
-    // https://github.com/streamlit/streamlit/issues/5069
-    // To avoid this, when we detect width is 0, we set height to 528,
-    // which is default height based on the default streamlit width
-    const height = width !== 0 ? width * 0.75 : DEFAULT_HEIGHT
-
     return (
-      <iframe
+      <StyledVideoIframe
         className="stVideo"
         data-testid="stVideo"
         title={url}
         src={getYoutubeSrc(url)}
-        width={width}
-        height={height}
-        style={{ colorScheme: "normal" }}
-        frameBorder="0"
         allow="autoplay; encrypted-media"
         allowFullScreen
       />
@@ -231,12 +220,12 @@ export default function Video({
       }
     >
       {subtitles &&
-        subtitles.map((subtitle: Subtitle, idx: number) => (
+        subtitles.map((subtitle: ISubtitleTrack, idx: number) => (
           <track
             key={idx}
             kind="captions"
-            src={endpoints.buildMediaURL(subtitle.url)}
-            label={subtitle.label}
+            src={endpoints.buildMediaURL(`${subtitle.url}`)}
+            label={`${subtitle.label}`}
             default={idx === 0}
           />
         ))}

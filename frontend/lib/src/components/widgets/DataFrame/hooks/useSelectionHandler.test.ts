@@ -22,11 +22,11 @@ import { Arrow as ArrowProto } from "@streamlit/lib/src/proto"
 
 import useSelectionHandler from "./useSelectionHandler"
 
-const syncSelectionStateMock = jest.fn()
+const syncSelectionStateMock = vi.fn()
 
 describe("useSelectionHandler hook", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it("detects single row selection", () => {

@@ -16,8 +16,7 @@
 
 import React, { PureComponent, ReactNode } from "react"
 
-import "@testing-library/jest-dom"
-import { fireEvent, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
 
@@ -46,8 +45,8 @@ class TestComponent extends PureComponent<TestProps> {
 const getProps = (props: Partial<TestProps> = {}): TestProps => ({
   width: 100,
   isFullScreen: false,
-  expand: jest.fn(),
-  collapse: jest.fn(),
+  expand: vi.fn(),
+  collapse: vi.fn(),
   label: "label",
   ...props,
 })
@@ -87,37 +86,6 @@ describe("withFullScreenWrapper HOC", () => {
     render(<WrappedTestComponent {...props} />)
 
     expect(screen.getByTestId("stFullScreenFrame")).toBeInTheDocument()
-    expect(screen.getByText(`${props.label}`)).toBeInTheDocument()
-  })
-
-  it("passes `isFullScreen` to wrapped component", () => {
-    const props = getProps()
-    render(<WrappedTestComponent {...props} />)
-
-    // by default, isFullScreen == false
-    expect(screen.getByText("NOT isFullScreen")).toBeInTheDocument()
-
-    // zoomIn sets FullScreenWrapper.expanded == true & isFullScreen == true
-    fireEvent.click(screen.getByTestId("StyledFullScreenButton"))
-    expect(screen.getByText("isFullScreen")).toBeInTheDocument()
-  })
-
-  it("works if wrapped component does not have `isFullScreen` prop", () => {
-    // This test exists just to show that a component that does not take
-    // an "isFullScreen" property can still be wrapped with the FullScreenWrapper,
-    // and the typechecker won't complain. (The component instance will still
-    // receive "isFullScreen" in its props - but it won't "know" about it.)
-    class NoFullScreenPropComponent extends PureComponent<
-      Omit<TestProps, "isFullScreen">
-    > {
-      public render = (): ReactNode => this.props.label
-    }
-    const WrappedNoFullScreenPropComponent = withFullScreenWrapper(
-      NoFullScreenPropComponent
-    )
-
-    const props = getProps()
-    render(<WrappedNoFullScreenPropComponent {...props} />)
     expect(screen.getByText(`${props.label}`)).toBeInTheDocument()
   })
 

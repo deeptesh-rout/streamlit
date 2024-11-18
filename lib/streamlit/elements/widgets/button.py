@@ -17,6 +17,7 @@ from __future__ import annotations
 import io
 import os
 from dataclasses import dataclass
+from pathlib import Path
 from textwrap import dedent
 from typing import (
     TYPE_CHECKING,
@@ -105,8 +106,9 @@ class ButtonMixin:
         label : str
             A short label explaining to the user what this button is for.
             The label can optionally contain GitHub-flavored Markdown of the
-            following types: Bold, Italics, Strikethroughs, Inline Code, and
-            Links.
+            following types: Bold, Italics, Strikethroughs, Inline Code, Links,
+            and Images. Images display like icons, with a max height equal to
+            the font height.
 
             Unsupported Markdown elements are unwrapped so only their children
             (text contents) render. Display unsupported elements as literal
@@ -159,8 +161,8 @@ class ButtonMixin:
               font library.
 
         disabled : bool
-            An optional boolean, which disables the button if set to True. The
-            default is False.
+            An optional boolean that disables the button if set to ``True``.
+            The default is ``False``.
 
         use_container_width : bool
             Whether to expand the button's width to fill its parent container.
@@ -270,8 +272,9 @@ class ButtonMixin:
         label : str
             A short label explaining to the user what this button is for.
             The label can optionally contain GitHub-flavored Markdown of the
-            following types: Bold, Italics, Strikethroughs, Inline Code, and
-            Links.
+            following types: Bold, Italics, Strikethroughs, Inline Code, Links,
+            and Images. Images display like icons, with a max height equal to
+            the font height.
 
             Unsupported Markdown elements are unwrapped so only their children
             (text contents) render. Display unsupported elements as literal
@@ -340,8 +343,8 @@ class ButtonMixin:
               font library.
 
         disabled : bool
-            An optional boolean, which disables the download button if set to
-            True. The default is False.
+            An optional boolean that disables the download button if set to
+            ``True``. The default is ``False``.
 
         use_container_width : bool
             Whether to expand the button's width to fill its parent container.
@@ -457,8 +460,9 @@ class ButtonMixin:
         label : str
             A short label explaining to the user what this button is for.
             The label can optionally contain GitHub-flavored Markdown of the
-            following types: Bold, Italics, Strikethroughs, Inline Code, and
-            Links.
+            following types: Bold, Italics, Strikethroughs, Inline Code, Links,
+            and Images. Images display like icons, with a max height equal to
+            the font height.
 
             Unsupported Markdown elements are unwrapped so only their children
             (text contents) render. Display unsupported elements as literal
@@ -501,8 +505,8 @@ class ButtonMixin:
               font library.
 
         disabled : bool
-            An optional boolean, which disables the link button if set to
-            True. The default is False.
+            An optional boolean that disables the link button if set to
+            ``True``. The default is ``False``.
 
         use_container_width : bool
             Whether to expand the button's width to fill its parent container.
@@ -544,7 +548,7 @@ class ButtonMixin:
     @gather_metrics("page_link")
     def page_link(
         self,
-        page: str | StreamlitPage,
+        page: str | Path | StreamlitPage,
         *,
         label: str | None = None,
         icon: str | None = None,
@@ -564,7 +568,7 @@ class ButtonMixin:
 
         Parameters
         ----------
-        page : str or st.Page
+        page : str, Path, or st.Page
             The file path (relative to the main script) or an st.Page indicating
             the page to switch to. Alternatively, this can be the URL to an
             external page (must start with "http://" or "https://").
@@ -572,8 +576,9 @@ class ButtonMixin:
         label : str
             The label for the page link. Labels are required for external pages.
             The label can optionally contain GitHub-flavored Markdown of the
-            following types: Bold, Italics, Strikethroughs, Inline Code, and
-            Links.
+            following types: Bold, Italics, Strikethroughs, Inline Code, Links,
+            and Images. Images display like icons, with a max height equal to
+            the font height.
 
             Unsupported Markdown elements are unwrapped so only their children
             (text contents) render. Display unsupported elements as literal
@@ -608,8 +613,8 @@ class ButtonMixin:
             hovered over.
 
         disabled : bool
-            An optional boolean, which disables the page link if set to
-            ``True``. The default is ``False``.
+            An optional boolean that disables the page link if set to ``True``.
+            The default is ``False``.
 
         use_container_width : bool
             Whether to expand the link's width to fill its parent container.
@@ -764,7 +769,7 @@ class ButtonMixin:
 
     def _page_link(
         self,
-        page: str | StreamlitPage,
+        page: str | Path | StreamlitPage,
         *,  # keyword-only arguments:
         label: str | None = None,
         icon: str | None = None,
@@ -793,6 +798,10 @@ class ButtonMixin:
             if label is None:
                 page_link_proto.label = page.title
         else:
+            # Convert Path to string if necessary
+            if isinstance(page, Path):
+                page = str(page)
+
             # Handle external links:
             if is_url(page):
                 if label is None or label == "":

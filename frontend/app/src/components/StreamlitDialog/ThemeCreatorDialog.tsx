@@ -36,16 +36,17 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
+  StreamlitMarkdown,
   ThemeConfig,
   toThemeInput,
   UISelectbox,
 } from "@streamlit/lib"
+import { MetricsManager } from "@streamlit/app/src/MetricsManager"
 
 import {
   StyledBackButton,
   StyledDialogBody,
   StyledFullRow,
-  StyledSmall,
 } from "./styled-components"
 
 interface ThemeOptionBuilder {
@@ -187,6 +188,7 @@ export const toMinimalToml = (
 export interface Props {
   backToSettings: (animateModal: boolean) => void
   onClose: () => void
+  metricsMgr: MetricsManager
 }
 
 const ThemeCreatorDialog = (props: Props): ReactElement => {
@@ -212,6 +214,9 @@ const ThemeCreatorDialog = (props: Props): ReactElement => {
   const config = toMinimalToml(themeInput)
 
   const copyConfig = (): void => {
+    props.metricsMgr.enqueue("menuClick", {
+      label: "copyThemeToClipboard",
+    })
     navigator.clipboard.writeText(config)
     updateCopied(true)
   }
@@ -279,11 +284,14 @@ const ThemeCreatorDialog = (props: Props): ReactElement => {
       <ModalBody>
         <StyledDialogBody data-testid="stThemeCreatorDialog">
           <StyledFullRow>
-            <StyledSmall>
-              Changes made to the active theme will exist for the duration of a
-              session. To discard changes and recover the original theme,
-              refresh the page.
-            </StyledSmall>
+            <StreamlitMarkdown
+              source={`
+Changes made to the active theme will exist for the duration of a
+session. To discard changes and recover the original theme,
+refresh the page.`}
+              allowHTML={false}
+              isCaption={true}
+            />
           </StyledFullRow>
 
           <ThemeOption name="primaryColor" value={primaryColor} />
@@ -299,12 +307,16 @@ const ThemeCreatorDialog = (props: Props): ReactElement => {
           </StyledFullRow>
 
           <StyledFullRow>
-            <StyledSmall>
-              To save your changes, copy your custom theme into the clipboard
-              and paste it into the
-              <code>[theme]</code> section of your{" "}
-              <code>.streamlit/config.toml</code> file.
-            </StyledSmall>
+            <StyledFullRow>
+              <StreamlitMarkdown
+                source={`
+To save your changes, copy your custom theme into the clipboard and paste it into the
+\`[theme]\` section of your \`.streamlit/config.toml\` file.
+`}
+                allowHTML={false}
+                isCaption={true}
+              />
+            </StyledFullRow>
           </StyledFullRow>
 
           <StyledFullRow>

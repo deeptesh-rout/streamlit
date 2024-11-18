@@ -71,6 +71,7 @@ export const StyledSummary = styled.summary<StyledSummaryProps>(
     paddingRight: theme.spacing.lg,
     paddingTop: theme.spacing.md,
     paddingBottom: theme.spacing.md,
+    cursor: "pointer",
     listStyleType: "none",
     "&::-webkit-details-marker": {
       display: "none",

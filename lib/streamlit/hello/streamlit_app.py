@@ -19,17 +19,35 @@ import streamlit as st
 dir_path = Path(__file__).parent
 
 
+# Note that this needs to be in a method so we can have an e2e playwright test.
 def run():
     page = st.navigation(
         [
-            st.Page(dir_path / "Hello.py", icon=":material/waving_hand:"),
-            st.Page(dir_path / "Animation_Demo.py", icon=":material/animation:"),
-            st.Page(dir_path / "Plotting_Demo.py", icon=":material/show_chart:"),
-            st.Page(dir_path / "Mapping_Demo.py", icon=":material/public:"),
-            st.Page(dir_path / "Dataframe_Demo.py", icon=":material/table:"),
+            st.Page(
+                dir_path / "hello.py", title="Hello", icon=":material/waving_hand:"
+            ),
+            st.Page(
+                dir_path / "dataframe_demo.py",
+                title="DataFrame demo",
+                icon=":material/table:",
+            ),
+            st.Page(
+                dir_path / "plotting_demo.py",
+                title="Plotting demo",
+                icon=":material/show_chart:",
+            ),
+            st.Page(
+                dir_path / "mapping_demo.py",
+                title="Mapping demo",
+                icon=":material/public:",
+            ),
+            st.Page(
+                dir_path / "animation_demo.py",
+                title="Animation demo",
+                icon=":material/animation:",
+            ),
         ]
     )
-
     page.run()
 
 

@@ -210,6 +210,7 @@ def test_clicking_on_fullscreen_toolbar_button(
         assert_snapshot=assert_snapshot,
         widget_test_id="stDataFrame",
         filename_prefix="st_dataframe",
+        nth=4,
     )
 
 

@@ -51,11 +51,11 @@ if runtime.exists():
 
     st.text_input(
         "text input 9 (callback, help)",
-        key="text_input9",
+        key="text_input_9",
         on_change=on_change,
         help="Help text",
     )
-    st.write("value 9:", st.session_state.text_input9)
+    st.write("value 9:", st.session_state.text_input_9)
     st.write("text input changed:", st.session_state.get("text_input_changed") is True)
     st.session_state.text_input_changed = False
 
@@ -64,3 +64,29 @@ st.write("value 10:", v10)
 
 v11 = st.text_input("text input 11 (type=password)", "my password", type="password")
 st.write("value 11:", v11)
+
+if "text_input_12" not in st.session_state:
+    st.session_state["text_input_12"] = "xyz"
+
+v12 = st.text_input(
+    "text input 12 (value from state)",
+    value=None,
+    key="text_input_12",
+)
+st.write("text input 12 (value from state) - value: ", v12)
+
+with st.form("form"):
+    st.text_input("text input 13 (value from form)", key="text_input_13")
+    st.form_submit_button("submit")
+
+form_value = (
+    st.session_state["text_input_13"] if "text_input_13" in st.session_state else None
+)
+st.write("text input 13 (value from form) - value: ", form_value)
+
+
+if "rerun_counter" not in st.session_state:
+    st.session_state.rerun_counter = 0
+
+st.session_state.rerun_counter += 1
+st.write("Rerun counter:", st.session_state.rerun_counter)

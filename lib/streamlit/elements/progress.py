@@ -105,7 +105,8 @@ class ProgressMixin:
         text : str or None
             A message to display above the progress bar. The text can optionally
             contain GitHub-flavored Markdown of the following types: Bold, Italics,
-            Strikethroughs, Inline Code, and Links.
+            Strikethroughs, Inline Code, Links, and Images. Images display like
+            icons, with a max height equal to the font height.
 
             Unsupported Markdown elements are unwrapped so only their children
             (text contents) render. Display unsupported elements as literal

@@ -25,6 +25,8 @@ from streamlit.proto.LabelVisibilityMessage_pb2 import LabelVisibilityMessage
 from streamlit.testing.v1.app_test import AppTest
 from tests.delta_generator_test_case import DeltaGeneratorTestCase
 
+TODAY = datetime.today()
+
 
 class DateInputTest(DeltaGeneratorTestCase):
     """Test ability to marshall date_input protos."""
@@ -63,13 +65,32 @@ class DateInputTest(DeltaGeneratorTestCase):
 
     @parameterized.expand(
         [
+            # Epoch
             (date(1970, 1, 1), ["1970/01/01"]),
+            # All scalar types
+            (date(1971, 2, 3), ["1971/02/03"]),
             (datetime(2019, 7, 6, 21, 15), ["2019/07/06"]),
+            ("1971-02-03", ["1971/02/03"]),
+            ("1971-02-03 12:34:56", ["1971/02/03"]),
+            # Lists
             ([], []),
             ([datetime(2019, 7, 6, 21, 15)], ["2019/07/06"]),
             (
-                [datetime(2019, 7, 6, 21, 15), datetime(2019, 7, 6, 21, 15)],
-                ["2019/07/06", "2019/07/06"],
+                [date(2019, 7, 6), date(2020, 8, 7)],
+                ["2019/07/06", "2020/08/07"],
+            ),
+            (
+                [datetime(2019, 7, 6, 21, 15), datetime(2020, 8, 7, 21, 15)],
+                ["2019/07/06", "2020/08/07"],
+            ),
+            (
+                ["2019-07-06", "2020-08-07"],
+                ["2019/07/06", "2020/08/07"],
+            ),
+            # Mixed list
+            (
+                [date(2019, 7, 6), datetime(2020, 8, 7, 21, 15)],
+                ["2019/07/06", "2020/08/07"],
             ),
         ]
     )
@@ -80,6 +101,23 @@ class DateInputTest(DeltaGeneratorTestCase):
         c = self.get_delta_from_queue().new_element.date_input
         self.assertEqual(c.label, "the label")
         self.assertEqual(c.default, proto_value)
+
+    @parameterized.expand(
+        [
+            ("2000-01-02", "1999-10-11", "2001-02-03"),
+            ("2000-01-02", "1999-10-11 12:34:56", "2001-02-03 11:22:33"),
+            ("2000-01-02", date(1999, 10, 11), date(2001, 2, 3)),
+            ("2000-01-02", datetime(1999, 10, 11), datetime(2001, 2, 3)),
+        ]
+    )
+    def test_min_max_value_types(self, arg_value, min_date_value, max_date_value):
+        """Test the datatypes accepted by min_value/max_value."""
+        st.date_input("the label", arg_value, min_date_value, max_date_value)
+
+        c = self.get_delta_from_queue().new_element.date_input
+        self.assertEqual(c.label, "the label")
+        self.assertEqual(c.min, "1999/10/11")
+        self.assertEqual(c.max, "2001/02/03")
 
     @parameterized.expand(
         [
@@ -103,29 +141,29 @@ class DateInputTest(DeltaGeneratorTestCase):
     @parameterized.expand(
         [
             (
-                datetime.today(),
-                datetime.today() + timedelta(days=7),
-                datetime.today() + timedelta(days=14),
+                TODAY,
+                TODAY + timedelta(days=7),
+                TODAY + timedelta(days=14),
             ),
             (
-                datetime.today() + timedelta(days=8),
-                datetime.today(),
-                datetime.today() + timedelta(days=7),
+                TODAY + timedelta(days=8),
+                TODAY,
+                TODAY + timedelta(days=7),
             ),
             (
-                [datetime.today(), datetime.today() + timedelta(2)],
-                datetime.today() + timedelta(days=7),
-                datetime.today() + timedelta(days=14),
+                [TODAY, TODAY + timedelta(2)],
+                TODAY + timedelta(days=7),
+                TODAY + timedelta(days=14),
             ),
             (
-                [datetime.today(), datetime.today() + timedelta(8)],
-                datetime.today() + timedelta(days=7),
-                datetime.today() + timedelta(days=14),
+                [TODAY, TODAY + timedelta(8)],
+                TODAY + timedelta(days=7),
+                TODAY + timedelta(days=14),
             ),
             (
-                [datetime.today(), datetime.today() + timedelta(8)],
-                datetime.today(),
-                datetime.today() + timedelta(days=7),
+                [TODAY, TODAY + timedelta(8)],
+                TODAY,
+                TODAY + timedelta(days=7),
             ),
         ]
     )
@@ -145,31 +183,32 @@ class DateInputTest(DeltaGeneratorTestCase):
 
     @parameterized.expand(
         [
-            (datetime.today(), datetime.today(), datetime.today() + timedelta(days=14)),
+            (TODAY, TODAY, TODAY + timedelta(days=14)),
             (
-                datetime.today() + timedelta(days=14),
-                datetime.today(),
-                datetime.today() + timedelta(days=14),
+                TODAY + timedelta(days=14),
+                TODAY,
+                TODAY + timedelta(days=14),
             ),
             (
-                datetime.today() + timedelta(days=10),
-                datetime.today(),
-                datetime.today() + timedelta(days=14),
+                TODAY + timedelta(days=10),
+                TODAY,
+                TODAY + timedelta(days=14),
             ),
             (
-                [datetime.today() + timedelta(1), datetime.today() + timedelta(2)],
-                datetime.today(),
-                datetime.today() + timedelta(days=14),
+                [TODAY + timedelta(1), TODAY + timedelta(2)],
+                TODAY,
+                TODAY + timedelta(days=14),
             ),
             (
-                [datetime.today(), datetime.today() + timedelta(14)],
-                datetime.today(),
-                datetime.today() + timedelta(days=14),
+                [TODAY, TODAY + timedelta(14)],
+                TODAY,
+                TODAY + timedelta(days=14),
             ),
         ]
     )
     def test_value_in_range(self, value, min_date, max_date):
         st.date_input("the label", value=value, min_value=min_date, max_value=max_date)
+        # No need to assert anything. Testing if not throwing an error.
 
     def test_default_min_if_today_is_before_min(self):
         min_date = date(9998, 2, 28)

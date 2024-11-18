@@ -18,8 +18,6 @@ import styled from "@emotion/styled"
 import { darken } from "color2k"
 import { ChevronLeft } from "react-feather"
 
-import { Small } from "@streamlit/lib"
-
 export const StyledShortcutLabel = styled.span({
   "&::first-letter": {
     textDecoration: "underline",
@@ -72,15 +70,6 @@ export const StyledLabel = styled.label(({ theme }) => ({
   marginTop: 0,
   lineHeight: theme.lineHeights.tight,
   fontSize: theme.fontSizes.sm,
-}))
-
-export const StyledSmall = styled(Small)(({ theme }) => ({
-  display: "block",
-  paddingBottom: 0,
-  paddingTop: 0,
-  marginBottom: 0,
-  marginTop: 0,
-  lineHeight: theme.lineHeights.small,
 }))
 
 export const StyledHr = styled.hr(({ theme }) => ({

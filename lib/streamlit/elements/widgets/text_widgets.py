@@ -139,8 +139,9 @@ class TextWidgetsMixin:
         label : str
             A short label explaining to the user what this input is for.
             The label can optionally contain GitHub-flavored Markdown of the
-            following types: Bold, Italics, Strikethroughs, Inline Code, and
-            Links.
+            following types: Bold, Italics, Strikethroughs, Inline Code, Links,
+            and Images. Images display like icons, with a max height equal to
+            the font height.
 
             Unsupported Markdown elements are unwrapped so only their children
             (text contents) render. Display unsupported elements as literal
@@ -150,9 +151,9 @@ class TextWidgetsMixin:
             See the ``body`` parameter of |st.markdown|_ for additional,
             supported Markdown directives.
 
-            For accessibility reasons, you should never set an empty label (label="")
-            but hide it with label_visibility if needed. In the future, we may disallow
-            empty labels by raising an exception.
+            For accessibility reasons, you should never set an empty label, but
+            you can hide it with ``label_visibility`` if needed. In the future,
+            we may disallow empty labels by raising an exception.
 
             .. |st.markdown| replace:: ``st.markdown``
             .. _st.markdown: https://docs.streamlit.io/develop/api-reference/text/st.markdown
@@ -176,7 +177,9 @@ class TextWidgetsMixin:
             masks the user's typed value). Defaults to "default".
 
         help : str
-            An optional tooltip that gets displayed next to the input.
+            An optional tooltip that gets displayed next to the widget label.
+            Streamlit only displays the tooltip when
+            ``label_visibility="visible"``.
 
         autocomplete : str
             An optional value that will be passed to the <input> element's
@@ -198,14 +201,14 @@ class TextWidgetsMixin:
             no text is displayed.
 
         disabled : bool
-            An optional boolean, which disables the text input if set to True.
-            The default is False.
+            An optional boolean that disables the text input if set to
+            ``True``. The default is ``False``.
 
         label_visibility : "visible", "hidden", or "collapsed"
-            The visibility of the label. If "hidden", the label doesn't show but there
-            is still empty space for it above the widget (equivalent to label="").
-            If "collapsed", both the label and the space are removed. Default is
-            "visible".
+            The visibility of the label. The default is ``"visible"``. If this
+            is ``"hidden"``, Streamlit displays an empty spacer instead of the
+            label, which can help keep the widget alligned with other widgets.
+            If this is ``"collapsed"``, Streamlit displays no label or spacer.
 
         Returns
         -------
@@ -410,8 +413,9 @@ class TextWidgetsMixin:
         label : str
             A short label explaining to the user what this input is for.
             The label can optionally contain GitHub-flavored Markdown of the
-            following types: Bold, Italics, Strikethroughs, Inline Code, and
-            Links.
+            following types: Bold, Italics, Strikethroughs, Inline Code, Links,
+            and Images. Images display like icons, with a max height equal to
+            the font height.
 
             Unsupported Markdown elements are unwrapped so only their children
             (text contents) render. Display unsupported elements as literal
@@ -421,13 +425,12 @@ class TextWidgetsMixin:
             See the ``body`` parameter of |st.markdown|_ for additional,
             supported Markdown directives.
 
-            For accessibility reasons, you should never set an empty label (label="")
-            but hide it with label_visibility if needed. In the future, we may disallow
-            empty labels by raising an exception.
+            For accessibility reasons, you should never set an empty label, but
+            you can hide it with ``label_visibility`` if needed. In the future,
+            we may disallow empty labels by raising an exception.
 
             .. |st.markdown| replace:: ``st.markdown``
             .. _st.markdown: https://docs.streamlit.io/develop/api-reference/text/st.markdown
-
 
         value : object or None
             The text value of this widget when it first renders. This will be
@@ -435,8 +438,9 @@ class TextWidgetsMixin:
             return ``None`` until the user provides input. Defaults to empty string.
 
         height : int or None
-            Desired height of the UI element expressed in pixels. If None, a
-            default height is used. Height must be at least 68 pixels (4.25rem).
+            Desired height of the UI element expressed in pixels. If this is
+            ``None`` (default), the widget's initial height fits three lines.
+            The height must be at least 68 pixels, which fits two lines.
 
         max_chars : int or None
             Maximum number of characters allowed in text area.
@@ -447,7 +451,9 @@ class TextWidgetsMixin:
             based on its content. No two widgets may have the same key.
 
         help : str
-            An optional tooltip that gets displayed next to the textarea.
+            An optional tooltip that gets displayed next to the widget label.
+            Streamlit only displays the tooltip when
+            ``label_visibility="visible"``.
 
         on_change : callable
             An optional callback invoked when this text_area's value changes.
@@ -463,14 +469,14 @@ class TextWidgetsMixin:
             no text is displayed.
 
         disabled : bool
-            An optional boolean, which disables the text area if set to True.
-            The default is False.
+            An optional boolean that disables the text area if set to ``True``.
+            The default is ``False``.
 
         label_visibility : "visible", "hidden", or "collapsed"
-            The visibility of the label. If "hidden", the label doesn't show but there
-            is still empty space for it above the widget (equivalent to label="").
-            If "collapsed", both the label and the space are removed. Default is
-            "visible".
+            The visibility of the label. The default is ``"visible"``. If this
+            is ``"hidden"``, Streamlit displays an empty spacer instead of the
+            label, which can help keep the widget alligned with other widgets.
+            If this is ``"collapsed"``, Streamlit displays no label or spacer.
         Returns
         -------
         str or None

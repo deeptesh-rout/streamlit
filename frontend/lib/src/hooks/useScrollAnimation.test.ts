@@ -37,41 +37,39 @@ describe("useScrollAnimation", () => {
       set: value => (offsetHeight = value),
       get: () => offsetHeight,
     })
-    targetElement.addEventListener = jest.fn()
-    targetElement.removeEventListener = jest.fn()
-    onEndMock = jest.fn()
+    targetElement.addEventListener = vi.fn()
+    targetElement.removeEventListener = vi.fn()
+    onEndMock = vi.fn()
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it("should animate scroll", () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
 
     renderHook(() => useScrollAnimation(targetElement, onEndMock, true))
 
     // Simulate scroll animation
-    jest.advanceTimersByTime(5)
+    vi.advanceTimersByTime(5)
     // Trigger the callback of requestAnimationFrame
-    jest.runOnlyPendingTimers()
+    vi.runOnlyPendingTimers()
 
     // Assert the updated scrollTop value
     expect(targetElement.scrollTop).toBeGreaterThan(0)
 
     // Simulate reaching the end of animation
-    jest.advanceTimersByTime(100)
+    vi.advanceTimersByTime(100)
     // Trigger the callback of requestAnimationFrame
-    jest.runOnlyPendingTimers()
+    vi.runOnlyPendingTimers()
 
     // Assert that onEnd callback is called
     expect(onEndMock).toHaveBeenCalled()
-
-    jest.useRealTimers()
   })
 
   it("should register and deregister the correct events", () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
 
     const { unmount } = renderHook(() =>
       useScrollAnimation(targetElement, onEndMock, true)
@@ -101,8 +99,6 @@ describe("useScrollAnimation", () => {
       "wheel",
       expect.any(Function)
     )
-
-    jest.useRealTimers()
   })
 
   it("should not animate scroll if target element is null", () => {

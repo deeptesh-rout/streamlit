@@ -19,7 +19,6 @@ import React from "react"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
-import "@testing-library/jest-dom"
 
 import Balloons, { NUM_BALLOONS, Props } from "./Balloons"
 
@@ -28,11 +27,11 @@ const getProps = (): Props => ({
 })
 
 describe("Balloons element", () => {
-  jest.useFakeTimers()
+  vi.useFakeTimers()
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.clearAllTimers()
+    vi.clearAllMocks()
+    vi.clearAllTimers()
   })
 
   it("renders without crashing", () => {

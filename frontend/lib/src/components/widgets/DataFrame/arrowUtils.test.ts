@@ -628,7 +628,7 @@ describe("getCellFromArrow", () => {
           numpy_type: "object",
         },
       }),
-      getCell: jest.fn().mockReturnValue(getTextCell(false, false)),
+      getCell: vi.fn().mockReturnValue(getTextCell(false, false)),
     }
 
     // Create a mock arrowCell object with time data
@@ -674,7 +674,7 @@ describe("getCellFromArrow", () => {
           numpy_type: "datetime64[ns]",
         },
       }),
-      getCell: jest.fn().mockReturnValue(getTextCell(false, false)),
+      getCell: vi.fn().mockReturnValue(getTextCell(false, false)),
     }
 
     // Create a mock arrowCell object with time data

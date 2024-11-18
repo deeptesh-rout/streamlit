@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -27,7 +26,7 @@ const getProps = (
   props: Partial<CameraInputButtonProps> = {}
 ): CameraInputButtonProps => {
   return {
-    onClick: jest.fn(),
+    onClick: vi.fn(),
     disabled: false,
     progress: 0,
     ...props,

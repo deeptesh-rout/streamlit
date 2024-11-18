@@ -41,5 +41,7 @@ st.radio("Radio Widget", ["Option 1", "Option 2", "Option 3"])
 with st.sidebar:
     st.write("Hello sidebar")
 
+st.file_uploader("Upload a file")
+
 # Allows for testing of script re-run / stop behavior
 time.sleep(3)

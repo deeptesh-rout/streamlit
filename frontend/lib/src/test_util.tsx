@@ -17,6 +17,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { FC, PropsWithChildren, ReactElement } from "react"
 
+import { Vector } from "apache-arrow"
 import {
   render as reactTestingLibraryRender,
   RenderOptions,
@@ -63,7 +64,7 @@ export function mockWindowLocation(hostname: string): void {
 
   // @ts-expect-error
   window.location = {
-    assign: jest.fn(),
+    assign: vi.fn(),
     hostname: hostname,
   }
 }
@@ -78,28 +79,43 @@ export const customRenderLibContext = (
 ): RenderResult => {
   const defaultLibContextProps = {
     isFullScreen: false,
-    setFullScreen: jest.fn(),
-    addScriptFinishedHandler: jest.fn(),
-    removeScriptFinishedHandler: jest.fn(),
+    setFullScreen: vi.fn(),
+    addScriptFinishedHandler: vi.fn(),
+    removeScriptFinishedHandler: vi.fn(),
     activeTheme: baseTheme,
-    setTheme: jest.fn(),
+    setTheme: vi.fn(),
     availableThemes: [],
-    addThemes: jest.fn(),
-    onPageChange: jest.fn(),
+    addThemes: vi.fn(),
+    onPageChange: vi.fn(),
     currentPageScriptHash: "",
     libConfig: {},
     fragmentIdsThisRun: [],
+    locale: "en-US",
   }
 
   return reactTestingLibraryRender(component, {
     wrapper: ({ children }) => (
       <ThemeProvider theme={baseTheme.emotion}>
-        <LibContext.Provider
-          value={{ ...defaultLibContextProps, ...overrideLibContextProps }}
-        >
-          {children}
-        </LibContext.Provider>
+        <WindowDimensionsProvider>
+          <LibContext.Provider
+            value={{ ...defaultLibContextProps, ...overrideLibContextProps }}
+          >
+            {children}
+          </LibContext.Provider>
+        </WindowDimensionsProvider>
       </ThemeProvider>
     ),
   })
+}
+
+export function arrayFromVector(vector: any): any {
+  if (Array.isArray(vector)) {
+    return vector.map(arrayFromVector)
+  }
+
+  if (vector instanceof Vector) {
+    return Array.from(vector)
+  }
+
+  return vector
 }

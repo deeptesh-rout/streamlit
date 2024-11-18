@@ -34,7 +34,7 @@ import {
   Search,
 } from "@emotion-icons/material-outlined"
 
-import { FormClearHelper } from "@streamlit/lib/src/components/widgets/Form"
+import { useFormClearHelper } from "@streamlit/lib/src/components/widgets/Form"
 import { withFullScreenWrapper } from "@streamlit/lib/src/components/shared/FullScreenWrapper"
 import { Quiver } from "@streamlit/lib/src/dataframes/Quiver"
 import { Arrow as ArrowProto } from "@streamlit/lib/src/proto"
@@ -47,6 +47,8 @@ import Toolbar, {
   ToolbarAction,
 } from "@streamlit/lib/src/components/shared/Toolbar"
 import { LibContext } from "@streamlit/lib/src/components/core/LibContext"
+import { ElementFullscreenContext } from "@streamlit/lib/src/components/shared/ElementFullscreen/ElementFullscreenContext"
+import { useRequiredContext } from "@streamlit/lib/src/hooks/useRequiredContext"
 
 import EditingState, { getColumnName } from "./EditingState"
 import {
@@ -106,15 +108,12 @@ export interface DataframeState {
 export interface DataFrameProps {
   element: ArrowProto
   data: Quiver
-  width: number
-  height?: number
   disabled: boolean
   widgetMgr: WidgetStateManager
-  isFullScreen?: boolean
-  expand?: () => void
-  collapse?: () => void
   disableFullscreenMode?: boolean
   fragmentId?: string
+  width: number
+  height?: number
 }
 
 /**
@@ -122,30 +121,31 @@ export interface DataFrameProps {
  *
  * @param element - The element's proto message
  * @param data - The Arrow data to render (extracted from the proto message)
- * @param width - The width of the container
- * @param height - The height of the container
  * @param disabled - Whether the widget is disabled
  * @param widgetMgr - The widget manager
- * @param isFullScreen - Whether the widget is in full screen mode
  */
 function DataFrame({
   element,
   data,
-  width: containerWidth,
-  height: containerHeight,
   disabled,
   widgetMgr,
-  isFullScreen,
   disableFullscreenMode,
-  expand,
-  collapse,
   fragmentId,
 }: Readonly<DataFrameProps>): ReactElement {
+  const {
+    expanded: isFullScreen,
+    expand,
+    collapse,
+    width: containerWidth,
+    height: containerHeight,
+  } = useRequiredContext(ElementFullscreenContext)
+
   const resizableRef = React.useRef<Resizable>(null)
   const dataEditorRef = React.useRef<DataEditorRef>(null)
   const resizableContainerRef = React.useRef<HTMLDivElement>(null)
 
-  const { theme, headerIcons, tableBorderRadius } = useCustomTheme()
+  const { theme, headerIcons, tableBorderRadius, tableBorderWidth } =
+    useCustomTheme()
 
   const {
     libConfig: { enforceDownloadInNewTab = false }, // Default to false, if no libConfig, e.g. for tests
@@ -560,23 +560,13 @@ function DataFrame({
     [columns, theme.textLight]
   )
 
-  // This is required for the form clearing functionality:
-  React.useEffect(() => {
-    if (!element.formId) {
-      return
-    }
+  const onFormCleared = React.useCallback(() => {
+    // Clear the editing state and the selection state
+    resetEditingState()
+    clearSelection()
+  }, [resetEditingState, clearSelection])
 
-    const formClearHelper = new FormClearHelper()
-    formClearHelper.manageFormClearListener(widgetMgr, element.formId, () => {
-      // Clear the editing state and the selection state
-      resetEditingState()
-      clearSelection()
-    })
-
-    return () => {
-      formClearHelper.disconnect()
-    }
-  }, [element.formId, resetEditingState, clearSelection, widgetMgr])
+  useFormClearHelper({ element, widgetMgr, onFormCleared })
 
   const isDynamicAndEditable =
     !isEmptyTable && element.editingMode === DYNAMIC && !disabled
@@ -749,7 +739,7 @@ function DataFrame({
         ref={resizableRef}
         defaultSize={resizableSize}
         style={{
-          border: `1px solid ${theme.borderColor}`,
+          border: `${tableBorderWidth} solid ${theme.borderColor}`,
           borderRadius: `${tableBorderRadius}`,
         }}
         minHeight={minHeight}
@@ -998,4 +988,4 @@ function DataFrame({
   )
 }
 
-export default withFullScreenWrapper(DataFrame, true)
+export default withFullScreenWrapper(DataFrame)

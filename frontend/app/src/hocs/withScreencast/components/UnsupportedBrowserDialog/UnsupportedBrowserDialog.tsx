@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { PureComponent, ReactNode } from "react"
+import React, { memo } from "react"
 
 import { Modal, ModalBody, ModalHeader } from "@streamlit/lib"
 
@@ -29,30 +29,25 @@ export interface Props {
   onClose: () => void
 }
 
-class UnsupportedBrowserDialog extends PureComponent<Props> {
-  public render(): ReactNode {
-    const { onClose } = this.props
-
-    return (
-      <Modal isOpen onClose={onClose}>
-        <ModalHeader>Record a screencast</ModalHeader>
-        <ModalBody>
-          <StyledScreenCastWarningDialog data-testid="stUnsupportedBrowserDialog">
-            <StyledUnsupportedScreenCastIcon>
-              <span role="img" aria-label="Alien Monster">
-                👾
-              </span>
-            </StyledUnsupportedScreenCastIcon>
-            <StyledUnsupportedScreenCastExplanation>
-              Due to limitations with some browsers, this feature is only
-              supported on recent desktop versions of Chrome, Firefox, and
-              Edge.
-            </StyledUnsupportedScreenCastExplanation>
-          </StyledScreenCastWarningDialog>
-        </ModalBody>
-      </Modal>
-    )
-  }
+const UnsupportedBrowserDialog: React.FC<Props> = ({ onClose }) => {
+  return (
+    <Modal isOpen onClose={onClose}>
+      <ModalHeader>Record a screencast</ModalHeader>
+      <ModalBody>
+        <StyledScreenCastWarningDialog data-testid="stUnsupportedBrowserDialog">
+          <StyledUnsupportedScreenCastIcon>
+            <span role="img" aria-label="Alien Monster">
+              👾
+            </span>
+          </StyledUnsupportedScreenCastIcon>
+          <StyledUnsupportedScreenCastExplanation>
+            Due to limitations with some browsers, this feature is only
+            supported on recent desktop versions of Chrome, Firefox, and Edge.
+          </StyledUnsupportedScreenCastExplanation>
+        </StyledScreenCastWarningDialog>
+      </ModalBody>
+    </Modal>
+  )
 }
 
-export default UnsupportedBrowserDialog
+export default memo(UnsupportedBrowserDialog)

@@ -253,6 +253,13 @@ class StreamlitWriteTest(unittest.TestCase):
 
             p.assert_called_once()
 
+    def test_delta_generator_input(self):
+        """Test st.write with DeltaGenerator as input uses st.help."""
+        with patch("streamlit.delta_generator.DeltaGenerator.help") as p:
+            st.write(st.container())
+
+            p.assert_called_once()
+
     @patch("builtins.open", new_callable=mock_open, read_data=MOCK_TOML)
     def test_streamlit_secrets(self, *mocks):
         """Test st.write with st.secrets."""

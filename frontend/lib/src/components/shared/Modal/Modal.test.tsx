@@ -17,7 +17,6 @@
 import React from "react"
 
 import { BaseProvider, LightTheme } from "baseui"
-import "@testing-library/jest-dom"
 import { screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"

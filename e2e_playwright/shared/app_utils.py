@@ -634,6 +634,6 @@ def wait_for_all_images_to_be_loaded(page: Page) -> None:
     # Wait to make sure that the images have been loaded
     page.wait_for_function("""() => {
         const images = Array.from(document.querySelectorAll('img'));
-        return images.every(img => img.complete);
+        return images.every(img => img.complete && img.naturalHeight !== 0);
     }
     """)

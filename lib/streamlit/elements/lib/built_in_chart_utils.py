@@ -140,7 +140,7 @@ def generate_chart(
     height: int | None = None,
     # Bar & Area charts only:
     stack: bool | ChartStackType | None = None,
-) -> tuple[alt.Chart, AddRowsMetadata]:
+) -> tuple[alt.Chart | alt.LayerChart, AddRowsMetadata]:
     """Function to use the chart's type, data columns and indices to figure out the chart's spec."""
     import altair as alt
 
@@ -208,15 +208,10 @@ def generate_chart(
     )
 
     # Offset encoding only works for Altair >= 5.0.0
-    is_altair_version_offset_compatible = not type_util.is_altair_version_less_than(
-        "5.0.0"
-    )
-    # Set up offset encoding (creates grouped/non-stacked bar charts, so only applicable when stack=False).
-    if (
-        is_altair_version_offset_compatible
-        and stack is False
-        and color_column is not None
-    ):
+    is_altair_version_5_or_greater = not type_util.is_altair_version_less_than("5.0.0")
+    # Set up offset encoding (creates grouped/non-stacked bar charts, so only applicable
+    # when stack=False).
+    if is_altair_version_5_or_greater and stack is False and color_column is not None:
         x_offset, y_offset = _get_offset_encoding(chart_type, color_column)
         chart = chart.encode(xOffset=x_offset, yOffset=y_offset)
 
@@ -249,7 +244,52 @@ def generate_chart(
             )
         )
 
+    if (
+        chart_type is ChartType.LINE
+        and x_column is not None
+        # This is using the new selection API that was added in Altair 5.0.0
+        and is_altair_version_5_or_greater
+    ):
+        return _add_improved_hover_tooltips(
+            chart, x_column, width, height
+        ).interactive(), add_rows_metadata
+
     return chart.interactive(), add_rows_metadata
+
+
+def _add_improved_hover_tooltips(
+    chart: alt.Chart, x_column: str, width: int | None, height: int | None
+) -> alt.LayerChart:
+    """Adds improved hover tooltips to an existing line chart."""
+
+    import altair as alt
+
+    # Create a selection that chooses the nearest point & selects based on x-value
+    nearest = alt.selection_point(
+        nearest=True,
+        on="pointerover",
+        fields=[x_column],
+        empty=False,
+        clear="pointerout",
+    )
+
+    # Draw points on the line, and highlight based on selection
+    points = (
+        chart.mark_point(filled=True, size=65)
+        .encode(opacity=alt.condition(nearest, alt.value(1), alt.value(0)))
+        .add_params(nearest)
+    )
+
+    layer_chart = (
+        alt.layer(chart, points)
+        .configure_legend(symbolType="stroke")
+        .properties(
+            width=width or 0,
+            height=height or 0,
+        )
+    )
+
+    return cast(alt.LayerChart, layer_chart)
 
 
 def prep_chart_data_for_add_rows(

@@ -16,8 +16,7 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
-import { fireEvent, screen } from "@testing-library/react"
+import { act, fireEvent, screen } from "@testing-library/react"
 import TimezoneMock from "timezone-mock"
 
 import {
@@ -26,7 +25,6 @@ import {
 } from "@streamlit/lib/src/proto"
 import { render } from "@streamlit/lib/src/test_util"
 import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
-import { mockTheme } from "@streamlit/lib/src/mocks/mockTheme"
 
 import Slider, { Props } from "./Slider"
 
@@ -48,10 +46,9 @@ const getProps = (
   width: 600,
   disabled: false,
   widgetMgr: new WidgetStateManager({
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }),
-  theme: mockTheme.emotion,
   ...props,
 })
 
@@ -65,11 +62,11 @@ const triggerChangeEvent = (
 }
 
 describe("Slider widget", () => {
-  jest.useFakeTimers()
+  vi.useFakeTimers()
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.clearAllTimers()
+    vi.clearAllMocks()
+    vi.clearAllTimers()
   })
 
   it("shows a label", () => {
@@ -104,12 +101,12 @@ describe("Slider widget", () => {
 
   it("sets widget value on mount", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setDoubleArrayValue")
+    vi.spyOn(props.widgetMgr, "setDoubleArrayValue")
 
     render(<Slider {...props} />)
 
     // We need to do this as we are using a debounce when the widget value is set
-    jest.runAllTimers()
+    vi.runAllTimers()
 
     expect(props.widgetMgr.setDoubleArrayValue).toHaveBeenCalledWith(
       props.element,
@@ -121,12 +118,12 @@ describe("Slider widget", () => {
 
   it("can pass fragmentId to setDoubleArrayValue", () => {
     const props = getProps(undefined, { fragmentId: "myFragmentId" })
-    jest.spyOn(props.widgetMgr, "setDoubleArrayValue")
+    vi.spyOn(props.widgetMgr, "setDoubleArrayValue")
 
     render(<Slider {...props} />)
 
     // We need to do this as we are using a debounce when the widget value is set
-    jest.runAllTimers()
+    vi.runAllTimers()
 
     expect(props.widgetMgr.setDoubleArrayValue).toHaveBeenCalledWith(
       props.element,
@@ -176,16 +173,20 @@ describe("Slider widget", () => {
       expect(slider).toHaveAttribute("aria-valuemax", `${props.element.max}`)
     })
 
-    it("handles value changes", async () => {
+    it("handles value changes", () => {
       const props = getProps()
 
       render(<Slider {...props} />)
-      jest.spyOn(props.widgetMgr, "setDoubleArrayValue")
+      vi.spyOn(props.widgetMgr, "setDoubleArrayValue")
 
       const slider = screen.getByRole("slider")
-      triggerChangeEvent(slider, "ArrowRight")
-      // We need to do this as we are using a debounce when the widget value is set
-      jest.runAllTimers()
+
+      act(() => {
+        triggerChangeEvent(slider, "ArrowRight")
+
+        // We need to do this as we are using a debounce when the widget value is set
+        vi.runAllTimers()
+      })
 
       expect(props.widgetMgr.setDoubleArrayValue).toHaveBeenCalledWith(
         props.element,
@@ -197,19 +198,22 @@ describe("Slider widget", () => {
       expect(slider).toHaveAttribute("aria-valuenow", "6")
     })
 
-    it("resets its value when form is cleared", async () => {
+    it("resets its value when form is cleared", () => {
       // Create a widget in a clearOnSubmit form
       const props = getProps({ formId: "form" })
       props.widgetMgr.setFormSubmitBehaviors("form", true)
 
       render(<Slider {...props} />)
 
-      jest.spyOn(props.widgetMgr, "setDoubleArrayValue")
+      vi.spyOn(props.widgetMgr, "setDoubleArrayValue")
 
       const slider = screen.getByRole("slider")
+
       triggerChangeEvent(slider, "ArrowRight")
 
-      jest.runAllTimers()
+      act(() => {
+        vi.runAllTimers()
+      })
 
       expect(props.widgetMgr.setDoubleArrayValue).toHaveBeenLastCalledWith(
         props.element,
@@ -220,8 +224,10 @@ describe("Slider widget", () => {
 
       expect(slider).toHaveAttribute("aria-valuenow", "6")
 
-      // "Submit" the form
-      props.widgetMgr.submitForm("form", undefined)
+      act(() => {
+        // "Submit" the form
+        props.widgetMgr.submitForm("form", undefined)
+      })
 
       // Our widget should be reset, and the widgetMgr should be updated
       expect(props.widgetMgr.setDoubleArrayValue).toHaveBeenLastCalledWith(
@@ -342,17 +348,20 @@ describe("Slider widget", () => {
       })
     })
 
-    it("handles value changes", async () => {
+    it("handles value changes", () => {
       const props = getProps({ default: [1, 9] })
 
       render(<Slider {...props} />)
-      jest.spyOn(props.widgetMgr, "setDoubleArrayValue")
+      vi.spyOn(props.widgetMgr, "setDoubleArrayValue")
 
       const sliders = screen.getAllByRole("slider")
+
       triggerChangeEvent(sliders[1], "ArrowRight")
 
-      // We need to do this as we are using a debounce when the widget value is set
-      jest.runAllTimers()
+      act(() => {
+        // We need to do this as we are using a debounce when the widget value is set
+        vi.runAllTimers()
+      })
 
       expect(props.widgetMgr.setDoubleArrayValue).toHaveBeenCalledWith(
         props.element,
@@ -464,6 +473,11 @@ describe("Slider widget", () => {
 
       const slider = screen.getByRole("slider")
       triggerChangeEvent(slider, "ArrowRight")
+
+      act(() => {
+        // We need to do this as we are using a debounce when the widget value is set
+        vi.runAllTimers()
+      })
 
       expect(slider).toHaveAttribute("aria-valuetext", "yellow")
     })

@@ -16,7 +16,6 @@
 
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { fireEvent, screen } from "@testing-library/react"
 
 import { render } from "@streamlit/lib/src/test_util"
@@ -39,15 +38,15 @@ const getProps = (
   width: 300,
   disabled: false,
   widgetMgr: new WidgetStateManager({
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }),
   ...widgetProps,
 })
 
 describe("ChatInput widget", () => {
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it("renders without crashing", () => {
@@ -104,7 +103,7 @@ describe("ChatInput widget", () => {
 
   it("sends and resets the value on enter", () => {
     const props = getProps()
-    const spy = jest.spyOn(props.widgetMgr, "setStringTriggerValue")
+    const spy = vi.spyOn(props.widgetMgr, "setStringTriggerValue")
     render(<ChatInput {...props} />)
 
     const chatInput = screen.getByTestId("stChatInputTextArea")
@@ -147,7 +146,7 @@ describe("ChatInput widget", () => {
 
   it("can set fragmentId when sending value", () => {
     const props = getProps(undefined, { fragmentId: "myFragmentId" })
-    const spy = jest.spyOn(props.widgetMgr, "setStringTriggerValue")
+    const spy = vi.spyOn(props.widgetMgr, "setStringTriggerValue")
     render(<ChatInput {...props} />)
 
     const chatInput = screen.getByTestId("stChatInputTextArea")
@@ -165,7 +164,7 @@ describe("ChatInput widget", () => {
 
   it("will not send an empty value on enter if empty", () => {
     const props = getProps()
-    const spy = jest.spyOn(props.widgetMgr, "setStringTriggerValue")
+    const spy = vi.spyOn(props.widgetMgr, "setStringTriggerValue")
     render(<ChatInput {...props} />)
 
     const chatInput = screen.getByTestId("stChatInputTextArea")
@@ -190,7 +189,7 @@ describe("ChatInput widget", () => {
 
   it("does not send/clear on shift + enter", () => {
     const props = getProps()
-    const spy = jest.spyOn(props.widgetMgr, "setStringTriggerValue")
+    const spy = vi.spyOn(props.widgetMgr, "setStringTriggerValue")
     render(<ChatInput {...props} />)
     const chatInput = screen.getByTestId("stChatInputTextArea")
 
@@ -205,7 +204,7 @@ describe("ChatInput widget", () => {
 
   it("does not send/clear on ctrl + enter", () => {
     const props = getProps()
-    const spy = jest.spyOn(props.widgetMgr, "setStringTriggerValue")
+    const spy = vi.spyOn(props.widgetMgr, "setStringTriggerValue")
     render(<ChatInput {...props} />)
 
     const chatInput = screen.getByTestId("stChatInputTextArea")
@@ -220,7 +219,7 @@ describe("ChatInput widget", () => {
 
   it("does not send/clear on meta + enter", () => {
     const props = getProps()
-    const spy = jest.spyOn(props.widgetMgr, "setStringTriggerValue")
+    const spy = vi.spyOn(props.widgetMgr, "setStringTriggerValue")
     render(<ChatInput {...props} />)
 
     const chatInput = screen.getByTestId("stChatInputTextArea")

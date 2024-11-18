@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-/* eslint-disable jest/expect-expect */
 import React from "react"
 
 import { act, fireEvent, screen, within } from "@testing-library/react"
 
-import "@testing-library/jest-dom"
 import { render } from "@streamlit/lib/src/test_util"
 import { WidgetStateManager } from "@streamlit/lib/src/WidgetStateManager"
 import {
@@ -42,6 +40,7 @@ const expectHighlightStyle = (
   element: HTMLElement,
   should_exist = true
 ): void => {
+  // eslint-disable-next-line vitest/valid-expect
   let expectCheck: any = expect(element)
   if (!should_exist) {
     expectCheck = expect.not
@@ -100,8 +99,8 @@ const getProps = (
   }),
   disabled: false,
   widgetMgr: new WidgetStateManager({
-    sendRerunBackMsg: jest.fn(),
-    formsDataChanged: jest.fn(),
+    sendRerunBackMsg: vi.fn(),
+    formsDataChanged: vi.fn(),
   }),
   ...widgetProps,
 })
@@ -134,7 +133,7 @@ describe("ButtonGroup widget", () => {
     const props = getProps({
       default: [],
       options: options,
-      style: ButtonGroupProto.Style.SEGMENT,
+      style: ButtonGroupProto.Style.SEGMENTED_CONTROL,
     })
     render(<ButtonGroup {...props} />)
 
@@ -143,14 +142,14 @@ describe("ButtonGroup widget", () => {
     expect(buttons).toHaveLength(options.length)
 
     let button = buttons[0]
-    expect(button).toHaveAttribute("kind", "icon")
+    expect(button).toHaveAttribute("kind", "segmented_control")
     let text = within(button).getByTestId("stMarkdownContainer")
     expect(text.textContent).toContain(materialIconNames[0])
     let icon = within(button).getByTestId("stIconEmoji")
     expect(icon.textContent).toContain("🔥")
 
     button = buttons[1]
-    expect(button).toHaveAttribute("kind", "icon")
+    expect(button).toHaveAttribute("kind", "segmented_control")
     text = within(button).getByTestId("stMarkdownContainer")
     expect(text.textContent).toContain(materialIconNames[1])
     icon = within(button).getByTestId("stIconMaterial")
@@ -159,7 +158,7 @@ describe("ButtonGroup widget", () => {
 
   it("sets widget value on mount", () => {
     const props = getProps()
-    jest.spyOn(props.widgetMgr, "setIntArrayValue")
+    vi.spyOn(props.widgetMgr, "setIntArrayValue")
 
     render(<ButtonGroup {...props} />)
     expect(props.widgetMgr.setIntArrayValue).toHaveBeenCalledWith(
@@ -185,7 +184,7 @@ describe("ButtonGroup widget", () => {
 
     it("onClick prop for single select", () => {
       const props = getProps()
-      jest.spyOn(props.widgetMgr, "setIntArrayValue")
+      vi.spyOn(props.widgetMgr, "setIntArrayValue")
 
       render(<ButtonGroup {...props} />)
 
@@ -234,7 +233,7 @@ describe("ButtonGroup widget", () => {
       const props = getProps({
         clickMode: ButtonGroupProto.ClickMode.MULTI_SELECT,
       })
-      jest.spyOn(props.widgetMgr, "setIntArrayValue")
+      vi.spyOn(props.widgetMgr, "setIntArrayValue")
       render(<ButtonGroup {...props} />)
 
       const buttons = getButtonGroupButtons()
@@ -279,7 +278,7 @@ describe("ButtonGroup widget", () => {
           fragmentId: "myFragmentId",
         }
       )
-      jest.spyOn(props.widgetMgr, "setIntArrayValue")
+      vi.spyOn(props.widgetMgr, "setIntArrayValue")
       render(<ButtonGroup {...props} />)
 
       expect(props.widgetMgr.setIntArrayValue).toHaveBeenCalledWith(
@@ -313,7 +312,7 @@ describe("ButtonGroup widget", () => {
 
     it("sets widget value on update", () => {
       const props = getProps({ value: [3], setValue: true })
-      jest.spyOn(props.widgetMgr, "setIntArrayValue")
+      vi.spyOn(props.widgetMgr, "setIntArrayValue")
 
       render(<ButtonGroup {...props} />)
       const buttons = getButtonGroupButtons()
@@ -330,7 +329,7 @@ describe("ButtonGroup widget", () => {
       )
     })
 
-    it("renders correct button style", () => {
+    it("renders correct pills button style", () => {
       const props = getProps({
         default: [],
         options: options,
@@ -342,6 +341,21 @@ describe("ButtonGroup widget", () => {
       expect(buttons).toHaveLength(options.length)
       buttons.forEach(button => {
         expect(button).toHaveAttribute("kind", "pills")
+      })
+    })
+
+    it("renders correct segmented control button style", () => {
+      const props = getProps({
+        default: [],
+        options: options,
+        style: ButtonGroupProto.Style.SEGMENTED_CONTROL,
+      })
+      render(<ButtonGroup {...props} />)
+
+      const buttons = getButtonGroupButtons()
+      expect(buttons).toHaveLength(options.length)
+      buttons.forEach(button => {
+        expect(button).toHaveAttribute("kind", "segmented_control")
       })
     })
 
@@ -389,6 +403,7 @@ describe("ButtonGroup widget", () => {
     })
 
     describe("visualizes selection behavior", () => {
+      // eslint-disable-next-line vitest/expect-expect
       it("visualize only selected option", () => {
         const props = getProps({
           selectionVisualization:
@@ -403,6 +418,7 @@ describe("ButtonGroup widget", () => {
         expectHighlightStyle(buttons[2], false)
       })
 
+      // eslint-disable-next-line vitest/expect-expect
       it("visualizes all up to the selected option", () => {
         const props = getProps({
           selectionVisualization:
@@ -421,6 +437,7 @@ describe("ButtonGroup widget", () => {
         expectHighlightStyle(buttons[3], false)
       })
 
+      // eslint-disable-next-line vitest/expect-expect
       it("has no default visualization when selected content present", () => {
         // used for example by feedback stars
         const disabledVisualizationOption = [
@@ -482,12 +499,12 @@ describe("ButtonGroup widget", () => {
       const props = getProps({
         default: [],
         options: materialIconOnlyOptions,
-        style: ButtonGroupProto.Style.SEGMENT,
+        style: ButtonGroupProto.Style.SEGMENTED_CONTROL,
       })
       render(<ButtonGroup {...props} />)
       const buttons = getButtonGroupButtons()
       buttons.forEach((button, index) => {
-        expect(button).toHaveAttribute("kind", "icon")
+        expect(button).toHaveAttribute("kind", "segmented_control")
         const icon = within(button).getByTestId("stIconMaterial")
         expect(icon.textContent).toContain(materialIconNames[index])
         expect(icon).toHaveStyle("width: 1rem")
@@ -503,7 +520,7 @@ describe("ButtonGroup widget", () => {
     })
     props.widgetMgr.setFormSubmitBehaviors("form", true)
 
-    jest.spyOn(props.widgetMgr, "setIntArrayValue")
+    vi.spyOn(props.widgetMgr, "setIntArrayValue")
 
     render(<ButtonGroup {...props} />)
 
@@ -582,5 +599,21 @@ describe("ButtonGroup getContentElement", () => {
     expect(children[1]).toBe("")
     expect(kind).toBe(BaseButtonKind.BORDERLESS_ICON)
     expect(size).toBe(BaseButtonSize.XSMALL)
+  })
+
+  it("tests element with content, icon and non-borderless-style", () => {
+    const { element, kind, size } = getContentElement(
+      "foo",
+      "bar",
+      ButtonGroupProto.Style.PILLS
+    )
+
+    expect(element.type).toBe(React.Fragment)
+    const { children } = element.props
+    expect(children).toHaveLength(2)
+    expect(children[0].type).toBe(DynamicIcon)
+    expect(children[1].type).toBe(StreamlitMarkdown)
+    expect(kind).toBe(BaseButtonKind.PILLS)
+    expect(size).toBe(BaseButtonSize.MEDIUM)
   })
 })

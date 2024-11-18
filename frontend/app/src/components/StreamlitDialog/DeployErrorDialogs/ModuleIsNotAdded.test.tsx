@@ -20,6 +20,6 @@ describe("DeployErrorDialog - ModuleIsNotAdded", () => {
   it("should render without crashing", () => {
     const dialog = ModuleIsNotAdded("module")
 
-    expect(dialog).toMatchSnapshot()
+    expect(dialog.title).toBe("Unable to deploy")
   })
 })

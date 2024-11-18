@@ -36,6 +36,7 @@ import Toolbar, {
 } from "@streamlit/lib/src/components/shared/Toolbar"
 import { useRequiredContext } from "@streamlit/lib/src/hooks/useRequiredContext"
 import { ElementFullscreenContext } from "@streamlit/lib/src/components/shared/ElementFullscreen/ElementFullscreenContext"
+import { withFullScreenWrapper } from "@streamlit/lib/src/components/shared/FullScreenWrapper"
 
 import withMapboxToken from "./withMapboxToken"
 import {
@@ -266,4 +267,6 @@ export const DeckGlJsonChart: FC<DeckGLProps> = props => {
   )
 }
 
-export default withMapboxToken("st.pydeck_chart")(DeckGlJsonChart)
+export default withFullScreenWrapper(
+  withMapboxToken("st.pydeck_chart")(DeckGlJsonChart)
+)

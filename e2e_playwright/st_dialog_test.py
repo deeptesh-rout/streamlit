@@ -214,9 +214,6 @@ def test_fullscreen_is_disabled_for_dialog_elements(app: Page):
     main_dialog = app.get_by_test_id(modal_test_id)
     expect(main_dialog).to_have_count(1)
 
-    # check that the images do not have the fullscreen button
-    expect(app.get_by_test_id("StyledFullScreenButton")).to_have_count(0)
-
     # check that the dataframe does not have the fullscreen button
     dataframe_toolbar = app.get_by_test_id("stElementToolbarButton")
     # 2 elements are in the toolbar as of today: download, search

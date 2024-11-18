@@ -352,7 +352,11 @@ export function isValidElementId(
   if (!elementId) {
     return false
   }
-  return elementId.startsWith(GENERATED_ELEMENT_ID_PREFIX)
+  return (
+    elementId.startsWith(GENERATED_ELEMENT_ID_PREFIX) &&
+    // There must be at least 3 parts: $$ID-<hash>-<userKey>
+    elementId.split("-").length >= 3
+  )
 }
 
 /**
@@ -565,16 +569,4 @@ export function keysToSnakeCase(
     acc[newKey] = value
     return acc
   }, {} as Record<string, any>)
-}
-
-/**
- *
- * @param scssValue: a string containing a value in rem units
- * @returns pixel value of the given rem value
- */
-export const convertScssRemValueToPixels = (scssValue: string): number => {
-  const remValue = parseFloat(scssValue)
-  return (
-    remValue * parseFloat(getComputedStyle(document.documentElement).fontSize)
-  )
 }

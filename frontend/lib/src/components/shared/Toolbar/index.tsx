@@ -15,3 +15,4 @@
  */
 
 export { default, ToolbarAction } from "./Toolbar"
+export { StyledToolbarElementContainer } from "./styled-components"
