@@ -14,7 +14,12 @@
 
 from playwright.sync_api import Page, expect
 
-from e2e_playwright.conftest import ImageCompareFunction, rerun_app, wait_for_app_run
+from e2e_playwright.conftest import ImageCompareFunction, rerun_app
+from e2e_playwright.shared.app_utils import (
+    click_button,
+    expect_markdown,
+    get_element_by_key,
+)
 
 
 def test_stream_generator(app: Page, assert_snapshot: ImageCompareFunction):
@@ -22,37 +27,56 @@ def test_stream_generator(app: Page, assert_snapshot: ImageCompareFunction):
     This also tests that the return value can be rendered via `st.write`.
     """
 
-    button_element = app.get_by_test_id("stButton").locator("button").first
-    button_element.click()
-
-    wait_for_app_run(app)
-
-    markdown_elements = app.get_by_test_id("stMarkdown")
-    expect(markdown_elements).to_have_count(2)
-    # Wait for the second element to appear
-    expect(markdown_elements.nth(1)).to_contain_text("This is the end of the stream.")
+    click_button(app, "Stream data")
+    expect_markdown(app, "This is the end of the stream.")
+    # There should be two markdown elements on the page:
+    expect(app.get_by_test_id("stMarkdown")).to_have_count(2)
 
     # Check that the dataframe is visible:
     expect(app.get_by_test_id("stDataFrame")).to_be_visible()
 
-    main_container = app.get_by_test_id("stVerticalBlock").nth(0)
-    assert_snapshot(main_container.nth(0), name="st_write_stream-generator_output")
-
-    expect(app.get_by_test_id("stVerticalBlock")).to_have_count(1)
+    stream_output = get_element_by_key(app, "stream-output")
+    assert_snapshot(stream_output, name="st_write_stream-generator_output")
 
     # Test that the rerun will output the same elements via st.write:
     rerun_app(app)
 
-    markdown_elements = app.get_by_test_id("stMarkdown")
-    expect(markdown_elements).to_have_count(2)
-    # Wait for the second element to appear
-    expect(markdown_elements.nth(1)).to_contain_text("This is the end of the stream.")
+    expect_markdown(app, "This is the end of the stream.")
+    # There should be two markdown elements on the page:
+    expect(app.get_by_test_id("stMarkdown")).to_have_count(2)
 
     # Check that the dataframe is visible:
     expect(app.get_by_test_id("stDataFrame")).to_be_visible()
 
-    expect(app.get_by_test_id("stVerticalBlock")).to_have_count(1)
-
-    main_container = app.get_by_test_id("stVerticalBlock").nth(0)
     # Test with the same snapshot name to make sure the output is the same:
-    assert_snapshot(main_container.nth(0), name="st_write_stream-generator_output")
+    stream_output = get_element_by_key(app, "stream-output")
+    assert_snapshot(stream_output, name="st_write_stream-generator_output")
+
+
+def test_async_generator(app: Page, assert_snapshot: ImageCompareFunction):
+    """Test that `st.write_stream` correctly streams content from an async generator."""
+
+    click_button(app, "Stream async data")
+    expect_markdown(app, "This is the end of the stream.")
+    # There should be two markdown elements on the page:
+    expect(app.get_by_test_id("stMarkdown")).to_have_count(2)
+
+    # Check that the dataframe is visible:
+    expect(app.get_by_test_id("stDataFrame")).to_be_visible()
+
+    stream_output = get_element_by_key(app, "stream-output")
+    assert_snapshot(stream_output, name="st_write_stream-async_generator_output")
+
+    # Test that the rerun will output the same elements via st.write:
+    rerun_app(app)
+
+    expect_markdown(app, "This is the end of the stream.")
+    # There should be two markdown elements on the page:
+    expect(app.get_by_test_id("stMarkdown")).to_have_count(2)
+
+    # Check that the dataframe is visible:
+    expect(app.get_by_test_id("stDataFrame")).to_be_visible()
+
+    # Test with the same snapshot name to make sure the output is the same:
+    stream_output = get_element_by_key(app, "stream-output")
+    assert_snapshot(stream_output, name="st_write_stream-async_generator_output")

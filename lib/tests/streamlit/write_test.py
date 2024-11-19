@@ -217,6 +217,24 @@ class StreamlitWriteTest(unittest.TestCase):
 
             p.assert_called_once()
 
+    def test_async_generator(self):
+        """Test st.write with async generator function."""
+
+        async def async_gen_function():
+            yield "hello"
+            yield "world"
+
+        # Should support it as a generator function
+        with patch("streamlit.delta_generator.DeltaGenerator.write_stream") as p:
+            st.write(async_gen_function)
+
+            p.assert_called_once()
+
+        with patch("streamlit.delta_generator.DeltaGenerator.write_stream") as p:
+            st.write(async_gen_function())
+
+            p.assert_called_once()
+
     @patch("streamlit.type_util.is_type")
     def test_openai_stream(self, is_type):
         """Test st.write with openai.Stream."""
@@ -463,6 +481,19 @@ class StreamlitStreamTest(unittest.TestCase):
             yield "World"
 
         stream_return = st.write_stream(test_stream)
+        self.assertEqual(stream_return, "Hello World")
+
+    def test_with_async_generator_text(self):
+        """Test st.write_stream with async generator text content."""
+
+        async def test_stream():
+            yield "Hello "
+            yield "World"
+
+        stream_return = st.write_stream(test_stream)
+        self.assertEqual(stream_return, "Hello World")
+
+        stream_return = st.write_stream(test_stream())
         self.assertEqual(stream_return, "Hello World")
 
     def test_with_empty_chunks(self):

@@ -191,3 +191,15 @@ class TypeUtilTest(unittest.TestCase):
 
         assert type_util.is_delta_generator(DeltaGenerator()) is True
         assert type_util.is_delta_generator("not a DeltaGenerator") is False
+
+    def test_async_generator_to_sync(self):
+        """Test that `async_generator_to_sync` converts an async generator to a sync
+        generator."""
+
+        async def async_gen():
+            yield "hello "
+            yield "world "
+            yield "!"
+
+        sync_gen = type_util.async_generator_to_sync(async_gen())
+        assert "".join(sync_gen) == "hello world !"

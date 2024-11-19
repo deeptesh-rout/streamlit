@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import time
 
 import numpy as np
@@ -29,6 +30,14 @@ laboris nisi ut aliquip ex ea commodo consequat.
 """
 
 
+button_group = st.container()
+stream_output = st.container(key="stream-output")
+
+# Replay the last output:
+if "written_content" in st.session_state:
+    stream_output.write(st.session_state["written_content"])
+
+
 def stream_example():
     for word in _LOREM_IPSUM.split():
         yield word + " "
@@ -44,8 +53,22 @@ def stream_example():
         time.sleep(0.02)
 
 
-if st.button("Stream data"):
-    st.session_state["written_content"] = st.write_stream(stream_example)
-else:
-    if "written_content" in st.session_state:
-        st.write(st.session_state["written_content"])
+async def async_generator():
+    for word in _LOREM_IPSUM.split():
+        yield word + " "
+        await asyncio.sleep(0.02)
+    yield pd.DataFrame(
+        np.random.randn(5, 10),
+        columns=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
+    )
+
+    for word in "This is the end of the stream.".split():
+        yield word + " "
+        await asyncio.sleep(0.02)
+
+
+if button_group.button("Stream data"):
+    st.session_state["written_content"] = stream_output.write_stream(stream_example)
+
+if button_group.button("Stream async data"):
+    st.session_state["written_content"] = stream_output.write_stream(async_generator)

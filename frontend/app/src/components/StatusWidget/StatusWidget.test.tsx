@@ -18,12 +18,7 @@ import React from "react"
 
 import { fireEvent, screen } from "@testing-library/react"
 
-import {
-  mockTheme,
-  render,
-  ScriptRunState,
-  SessionEvent,
-} from "@streamlit/lib"
+import { render, ScriptRunState, SessionEvent } from "@streamlit/lib"
 import { ConnectionState } from "@streamlit/app/src/connection/ConnectionState"
 import { SessionEventDispatcher } from "@streamlit/app/src/SessionEventDispatcher"
 
@@ -38,7 +33,6 @@ const getProps = (
   rerunScript: vi.fn(),
   stopScript: () => {},
   allowRunOnSave: true,
-  theme: mockTheme.emotion,
   ...propOverrides,
 })
 
