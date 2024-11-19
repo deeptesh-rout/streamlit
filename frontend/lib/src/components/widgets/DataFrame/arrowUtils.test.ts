@@ -258,6 +258,7 @@ describe("getIndexFromArrow", () => {
         pandas_type: "unicode",
       },
       isIndex: true,
+      isPinned: true,
       isHidden: false,
     })
   })
@@ -344,6 +345,7 @@ describe("getColumnFromArrow", () => {
         pandas_type: "unicode",
       },
       isIndex: false,
+      isPinned: false,
       isHidden: false,
       group: "1",
     })
