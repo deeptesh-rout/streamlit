@@ -34,16 +34,17 @@ async function convertFileToWav(fileBlob: Blob): Promise<Blob | undefined> {
     return undefined // Return undefined if decoding fails
   }
 
+  const HEADER_HEIGHT = 44
   const numOfChan = audioBuffer.numberOfChannels
   const sampleRate = audioBuffer.sampleRate
-  const length = audioBuffer.length * numOfChan * 2 + 44
+  const length = audioBuffer.length * numOfChan * 2 + HEADER_HEIGHT
   const buffer = new ArrayBuffer(length)
   const view = new DataView(buffer)
 
   // WAV header metadata
   const wavHeader = {
     0: { type: "string", value: "RIFF" },
-    4: { type: "uint32", value: 36 + audioBuffer.length * 2 * numOfChan },
+    4: { type: "uint32", value: length - 8 },
     8: { type: "string", value: "WAVE" },
     12: { type: "string", value: "fmt " },
     16: { type: "uint32", value: 16 }, // PCM format
@@ -70,33 +71,20 @@ async function convertFileToWav(fileBlob: Blob): Promise<Blob | undefined> {
   })
 
   // Write PCM data
-  for (let channel = 0; channel < numOfChan; channel++) {
-    floatTo16BitPCM(
-      view,
-      44 + channel * audioBuffer.length * 2,
-      audioBuffer.getChannelData(channel)
-    )
+  let offset = HEADER_HEIGHT
+  for (let i = 0; i < audioBuffer.length; i++) {
+    for (let channel = 0; channel < numOfChan; channel++) {
+      const sample = Math.max(
+        -1,
+        Math.min(1, audioBuffer.getChannelData(channel)[i])
+      )
+      view.setInt16(offset, sample * 0x7fff, true)
+      offset += 2
+    }
   }
 
   const wavArray = new Uint8Array(buffer)
   return new Blob([wavArray], { type: "audio/wav" })
-}
-
-/**
- * Converts a floating-point sample array into 16-bit PCM format.
- * @param output - The DataView to write to.
- * @param offset - The starting offset in the DataView.
- * @param input - The Float32Array with the input samples.
- */
-function floatTo16BitPCM(
-  output: DataView,
-  offset: number,
-  input: Float32Array
-): void {
-  for (let i = 0; i < input.length; i++, offset += 2) {
-    const s = Math.max(-1, Math.min(1, input[i]))
-    output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true)
-  }
 }
 
 /**
