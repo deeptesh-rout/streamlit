@@ -734,7 +734,7 @@ function DataFrame({
         ref={resizableRef}
         defaultSize={resizableSize}
         style={{
-          border: `${gridTheme.tableBorderWidth} solid ${gridTheme.glideTheme.borderColor}`,
+          border: `${gridTheme.tableBorderWidth}px solid ${gridTheme.glideTheme.borderColor}`,
           borderRadius: `${gridTheme.tableBorderRadius}`,
         }}
         minHeight={minHeight}

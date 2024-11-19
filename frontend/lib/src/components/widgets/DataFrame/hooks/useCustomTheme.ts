@@ -52,18 +52,16 @@ export type CustomGridTheme = {
 function useCustomTheme(): CustomGridTheme {
   const theme: EmotionTheme = useTheme()
 
-  const headerIcons = React.useMemo<SpriteMap>(() => {
-    return {
+  const gridTheme: CustomGridTheme = React.useMemo<CustomGridTheme>(() => {
+    const headerIcons = {
       // Material design icon `edit_note`:
       // https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aedit_note%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
       // We need to provide this as string as explained explained here: https://github.com/glideapps/glide-data-grid/blob/main/packages/core/API.md#headericons
-      editable: p =>
+      editable: (p: { bgColor: string }) =>
         `<svg xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 96 960 960" width="40" fill="${p.bgColor}"><path d="m800.641 679.743-64.384-64.384 29-29q7.156-6.948 17.642-6.948 10.485 0 17.742 6.948l29 29q6.948 7.464 6.948 17.95 0 10.486-6.948 17.434l-29 29Zm-310.64 246.256v-64.383l210.82-210.821 64.384 64.384-210.821 210.82h-64.383Zm-360-204.872v-50.254h289.743v50.254H130.001Zm0-162.564v-50.255h454.615v50.255H130.001Zm0-162.307v-50.255h454.615v50.255H130.001Z"/></svg>`,
     }
-  }, [])
 
-  const glideTheme = React.useMemo<Partial<GlideTheme>>(() => {
-    return {
+    const glideTheme = {
       // Explanations: https://github.com/glideapps/glide-data-grid/blob/main/packages/core/API.md#theme
       accentColor: theme.colors.primary,
       accentFg: theme.colors.white,
@@ -107,20 +105,23 @@ function useCustomTheme(): CustomGridTheme {
       // resizeIndicatorColor?: string;
       // headerBottomBorderColor?: string;
     }
+
+    return {
+      glideTheme,
+      tableBorderRadius: theme.radii.default,
+      tableBorderWidth: 1,
+      // glide-data-grid can only handle integer pixel values:
+      defaultTableHeight: Math.round(convertRemToPx("25rem")),
+      minColumnWidth: Math.round(convertRemToPx("3.125rem")),
+      maxColumnWidth: Math.round(convertRemToPx("62.5rem")),
+      maxColumnAutoWidth: Math.round(convertRemToPx("31.25rem")),
+      defaultRowHeight: Math.round(convertRemToPx("2.188rem")),
+      defaultHeaderHeight: Math.round(convertRemToPx("2.188rem")),
+      headerIcons,
+    }
   }, [theme])
 
-  return {
-    glideTheme,
-    tableBorderRadius: theme.radii.default,
-    tableBorderWidth: 1,
-    defaultTableHeight: convertRemToPx("25rem"),
-    minColumnWidth: convertRemToPx("3.125rem"),
-    maxColumnWidth: convertRemToPx("62.5rem"),
-    maxColumnAutoWidth: convertRemToPx("31.25rem"),
-    defaultRowHeight: convertRemToPx("2.188rem"),
-    defaultHeaderHeight: convertRemToPx("2.188rem"),
-    headerIcons,
-  }
+  return gridTheme
 }
 
 export default useCustomTheme
