@@ -91,8 +91,8 @@ function useCustomTheme(): CustomGridTheme {
       bgCell: theme.colors.bgColor,
       // uses same as bgCell to always have the same background color:
       bgCellMedium: theme.colors.bgColor,
-      cellHorizontalPadding: convertRemToPx(theme.spacing.sm),
-      cellVerticalPadding: convertRemToPx("0.188rem"),
+      cellHorizontalPadding: Math.round(convertRemToPx(theme.spacing.sm)),
+      cellVerticalPadding: Math.round(convertRemToPx("0.1875rem")),
       // Special cells:
       bgBubble: theme.colors.secondaryBg,
       bgBubbleSelected: theme.colors.secondaryBg,
@@ -115,8 +115,8 @@ function useCustomTheme(): CustomGridTheme {
       minColumnWidth: Math.round(convertRemToPx("3.125rem")),
       maxColumnWidth: Math.round(convertRemToPx("62.5rem")),
       maxColumnAutoWidth: Math.round(convertRemToPx("31.25rem")),
-      defaultRowHeight: Math.round(convertRemToPx("2.188rem")),
-      defaultHeaderHeight: Math.round(convertRemToPx("2.188rem")),
+      defaultRowHeight: Math.round(convertRemToPx("2.1875rem")),
+      defaultHeaderHeight: Math.round(convertRemToPx("2.1875rem")),
       headerIcons,
     }
   }, [theme])
