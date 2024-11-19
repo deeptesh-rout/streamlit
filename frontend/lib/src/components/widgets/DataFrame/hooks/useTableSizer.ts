@@ -24,25 +24,7 @@ import { Size as ResizableSize } from "re-resizable"
 import { Arrow as ArrowProto } from "@streamlit/lib/src/proto"
 import { notNullOrUndefined } from "@streamlit/lib/src/util/utils"
 
-// Min column width used for manual and automatic resizing
-export const MIN_COLUMN_WIDTH = 50
-// Max column width used for manual resizing
-export const MAX_COLUMN_WIDTH = 1000
-// Max column width used for automatic column sizing
-export const MAX_COLUMN_AUTO_WIDTH = 500
-// The border size in pixels (2)
-// to prevent overlap problem with selection ring.
-export const BORDER_THRESHOLD = 2
-// The default row height in pixels, used as fallback
-// if no row height is set by the user.
-export const DEFAULT_ROW_HEIGHT = 35
-// The default header height in pixels
-export const HEADER_HEIGHT = 35
-// Min width for the resizable table container:
-// Based on one column at minimum width + borders
-export const MIN_TABLE_WIDTH = MIN_COLUMN_WIDTH + BORDER_THRESHOLD
-// The default maximum height of the table:
-const DEFAULT_TABLE_HEIGHT = 400
+import { CustomGridTheme } from "./useCustomTheme"
 
 export type AutoSizerReturn = {
   // The minimum height that the data grid can be resized to
@@ -75,17 +57,18 @@ export type AutoSizerReturn = {
  */
 function useTableSizer(
   element: ArrowProto,
+  gridTheme: CustomGridTheme,
   numRows: number,
   usesGroupRow: boolean,
   containerWidth: number,
   containerHeight?: number,
   isFullScreen?: boolean
 ): AutoSizerReturn {
-  // Use the user-configured row height, if set, otherwise use the default
-  const rowHeight = element.rowHeight ?? DEFAULT_ROW_HEIGHT
+  const rowHeight = gridTheme.defaultRowHeight
   // Min height for the resizable table container:
   // Based on header + one column, and border threshold
-  const minHeight = HEADER_HEIGHT + rowHeight + BORDER_THRESHOLD
+  const minHeight =
+    gridTheme.defaultHeaderHeight + rowHeight + 2 * gridTheme.tableBorderWidth
 
   // Group row + column header row
   const numHeaderRows = usesGroupRow ? 2 : 1
@@ -95,8 +78,8 @@ function useTableSizer(
   const totalDataRows = numRows + numTrailingRows
   let maxHeight = Math.max(
     totalDataRows * rowHeight +
-      numHeaderRows * HEADER_HEIGHT +
-      BORDER_THRESHOLD,
+      numHeaderRows * gridTheme.defaultHeaderHeight +
+      2 * gridTheme.tableBorderWidth,
     minHeight
   )
 
@@ -105,7 +88,7 @@ function useTableSizer(
   // The reason why we have initial height is that the table itself is
   // resizable by the user. So, it starts with initial height but can be
   // resized between min and max height.
-  let initialHeight = Math.min(maxHeight, DEFAULT_TABLE_HEIGHT)
+  let initialHeight = Math.min(maxHeight, gridTheme.defaultTableHeight)
 
   if (element.height) {
     // User has explicitly configured a height
@@ -125,13 +108,16 @@ function useTableSizer(
     }
   }
 
+  // Min width for the resizable table container:
+  // Based on one column at minimum width + borders
+  const minWidth = gridTheme.minColumnWidth + 2 * gridTheme.tableBorderWidth
   // The available width should be at least the minimum table width
   // to prevent "maximum update depth exceeded" error. The reason
   // is that the container width can be -1 in some edge cases
   // caused by the resize observer in the Block component.
   // This can trigger the "maximum update depth exceeded" error
   // within the grid component.
-  const availableWidth = Math.max(containerWidth, MIN_TABLE_WIDTH)
+  const availableWidth = Math.max(containerWidth, minWidth)
 
   // The initial width of the data grid.
   // If not set, the data grid will be auto adapted to its content.
@@ -150,10 +136,7 @@ function useTableSizer(
     // The user has explicitly configured a width
     // use it but keep between the MIN_TABLE_WIDTH
     // and the available width.
-    initialWidth = Math.min(
-      Math.max(element.width, MIN_TABLE_WIDTH),
-      availableWidth
-    )
+    initialWidth = Math.min(Math.max(element.width, minWidth), availableWidth)
     // Make sure that the max width we configure is between the user
     // configured width and the available (container) width.
     maxWidth = Math.min(Math.max(element.width, maxWidth), availableWidth)
@@ -223,7 +206,7 @@ function useTableSizer(
   return {
     minHeight,
     maxHeight,
-    minWidth: MIN_TABLE_WIDTH,
+    minWidth,
     maxWidth,
     rowHeight,
     resizableSize,

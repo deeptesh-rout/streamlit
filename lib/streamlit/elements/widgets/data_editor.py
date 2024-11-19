@@ -553,7 +553,6 @@ class DataEditorMixin:
         on_change: WidgetCallback | None = None,
         args: WidgetArgs | None = None,
         kwargs: WidgetKwargs | None = None,
-        row_height: int | None = None,
     ) -> EditableData:
         pass
 
@@ -574,7 +573,6 @@ class DataEditorMixin:
         on_change: WidgetCallback | None = None,
         args: WidgetArgs | None = None,
         kwargs: WidgetKwargs | None = None,
-        row_height: int | None = None,
     ) -> pd.DataFrame:
         pass
 
@@ -595,7 +593,6 @@ class DataEditorMixin:
         on_change: WidgetCallback | None = None,
         args: WidgetArgs | None = None,
         kwargs: WidgetKwargs | None = None,
-        row_height: int | None = None,
     ) -> DataTypes:
         """Display a data editor widget.
 
@@ -910,9 +907,6 @@ class DataEditorMixin:
             proto.width = width
         if height:
             proto.height = height
-
-        if row_height:
-            proto.row_height = row_height
 
         if column_order:
             proto.column_order[:] = column_order

@@ -65,13 +65,6 @@ import {
   useTooltips,
 } from "./hooks"
 import {
-  BORDER_THRESHOLD,
-  HEADER_HEIGHT,
-  MAX_COLUMN_AUTO_WIDTH,
-  MAX_COLUMN_WIDTH,
-  MIN_COLUMN_WIDTH,
-} from "./hooks/useTableSizer"
-import {
   BaseColumn,
   getTextCell,
   ImageCellEditor,
@@ -144,8 +137,7 @@ function DataFrame({
   const dataEditorRef = React.useRef<DataEditorRef>(null)
   const resizableContainerRef = React.useRef<HTMLDivElement>(null)
 
-  const { theme, headerIcons, tableBorderRadius, tableBorderWidth } =
-    useCustomTheme()
+  const gridTheme = useCustomTheme()
 
   const {
     libConfig: { enforceDownloadInNewTab = false }, // Default to false, if no libConfig, e.g. for tests
@@ -536,6 +528,7 @@ function DataFrame({
     setResizableSize,
   } = useTableSizer(
     element,
+    gridTheme,
     numRows,
     usesGroupRow,
     containerWidth,
@@ -553,12 +546,12 @@ function DataFrame({
         contentAlign: "center",
         allowOverlay: false,
         themeOverride: {
-          textDark: theme.textLight,
+          textDark: gridTheme.glideTheme.textLight,
         },
         span: [0, Math.max(columns.length - 1, 0)],
       } as GridCell
     },
-    [columns, theme.textLight]
+    [columns, gridTheme.glideTheme.textLight]
   )
 
   const onFormCleared = React.useCallback(() => {
@@ -741,8 +734,8 @@ function DataFrame({
         ref={resizableRef}
         defaultSize={resizableSize}
         style={{
-          border: `${tableBorderWidth} solid ${theme.borderColor}`,
-          borderRadius: `${tableBorderRadius}`,
+          border: `${gridTheme.tableBorderWidth} solid ${gridTheme.glideTheme.borderColor}`,
+          borderRadius: `${gridTheme.tableBorderRadius}`,
         }}
         minHeight={minHeight}
         maxHeight={maxHeight}
@@ -763,14 +756,15 @@ function DataFrame({
         snapGap={rowHeight / 3}
         onResizeStop={(_event, _direction, _ref, _delta) => {
           if (resizableRef.current) {
+            const borderThreshold = 2 * gridTheme.tableBorderWidth
             setResizableSize({
               width: resizableRef.current.size.width,
               height:
                 // Add additional pixels if it is stretched to full width
                 // to allow the full cell border to be visible
                 maxHeight - resizableRef.current.size.height ===
-                BORDER_THRESHOLD
-                  ? resizableRef.current.size.height + BORDER_THRESHOLD
+                borderThreshold
+                  ? resizableRef.current.size.height + borderThreshold
                   : resizableRef.current.size.height,
             })
           }
@@ -783,11 +777,11 @@ function DataFrame({
           ref={dataEditorRef}
           columns={glideColumns}
           rows={isEmptyTable ? 1 : numRows}
-          minColumnWidth={MIN_COLUMN_WIDTH}
-          maxColumnWidth={MAX_COLUMN_WIDTH}
-          maxColumnAutoWidth={MAX_COLUMN_AUTO_WIDTH}
+          minColumnWidth={gridTheme.minColumnWidth}
+          maxColumnWidth={gridTheme.maxColumnWidth}
+          maxColumnAutoWidth={gridTheme.maxColumnAutoWidth}
           rowHeight={rowHeight}
-          headerHeight={HEADER_HEIGHT}
+          headerHeight={gridTheme.defaultHeaderHeight}
           getCellContent={isEmptyTable ? getEmptyStateContent : getCellContent}
           onColumnResize={isTouchDevice ? undefined : onColumnResize}
           // Configure resize indicator to only show on the header:
@@ -861,7 +855,7 @@ function DataFrame({
               }
             }
           }}
-          theme={theme}
+          theme={gridTheme.glideTheme}
           onMouseMove={(args: GridMouseEventArgs) => {
             // Determine if the dataframe is focused or not
             if (args.kind === "out-of-bounds" && isFocused) {
@@ -895,7 +889,7 @@ function DataFrame({
           // Custom image editor to render single images:
           imageEditorOverride={ImageCellEditor}
           // Add our custom SVG header icons:
-          headerIcons={headerIcons}
+          headerIcons={gridTheme.headerIcons}
           // Add support for user input validation:
           validateCell={validateCell}
           // The default setup is read only, and therefore we deactivate paste here:
@@ -907,8 +901,8 @@ function DataFrame({
               kind: "checkbox",
               checkboxStyle: "square",
               theme: {
-                bgCell: theme.bgHeader,
-                bgCellMedium: theme.bgHeader,
+                bgCell: gridTheme.glideTheme.bgHeader,
+                bgCellMedium: gridTheme.glideTheme.bgHeader,
               },
             },
             rowSelectionMode: isMultiRowSelectionActivated ? "multi" : "auto",
@@ -965,8 +959,8 @@ function DataFrame({
                 kind: "checkbox",
                 checkboxStyle: "square",
                 theme: {
-                  bgCell: theme.bgHeader,
-                  bgCellMedium: theme.bgHeader,
+                  bgCell: gridTheme.glideTheme.bgHeader,
+                  bgCellMedium: gridTheme.glideTheme.bgHeader,
                 },
               },
               rowSelectionMode: "multi",

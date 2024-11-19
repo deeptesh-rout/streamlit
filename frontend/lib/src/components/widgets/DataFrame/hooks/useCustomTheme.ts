@@ -19,13 +19,29 @@ import { useTheme } from "@emotion/react"
 import { Theme as GlideTheme, SpriteMap } from "@glideapps/glide-data-grid"
 import { transparentize } from "color2k"
 
-import { EmotionTheme } from "@streamlit/lib/src/theme"
+import { convertRemToPx, EmotionTheme } from "@streamlit/lib/src/theme"
 
-type CustomThemeReturn = {
-  theme: Partial<GlideTheme>
+export type CustomGridTheme = {
+  // The theme configuration for the glide-data-grid
+  glideTheme: Partial<GlideTheme>
+  // The table border radius in pixels
   tableBorderRadius: string
-  tableBorderWidth: string
+  // The table border size in pixels
+  tableBorderWidth: number
+  // The default table height in pixels
+  defaultTableHeight: number
+  // Configure custom SVG icons used in the column header:
   headerIcons: SpriteMap
+  // Min column width in pixels used for manual and automatic resizing
+  minColumnWidth: number
+  // Max column width in pixels used for manual resizing
+  maxColumnWidth: number
+  // Max column width in pixels used for automatic column sizing
+  maxColumnAutoWidth: number
+  // The default row height in pixels
+  defaultRowHeight: number
+  // The default header height in pixels
+  defaultHeaderHeight: number
 }
 
 /**
@@ -33,7 +49,7 @@ type CustomThemeReturn = {
  *
  * @return a glide-data-grid compatible theme.
  */
-function useCustomTheme(): CustomThemeReturn {
+function useCustomTheme(): CustomGridTheme {
   const theme: EmotionTheme = useTheme()
 
   const headerIcons = React.useMemo<SpriteMap>(() => {
@@ -75,9 +91,10 @@ function useCustomTheme(): CustomThemeReturn {
       textLight: theme.colors.fadedText40,
       textBubble: theme.colors.fadedText60,
       bgCell: theme.colors.bgColor,
-      bgCellMedium: theme.colors.bgColor, // uses same as bgCell to always have the same background color
-      cellHorizontalPadding: 8,
-      cellVerticalPadding: 3,
+      // uses same as bgCell to always have the same background color:
+      bgCellMedium: theme.colors.bgColor,
+      cellHorizontalPadding: convertRemToPx(theme.spacing.sm),
+      cellVerticalPadding: convertRemToPx("0.188rem"),
       // Special cells:
       bgBubble: theme.colors.secondaryBg,
       bgBubbleSelected: theme.colors.secondaryBg,
@@ -93,10 +110,15 @@ function useCustomTheme(): CustomThemeReturn {
   }, [theme])
 
   return {
-    theme: glideTheme,
+    glideTheme,
     tableBorderRadius: theme.radii.default,
-    tableBorderWidth: theme.sizes.borderWidth,
-    // Configure custom SVG icons used in the column header:
+    tableBorderWidth: 1,
+    defaultTableHeight: convertRemToPx("25rem"),
+    minColumnWidth: convertRemToPx("3.125rem"),
+    maxColumnWidth: convertRemToPx("62.5rem"),
+    maxColumnAutoWidth: convertRemToPx("31.25rem"),
+    defaultRowHeight: convertRemToPx("2.188rem"),
+    defaultHeaderHeight: convertRemToPx("2.188rem"),
     headerIcons,
   }
 }

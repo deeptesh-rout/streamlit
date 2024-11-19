@@ -19,11 +19,18 @@ import { act, renderHook } from "@testing-library/react-hooks"
 import { TEN_BY_TEN, UNICODE, VERY_TALL } from "@streamlit/lib/src/mocks/arrow"
 import { Arrow as ArrowProto } from "@streamlit/lib/src/proto"
 
-import useTableSizer, {
-  BORDER_THRESHOLD,
-  DEFAULT_ROW_HEIGHT,
-  MIN_TABLE_WIDTH,
-} from "./useTableSizer"
+import { CustomGridTheme } from "./useCustomTheme"
+import useTableSizer from "./useTableSizer"
+
+const mockTheme = {
+  tableBorderWidth: 1,
+  defaultTableHeight: 400,
+  minColumnWidth: 50,
+  maxColumnWidth: 1000,
+  maxColumnAutoWidth: 500,
+  defaultRowHeight: 35,
+  defaultHeaderHeight: 35,
+} as CustomGridTheme
 
 describe("useTableSizer hook", () => {
   it("applies the configured width", () => {
@@ -37,6 +44,7 @@ describe("useTableSizer hook", () => {
           useContainerWidth: false,
           width: TABLE_WIDTH,
         }),
+        mockTheme,
         10,
         false,
         CONTAINER_WIDTH
@@ -60,15 +68,19 @@ describe("useTableSizer hook", () => {
           data: TEN_BY_TEN,
           useContainerWidth: true,
         }),
+        mockTheme,
         10,
         false,
         CONTAINER_WIDTH
       )
     )
 
-    expect(result.current.resizableSize.width).toEqual(MIN_TABLE_WIDTH)
-    expect(result.current.maxWidth).toEqual(MIN_TABLE_WIDTH)
-    expect(result.current.minWidth).toEqual(MIN_TABLE_WIDTH)
+    const minTableWidth =
+      mockTheme.minColumnWidth + 2 * mockTheme.tableBorderWidth
+
+    expect(result.current.resizableSize.width).toEqual(minTableWidth)
+    expect(result.current.maxWidth).toEqual(minTableWidth)
+    expect(result.current.minWidth).toEqual(minTableWidth)
   })
 
   it("adapts to the surrounding container width", () => {
@@ -82,6 +94,7 @@ describe("useTableSizer hook", () => {
           useContainerWidth: false,
           width: TABLE_WIDTH,
         }),
+        mockTheme,
         10,
         false,
         CONTAINER_WIDTH
@@ -102,6 +115,7 @@ describe("useTableSizer hook", () => {
           useContainerWidth: false,
           height: TABLE_HEIGHT,
         }),
+        mockTheme,
         NUMBER_OF_ROWS,
         false,
         700
@@ -111,7 +125,9 @@ describe("useTableSizer hook", () => {
     expect(result.current.resizableSize.height).toEqual(TABLE_HEIGHT)
     // +1 rows for header row
     expect(result.current.maxHeight).toEqual(
-      NUMBER_OF_ROWS + 1 * DEFAULT_ROW_HEIGHT + BORDER_THRESHOLD
+      NUMBER_OF_ROWS * mockTheme.defaultRowHeight +
+        mockTheme.defaultHeaderHeight +
+        2 * mockTheme.tableBorderWidth
     )
   })
 
@@ -125,6 +141,7 @@ describe("useTableSizer hook", () => {
           useContainerWidth: false,
           height: TABLE_HEIGHT,
         }),
+        mockTheme,
         NUMBER_OF_ROWS,
         true,
         700
@@ -132,9 +149,11 @@ describe("useTableSizer hook", () => {
     )
 
     expect(result.current.resizableSize.height).toEqual(TABLE_HEIGHT)
-    // +1 rows for header row + 1 for group row
     expect(result.current.maxHeight).toEqual(
-      NUMBER_OF_ROWS + 2 * DEFAULT_ROW_HEIGHT + BORDER_THRESHOLD
+      NUMBER_OF_ROWS * mockTheme.defaultRowHeight +
+        // + header row & group row
+        2 * mockTheme.defaultHeaderHeight +
+        2 * mockTheme.tableBorderWidth
     )
   })
 
@@ -149,6 +168,7 @@ describe("useTableSizer hook", () => {
           useContainerWidth: true,
           width: TABLE_WIDTH,
         }),
+        mockTheme,
         10,
         false,
         CONTAINER_WIDTH
@@ -168,6 +188,7 @@ describe("useTableSizer hook", () => {
           data: UNICODE,
           useContainerWidth: false,
         }),
+        mockTheme,
         2, // Unicode table has 2 rows
         false,
         CONTAINER_WIDTH
@@ -192,6 +213,7 @@ describe("useTableSizer hook", () => {
           useContainerWidth: true,
           width: TABLE_WIDTH,
         }),
+        mockTheme,
         100, // VERY_TALL table has 100 rows
         false,
         CONTAINER_WIDTH,
@@ -218,6 +240,7 @@ describe("useTableSizer hook", () => {
           useContainerWidth: false,
           width: TABLE_WIDTH,
         }),
+        mockTheme,
         NUMBER_OF_ROWS,
         false,
         CONTAINER_WIDTH
@@ -238,9 +261,10 @@ describe("useTableSizer hook", () => {
     expect(result.current.resizableSize.width).toEqual(NEW_WIDTH)
     expect(result.current.resizableSize.height).toEqual(NEW_HEIGHT)
     expect(result.current.maxWidth).toEqual(CONTAINER_WIDTH)
-    // +1 rows for header row
     expect(result.current.maxHeight).toEqual(
-      NUMBER_OF_ROWS + 1 * DEFAULT_ROW_HEIGHT + BORDER_THRESHOLD
+      NUMBER_OF_ROWS * mockTheme.defaultRowHeight +
+        mockTheme.defaultHeaderHeight +
+        2 * mockTheme.tableBorderWidth
     )
   })
 })
