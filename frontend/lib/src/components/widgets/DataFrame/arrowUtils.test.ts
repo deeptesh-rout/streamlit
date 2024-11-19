@@ -578,6 +578,7 @@ describe("getCellFromArrow", () => {
         isEditable: false,
         isHidden: false,
         isIndex: false,
+        isPinned: false,
         isStretched: false,
         columnTypeOptions: {
           format: "YYYY",
