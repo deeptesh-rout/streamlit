@@ -242,7 +242,6 @@ function useColumnLoader(
           ...applyColumnConfig(column, columnConfigMapping),
           isStretched: stretchColumns,
         } as BaseColumnProps
-        console.log("updatedColumn", updatedColumn, columnConfigMapping)
         const ColumnType = getColumnType(updatedColumn)
 
         // Make sure editing is deactivated if the column is read-only, disabled,
