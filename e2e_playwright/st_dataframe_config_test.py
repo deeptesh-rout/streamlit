@@ -23,7 +23,7 @@ def test_dataframe_supports_various_configurations(
 ):
     """Screenshot test that st.dataframe supports various configuration options."""
     dataframe_elements = themed_app.get_by_test_id("stDataFrame")
-    expect(dataframe_elements).to_have_count(24)
+    expect(dataframe_elements).to_have_count(25)
 
     # The dataframe component might require a bit more time for rendering the canvas
     themed_app.wait_for_timeout(250)
@@ -54,6 +54,7 @@ def test_dataframe_supports_various_configurations(
     assert_snapshot(
         dataframe_elements.nth(23), name="st_dataframe-hierarchical_headers"
     )
+    assert_snapshot(dataframe_elements.nth(24), name="st_dataframe-pinned_columns")
 
 
 def test_check_top_level_class(app: Page):
