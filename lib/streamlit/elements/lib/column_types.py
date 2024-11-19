@@ -157,8 +157,9 @@ class ColumnConfig(TypedDict, total=False):
         can only be submitted if it has a value other than None. Defaults to False.
 
     pinned: bool or None
-        Whether the column is pinned. A pinned column will not scroll horizontally
-        when the user scrolls the table. Defaults to False.
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     default: str, bool, int, float, or None
         Specifies the default value in this column when a new row is added by the user.
@@ -238,6 +239,11 @@ def Column(
     required: bool or None
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     Examples
     --------
@@ -320,6 +326,11 @@ def NumberColumn(
     required: bool or None
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     default: int, float, or None
         Specifies the default value in this column when a new row is added by the user.
@@ -434,6 +445,11 @@ def TextColumn(
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
 
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
+
     default: str or None
         Specifies the default value in this column when a new row is added by the user.
 
@@ -531,6 +547,11 @@ def LinkColumn(
     required: bool or None
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     default: str or None
         Specifies the default value in this column when a new row is added by the user.
@@ -663,6 +684,11 @@ def CheckboxColumn(
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
 
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
+
     default: bool or None
         Specifies the default value in this column when a new row is added by the user.
 
@@ -747,6 +773,11 @@ def SelectboxColumn(
     required: bool or None
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     default: str, int, float, bool, or None
         Specifies the default value in this column when a new row is added by the user.
@@ -840,6 +871,11 @@ def BarChartColumn(
     help: str or None
         An optional tooltip that gets displayed when hovering over the column label.
 
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
+
     y_min: int, float, or None
         The minimum value on the y-axis for all cells in the column.
         If None (default), every cell will use the minimum of its data.
@@ -921,6 +957,11 @@ def LineChartColumn(
 
     help: str or None
         An optional tooltip that gets displayed when hovering over the column label.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     y_min: int, float, or None
         The minimum value on the y-axis for all cells in the column.
@@ -1004,6 +1045,11 @@ def AreaChartColumn(
 
     help: str or None
         An optional tooltip that gets displayed when hovering over the column label.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     y_min: int, float, or None
         The minimum value on the y-axis for all cells in the column.
@@ -1094,6 +1140,11 @@ def ImageColumn(
     help: str or None
         An optional tooltip that gets displayed when hovering over the column label.
 
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
+
     Examples
     --------
 
@@ -1161,6 +1212,11 @@ def ListColumn(
 
     help: str or None
         An optional tooltip that gets displayed when hovering over the column label.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     Examples
     --------
@@ -1247,6 +1303,11 @@ def DatetimeColumn(
     required: bool or None
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     default: datetime.datetime or None
         Specifies the default value in this column when a new row is added by the user.
@@ -1372,6 +1433,11 @@ def TimeColumn(
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
 
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
+
     default: datetime.time or None
         Specifies the default value in this column when a new row is added by the user.
 
@@ -1491,6 +1557,11 @@ def DateColumn(
         Whether edited cells in the column need to have a value. If True, an edited cell
         can only be submitted if it has a value other than None. Defaults to False.
 
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
+
     default: datetime.date or None
         Specifies the default value in this column when a new row is added by the user.
 
@@ -1602,6 +1673,11 @@ def ProgressColumn(
         A printf-style format string controlling how numbers are displayed.
         Valid formatters: %d %e %f %g %i %u. You can also add prefixes and suffixes,
         e.g. ``"$ %.2f"`` to show a dollar prefix.
+
+    pinned: bool or None
+        Whether the column is pinned. A pinned column will stay visible on the left side
+        no matter where the user scrolls. Defaults to False for data columns and True
+        for indices.
 
     min_value : int, float, or None
         The minimum value of the progress bar.
