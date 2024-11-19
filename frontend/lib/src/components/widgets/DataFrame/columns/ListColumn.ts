@@ -35,7 +35,7 @@ function ListColumn(props: BaseColumnProps): BaseColumn {
     data: [],
     allowOverlay: true,
     contentAlign: props.contentAlignment,
-    style: props.isPinned ? "faded" : "normal",
+    style: "normal",
   } as BubbleCell
 
   return {

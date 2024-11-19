@@ -41,7 +41,7 @@ function CheckboxColumn(props: BaseColumnProps): BaseColumn {
     allowOverlay: false, // no overlay possible
     contentAlign: props.contentAlignment,
     readonly: !props.isEditable,
-    style: props.isPinned ? "faded" : "normal",
+    style: "normal",
   } as BooleanCell
 
   return {

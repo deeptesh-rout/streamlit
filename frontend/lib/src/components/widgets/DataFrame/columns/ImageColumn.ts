@@ -34,7 +34,7 @@ function ImageColumn(props: BaseColumnProps): BaseColumn {
     readonly: true,
     allowOverlay: true,
     contentAlign: props.contentAlignment || "center",
-    style: props.isPinned ? "faded" : "normal",
+    style: "normal",
   } as ImageCell
 
   return {
