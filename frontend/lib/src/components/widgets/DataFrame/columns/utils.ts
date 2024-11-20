@@ -31,10 +31,8 @@ import "moment-timezone"
 import numbro from "numbro"
 import { sprintf } from "sprintf-js"
 
-import {
-  Type as ArrowType,
-  Quiver,
-} from "@streamlit/lib/src/dataframes/Quiver"
+import { formatPeriodType } from "@streamlit/lib/src/dataframes/arrowFormatting"
+import { Type as ArrowType } from "@streamlit/lib/src/dataframes/arrowTypeUtils"
 import { EmotionTheme } from "@streamlit/lib/src/theme"
 import {
   isNullOrUndefined,
@@ -468,7 +466,7 @@ export function formatNumber(
   } else if (format === "duration[ns]") {
     return moment.duration(value / (1000 * 1000), "milliseconds").humanize()
   } else if (format.startsWith("period[")) {
-    return Quiver.formatPeriodType(BigInt(value), format as any)
+    return formatPeriodType(BigInt(value), format as any)
   }
 
   return sprintf(format, value)

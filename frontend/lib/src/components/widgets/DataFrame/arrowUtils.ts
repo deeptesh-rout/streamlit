@@ -25,11 +25,15 @@ import {
 import { DatePickerType } from "@glideapps/glide-data-grid-cells"
 import moment from "moment"
 
+import { DataFrameCell, Quiver } from "@streamlit/lib/src/dataframes/Quiver"
+import {
+  convertToSeconds,
+  format as formatArrowCell,
+} from "@streamlit/lib/src/dataframes/arrowFormatting"
 import {
   Type as ArrowType,
-  DataFrameCell,
-  Quiver,
-} from "@streamlit/lib/src/dataframes/Quiver"
+  getTypeName,
+} from "@streamlit/lib/src/dataframes/arrowTypeUtils"
 import {
   isNullOrUndefined,
   notNullOrUndefined,
@@ -139,7 +143,7 @@ export function applyPandasStylerCss(
  * Maps the data type from Arrow to a column type.
  */
 export function getColumnTypeFromArrow(arrowType: ArrowType): ColumnCreator {
-  let typeName = arrowType ? Quiver.getTypeName(arrowType) : null
+  let typeName = arrowType ? getTypeName(arrowType) : null
 
   if (!typeName) {
     // Use object column as fallback
@@ -214,7 +218,7 @@ export function getIndexFromArrow(
   const title = data.indexNames[indexPosition]
   let isEditable = true
 
-  if (Quiver.getTypeName(arrowType) === "range") {
+  if (getTypeName(arrowType) === "range") {
     // Range indices are not editable
     isEditable = false
   }
@@ -278,7 +282,7 @@ export function getColumnFromArrow(
   }
 
   let columnTypeOptions
-  if (Quiver.getTypeName(arrowType) === "categorical") {
+  if (getTypeName(arrowType) === "categorical") {
     // Get the available categories and use it in column type metadata
     const options = data.getCategoricalOptions(columnPosition)
     if (notNullOrUndefined(options)) {
@@ -372,9 +376,7 @@ export function getCellFromArrow(
   arrowCell: DataFrameCell,
   cssStyles: string | undefined = undefined
 ): GridCell {
-  const typeName = column.arrowType
-    ? Quiver.getTypeName(column.arrowType)
-    : null
+  const typeName = column.arrowType ? getTypeName(column.arrowType) : null
 
   let cellTemplate
   if (column.kind === "object") {
@@ -383,7 +385,7 @@ export function getCellFromArrow(
     cellTemplate = column.getCell(
       notNullOrUndefined(arrowCell.content)
         ? removeLineBreaks(
-            Quiver.format(
+            formatArrowCell(
               arrowCell.content,
               arrowCell.contentType,
               arrowCell.field
@@ -409,10 +411,7 @@ export function getCellFromArrow(
       // Time values needs to be adjusted to seconds based on the unit
       parsedDate = moment
         .unix(
-          Quiver.convertToSeconds(
-            arrowCell.content,
-            arrowCell.field?.type?.unit ?? 0
-          )
+          convertToSeconds(arrowCell.content, arrowCell.field?.type?.unit ?? 0)
         )
         .utc()
         .toDate()
@@ -428,7 +427,7 @@ export function getCellFromArrow(
     // because we don't have access to the required scale in the number column.
     const decimalStr = isNullOrUndefined(arrowCell.content)
       ? null
-      : Quiver.format(
+      : formatArrowCell(
           arrowCell.content,
           arrowCell.contentType,
           arrowCell.field

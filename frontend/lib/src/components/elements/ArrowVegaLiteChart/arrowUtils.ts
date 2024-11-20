@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+import {
+  getTypeName,
+  IndexTypeName,
+} from "@streamlit/lib/src/dataframes/arrowTypeUtils"
+import { Quiver } from "@streamlit/lib/src/dataframes/Quiver"
 import { isNullOrUndefined } from "@streamlit/lib/src/util/utils"
-import { IndexTypeName, Quiver } from "@streamlit/lib/src/dataframes/Quiver"
 
 const MagicFields = {
   DATAFRAME_INDEX: "(index)",
@@ -147,7 +151,7 @@ export function getDataArray(
   const dataArr = []
   const { dataRows: rows, dataColumns: cols } = dataProto.dimensions
 
-  const indexType = Quiver.getTypeName(dataProto.types.index[0])
+  const indexType = getTypeName(dataProto.types.index[0])
   const hasSupportedIndex = SUPPORTED_INDEX_TYPES.has(
     indexType as IndexTypeName
   )
@@ -165,7 +169,7 @@ export function getDataArray(
     for (let colIndex = 0; colIndex < cols; colIndex++) {
       const dataValue = dataProto.getDataValue(rowIndex, colIndex)
       const dataType = dataProto.types.data[colIndex]
-      const typeName = Quiver.getTypeName(dataType)
+      const typeName = getTypeName(dataType)
 
       if (
         typeName !== "datetimetz" &&

@@ -20,6 +20,9 @@ import { MockInstance } from "vitest"
 import { arrayFromVector } from "@streamlit/lib/src/test_util"
 import { isNullOrUndefined } from "@streamlit/lib/src/util/utils"
 
+import { AppNode, AppRoot, BlockNode, ElementNode } from "./AppNode"
+import { IndexTypeName } from "./dataframes/arrowTypeUtils"
+import { UNICODE } from "./mocks/arrow"
 import {
   ArrowNamedDataSet,
   Block as BlockProto,
@@ -29,9 +32,6 @@ import {
   IArrowVegaLiteChart,
   Logo as LogoProto,
 } from "./proto"
-import { AppNode, AppRoot, BlockNode, ElementNode } from "./AppNode"
-import { IndexTypeName } from "./dataframes/Quiver"
-import { UNICODE } from "./mocks/arrow"
 
 const NO_SCRIPT_RUN_ID = "NO_SCRIPT_RUN_ID"
 const FAKE_SCRIPT_HASH = "fake_script_hash"

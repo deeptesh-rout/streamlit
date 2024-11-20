@@ -16,9 +16,9 @@
 
 import {
   Type as ArrowType,
-  DataFrameCell,
-  Quiver,
-} from "@streamlit/lib/src/dataframes/Quiver"
+  getTypeName,
+} from "@streamlit/lib/src/dataframes/arrowTypeUtils"
+import { DataFrameCell, Quiver } from "@streamlit/lib/src/dataframes/Quiver"
 import {
   CATEGORICAL_COLUMN,
   DECIMAL,
@@ -1002,7 +1002,7 @@ describe("isIntegerType", () => {
   ])(
     "interprets %p as integer type: %p",
     (arrowType: ArrowType, expected: boolean) => {
-      expect(isIntegerType(Quiver.getTypeName(arrowType))).toEqual(expected)
+      expect(isIntegerType(getTypeName(arrowType))).toEqual(expected)
     }
   )
 })
