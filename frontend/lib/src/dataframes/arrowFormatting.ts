@@ -331,7 +331,6 @@ function formatCategoricalType(
 /** Takes the data and it's type and nicely formats it. */
 export function format(x: DataType, type?: Type, field?: Field): string {
   const typeName = type && getTypeName(type)
-  const typeMetadata = type?.meta
 
   if (isNullOrUndefined(x)) {
     return "<NA>"
@@ -349,15 +348,16 @@ export function format(x: DataType, type?: Type, field?: Field): string {
 
   // datetimetz
   if (isDate && typeName === "datetimetz") {
+    const meta = type?.meta
     let datetime = moment(x as Date | number)
 
-    if (typeMetadata?.timezone) {
-      if (moment.tz.zone(typeMetadata?.timezone)) {
+    if (meta?.timezone) {
+      if (moment.tz.zone(meta?.timezone)) {
         // uses timezone notation
-        datetime = datetime.tz(typeMetadata?.timezone)
+        datetime = datetime.tz(meta?.timezone)
       } else {
         // uses UTC offset notation
-        datetime = datetime.utcOffset(typeMetadata?.timezone)
+        datetime = datetime.utcOffset(meta?.timezone)
       }
     }
 
