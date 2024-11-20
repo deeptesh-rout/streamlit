@@ -29,7 +29,7 @@ import { DataFrameCell, Quiver } from "@streamlit/lib/src/dataframes/Quiver"
 import {
   convertToSeconds,
   format as formatArrowCell,
-} from "@streamlit/lib/src/dataframes/arrowFormatting"
+} from "@streamlit/lib/src/dataframes/arrowFormatUtils"
 import {
   Type as ArrowType,
   getTypeName,

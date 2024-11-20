@@ -31,7 +31,7 @@ import {
   UINT64,
 } from "@streamlit/lib/src/mocks/arrow"
 
-import { format } from "./arrowFormatting"
+import { format } from "./arrowFormatUtils"
 
 describe("format", () => {
   test("null", () => {

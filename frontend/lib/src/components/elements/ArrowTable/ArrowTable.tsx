@@ -19,7 +19,7 @@ import React, { ReactElement } from "react"
 import range from "lodash/range"
 
 import { Quiver } from "@streamlit/lib/src/dataframes/Quiver"
-import { format as formatArrowCell } from "@streamlit/lib/src/dataframes/arrowFormatting"
+import { format as formatArrowCell } from "@streamlit/lib/src/dataframes/arrowFormatUtils"
 
 import {
   StyledEmptyTableCell,
